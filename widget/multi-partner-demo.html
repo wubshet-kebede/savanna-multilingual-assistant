@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Universal Drop-in Showcase: Any LMS / Partner Platform</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      padding: 30px 20px;
+      max-width: 960px;
+      margin: auto;
+      line-height: 1.6;
+      color: #1f2937;
+      background: #f8fafc;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 24px;
+    }
+    .partner-card {
+      background: #ffffff;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    }
+    .partner-card h3 { margin-top: 0; }
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .code-box {
+      background: #1e293b;
+      color: #e2e8f0;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      overflow-x: auto;
+    }
+    .event-logger {
+      background: #0f172a;
+      color: #38bdf8;
+      font-family: monospace;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-top: 24px;
+      height: 120px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>🌐 Universal Drop-in Web Component Showcase</h1>
+  <p>Proving <strong>Level 1 "Plug-and-Play"</strong> across different educational platforms, brand colors, courses, and regional languages.</p>
+
+  <div class="grid">
+    <!-- Partner 1: Canvas LMS -->
+    <div class="partner-card" style="border-top: 5px solid #2563eb;">
+      <span class="badge" style="background:#dbeafe; color:#1e40af;">Partner A: Canvas LMS</span>
+      <h3>Addis Ababa University</h3>
+      <p>Theme: <strong>Royal Blue</strong> | Course: <strong>CS-101</strong> | Default: <strong>Afaan Oromoo</strong></p>
+      <div class="code-box">
+&lt;multilingual-assistant
+  partner="canvas_aau"
+  course="CS-101"
+  theme-color="#2563eb"
+  default-lang="om"&gt;
+&lt;/multilingual-assistant&gt;
+      </div>
+      <button onclick="switchPartner('canvas_aau', 'CS-101', '#2563eb', 'om')" style="margin-top:12px; padding:8px 14px; cursor:pointer;">
+        Simulate Canvas AAU
+      </button>
+    </div>
+
+    <!-- Partner 2: Moodle Arabic Academy -->
+    <div class="partner-card" style="border-top: 5px solid #7c3aed;">
+      <span class="badge" style="background:#ede9fe; color:#5b21b6;">Partner B: Moodle</span>
+      <h3>Cairo Digital Academy</h3>
+      <p>Theme: <strong>Purple</strong> | Course: <strong>DATA-201</strong> | Default: <strong>العربية (RTL)</strong></p>
+      <div class="code-box">
+&lt;multilingual-assistant
+  partner="moodle_cairo"
+  course="DATA-201"
+  theme-color="#7c3aed"
+  default-lang="ar"&gt;
+&lt;/multilingual-assistant&gt;
+      </div>
+      <button onclick="switchPartner('moodle_cairo', 'DATA-201', '#7c3aed', 'ar')" style="margin-top:12px; padding:8px 14px; cursor:pointer;">
+        Simulate Moodle Cairo
+      </button>
+    </div>
+
+    <!-- Partner 3: Savanna ALX -->
+    <div class="partner-card" style="border-top: 5px solid #0e623b;">
+      <span class="badge" style="background:#dcfce7; color:#166534;">Partner C: Savanna</span>
+      <h3>ALX Intranet</h3>
+      <p>Theme: <strong>Savanna Green</strong> | Course: <strong>VA-1</strong> | Default: <strong>አማርኛ (Amharic)</strong></p>
+      <div class="code-box">
+&lt;multilingual-assistant
+  partner="savanna"
+  course="VA-1"
+  theme-color="#0e623b"
+  default-lang="am"&gt;
+&lt;/multilingual-assistant&gt;
+      </div>
+      <button onclick="switchPartner('savanna', 'VA-1', '#0e623b', 'am')" style="margin-top:12px; padding:8px 14px; cursor:pointer;">
+        Simulate Savanna ALX
+      </button>
+    </div>
+  </div>
+
+  <div class="event-logger" id="logger">
+    [Event Listener Console] Listening for Universal CustomEvents from &lt;multilingual-assistant&gt;...
+  </div>
+
+  <!-- Host Event Listeners (Universal Integration) -->
+  <script>
+    function logEvent(text) {
+      const logger = document.getElementById('logger');
+      const time = new Date().toLocaleTimeString();
+      logger.innerHTML += `<div>[${time}] ${text}</div>`;
+      logger.scrollTop = logger.scrollHeight;
+    }
+
+    window.addEventListener('assistant:opened', (e) => {
+      logEvent(`🔔 Event: assistant:opened by partner: ${e.detail.partnerId} on course: ${e.detail.courseId}`);
+    });
+
+    window.addEventListener('assistant:closed', (e) => {
+      logEvent(`🔔 Event: assistant:closed by partner: ${e.detail.partnerId}`);
+    });
+
+    window.addEventListener('assistant:language-change', (e) => {
+      logEvent(`🗣️ Event: assistant:language-change to '${e.detail.language}' (RTL: ${e.detail.isRtl})`);
+    });
+
+    window.addEventListener('assistant:citation-click', (e) => {
+      logEvent(`📌 Event: assistant:citation-click for: "${e.detail.citation}"`);
+    });
+
+    window.addEventListener('assistant:escalate', (e) => {
+      logEvent(`🚨 Event: assistant:escalate — Human mentor requested!`);
+    });
+
+    function switchPartner(partner, course, color, lang) {
+      const assistant = document.querySelector('multilingual-assistant');
+      assistant.setAttribute('partner', partner);
+      assistant.setAttribute('course', course);
+      assistant.setAttribute('theme-color', color);
+      assistant.setAttribute('default-lang', lang);
+      assistant.setLanguage(lang);
+      logEvent(`🔄 Reconfigured Web Component for Partner: ${partner} (${course}) with color ${color}`);
+    }
+  </script>
+
+  <!-- Single Drop-in Script -->
+  <script src="assistant.js" defer></script>
+  <multilingual-assistant partner="savanna" course="VA-1" theme-color="#0e623b" default-lang="am"></multilingual-assistant>
+</body>
+</html>
