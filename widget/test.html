@@ -3,95 +3,251 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Multilingual Assistant - Phase 1 Verification Testbed</title>
+  <title>Multilingual Assistant - Phase 3 Verification Testbed</title>
   <style>
+    :root {
+      --primary: #059669;
+    }
     body {
-      font-family: system-ui, -apple-system, sans-serif;
-      padding: 40px 20px;
-      max-width: 860px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      padding: 30px 20px;
+      max-width: 960px;
       margin: auto;
       line-height: 1.6;
       color: #1f2937;
-      background: #fdfdfd;
+      background: #f8fafc;
     }
     .badge {
       display: inline-block;
-      padding: 4px 10px;
+      padding: 4px 12px;
       border-radius: 9999px;
       font-size: 12px;
       font-weight: 700;
       background: #e0f2fe;
       color: #0369a1;
-      margin-bottom: 8px;
+      margin-bottom: 12px;
     }
     .card {
       background: #ffffff;
-      border: 1px solid #e5e7eb;
+      border: 1px solid #e2e8f0;
       border-radius: 12px;
       padding: 24px;
       margin-top: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
     }
-    .highlight-target {
-      transition: background-color 0.8s ease, outline 0.8s ease;
-      padding: 12px;
+    .course-section {
+      transition: background-color 0.5s ease, outline 0.4s ease;
+      padding: 16px;
       border-radius: 8px;
+      margin-bottom: 16px;
+      background: #ffffff;
+      border: 1px solid #f1f5f9;
     }
-    .highlight-active {
-      background-color: #fef08a !important;
-      outline: 3px solid #eab308;
+    .course-section h3 {
+      margin-top: 0;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .anchor-tag {
+      font-size: 11px;
+      font-family: monospace;
+      background: #f1f5f9;
+      color: #64748b;
+      padding: 2px 6px;
+      border-radius: 4px;
     }
     .checklist {
       background: #f0fdf4;
       border: 1px solid #bbf7d0;
-      border-radius: 8px;
-      padding: 16px;
+      border-radius: 10px;
+      padding: 18px;
       margin-top: 24px;
     }
     .checklist h3 { margin-top: 0; color: #166534; }
     .checklist ul { margin-bottom: 0; padding-left: 20px; }
+    .sample-prompts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .prompt-chip {
+      background: #e2e8f0;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      color: #334155;
+    }
+    .prompt-chip:hover {
+      background: #cbd5e1;
+    }
+    .event-log-box {
+      background: #0f172a;
+      color: #38bdf8;
+      font-family: monospace;
+      font-size: 12px;
+      padding: 14px;
+      border-radius: 8px;
+      height: 120px;
+      overflow-y: auto;
+      margin-top: 14px;
+    }
   </style>
 </head>
 <body>
-  <span class="badge">Level 1: Drop-in Web Component</span>
-  <h1>Partner Course Testbed (Generic LMS Simulation)</h1>
-  <p>This page simulates any partner platform (Savanna, Canvas, or WordPress) embedding the Universal Multilingual Assistant with a single <code>&lt;script&gt;</code> tag.</p>
+
+  <span class="badge">Level 1: Plug-and-Play Web Component · Phase 3 Verification</span>
+  <h1>Savanna LMS Course Page (Grounding & Accessibility Testbed)</h1>
+  <p>
+    This page tests <strong>Phase 3</strong>: Screen Reader Announcements (polite live regions), Web Audio API Sensory Cues, and the <strong>Grounded Course Citation Engine</strong> with instant jump navigation and pulse highlighting.
+  </p>
 
   <div class="card">
-    <h2>VA-1: Virtual Assistant Foundations</h2>
-    <div id="target-section" class="highlight-target">
-      <h3>Module 2: An Important Distinction</h3>
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <h2 style="margin:0;">📚 Course: Virtual Assistant Foundations (VA-1)</h2>
+      <span class="anchor-tag">Host DOM Sections</span>
+    </div>
+    <p style="color:#64748b; font-size:13px; margin: 4px 0 16px 0;">
+      Click any citation badge in the AI Tutor drawer to observe smooth scrolling & visual pulse right to these headings!
+    </p>
+
+    <!-- Section 1 -->
+    <div id="what-is-shaping-the-future-of-va-work" class="course-section">
+      <h3>
+        <span>1. What is shaping the future of VA work?</span>
+        <span class="anchor-tag">#what-is-shaping-the-future-of-va-work</span>
+      </h3>
       <p>
-        Virtual Assistant can mean two different things. In some reports, a “virtual assistant” refers to AI software assistants such as chatbots, voice assistants, and digital agents. In other contexts, it refers to human remote professionals who provide business support online. The future of the industry includes both, and increasingly, they will work together.
+        The shift to remote work, global distributed teams, and task automation are driving demand for dynamic professionals who can orchestrate workflows across borders.
+      </p>
+    </div>
+
+    <!-- Section 2 -->
+    <div id="artificial-intelligence-and-the-future-of-va-work" class="course-section">
+      <h3>
+        <span>2. Artificial Intelligence and the future of VA work</span>
+        <span class="anchor-tag">#artificial-intelligence-and-the-future-of-va-work</span>
+      </h3>
+      <p>
+        AI tools (ChatGPT, Notion AI, Zapier) do not replace human VAs; they augment them. High-performing VAs use AI to deliver 5x productivity while offering empathy, discretion, and strategic oversight.
+      </p>
+    </div>
+
+    <!-- Section 3 -->
+    <div id="what-clients-are-likely-to-value-more-and-more" class="course-section">
+      <h3>
+        <span>3. What clients are likely to value more and more</span>
+        <span class="anchor-tag">#what-clients-are-likely-to-value-more-and-more</span>
+      </h3>
+      <p>
+        Clients prioritize 3 key pillars: <strong>1. AI fluency</strong> (prompting & verification), <strong>2. Specialized expertise</strong>, and <strong>3. Excellent human service</strong> (empathy, confidentiality, reliability).
+      </p>
+    </div>
+
+    <!-- Section 4 -->
+    <div id="what-this-means-for-aspiring-virtual-assistants" class="course-section">
+      <h3>
+        <span>4. What this means for aspiring virtual assistants</span>
+        <span class="anchor-tag">#what-this-means-for-aspiring-virtual-assistants</span>
+      </h3>
+      <p>
+        Aspiring virtual assistants should build digital communication skills, learn generative AI workflows, practice verifiable work ethics, and maintain an active digital portfolio.
+      </p>
+    </div>
+
+    <!-- Section 5 -->
+    <div id="so-is-the-future-of-va-promising" class="course-section">
+      <h3>
+        <span>5. So is the future of VA promising?</span>
+        <span class="anchor-tag">#so-is-the-future-of-va-promising</span>
+      </h3>
+      <p>
+        Yes. Industry forecasts indicate increasing global demand for skilled virtual assistants who understand how to leverage modern AI tools effectively.
       </p>
     </div>
   </div>
 
+  <!-- Interactive Test Controller -->
+  <div class="card">
+    <h3 style="margin-top:0;">⚡ Instant Test Prompts (Auto-Inject to Assistant)</h3>
+    <p style="font-size:13px; color:#64748b;">Click any chip below to automatically send a query in English, Amharic, Oromo, or Arabic:</p>
+    
+    <div class="sample-prompts">
+      <button class="prompt-chip" onclick="askTutor('Will AI replace virtual assistants?')">
+        🤖 "Will AI replace virtual assistants?" (EN)
+      </button>
+      <button class="prompt-chip" onclick="switchAndAsk('am', 'AI ረዳቶችን ይተካቸዋል?')">
+        🇪🇹 "AI ረዳቶችን ይተካቸዋል?" (AM)
+      </button>
+      <button class="prompt-chip" onclick="switchAndAsk('om', 'AI\'n gargaartota namootaa bakka bu\'aa?')">
+        🌳 "AI'n gargaartota bakka bu'aa?" (OM)
+      </button>
+      <button class="prompt-chip" onclick="switchAndAsk('ar', 'هل يستبدل الذكاء الاصطناعي المساعدين؟')">
+        🇸🇦 "هل يستبدل الذكاء الاصطناعي المساعدين؟" (AR)
+      </button>
+      <button class="prompt-chip" onclick="askTutor('What skills do clients value most?')">
+        🎯 "What skills do clients value most?" (EN)
+      </button>
+      <button class="prompt-chip" onclick="askTutor('Is the future promising for VAs?')">
+        📈 "Is the future promising for VAs?" (EN)
+      </button>
+    </div>
+
+    <h4 style="margin:16px 0 6px 0;">📡 Host Page CustomEvent Listener Stream:</h4>
+    <div class="event-log-box" id="event-stream-log">
+      Listening for assistant:opened, assistant:citation-click, assistant:language-change...
+    </div>
+  </div>
+
   <div class="checklist">
-    <h3>✅ Phase 1 Verification Checklist (Try this in your browser!)</h3>
+    <h3>✅ Phase 3 Verification Checklist</h3>
     <ul>
-      <li><strong>Open Drawer:</strong> Click the floating green button at bottom-right or press <code>Enter</code> on it.</li>
-      <li><strong>Keyboard Trapping:</strong> Press <code>Tab</code> repeatedly. Focus will <em>never</em> escape into this host page while the dialog is open!</li>
-      <li><strong>Escape Key:</strong> Press <code>Escape</code> anywhere. The drawer closes and focus returns to the launcher button.</li>
-      <li><strong>Tabs Navigation:</strong> Focus on "Course Tutor" tab and press <code>ArrowRight</code> to switch to "Career Gateway".</li>
-      <li><strong>400% Zoom:</strong> Zoom your browser to 400%. The drawer automatically reflows without horizontal scrollbars.</li>
+      <li><strong>Polite Screen Reader Announcements (WCAG 4.1.3):</strong> Dedicated <code>#sr-announcer</code> live region informs NVDA / TalkBack on send, reply arrival, and citation click without stealing focus.</li>
+      <li><strong>Auditory Sensory Cues (Web Audio API):</strong> Synthesized chime plays instantly when tutor responds (toggleable with 🔔 in header).</li>
+      <li><strong>Grounded Citation Badges:</strong> Every reply displays a high-contrast (7.8:1) <code>📌 Source: ... ↗</code> badge.</li>
+      <li><strong>Course Section Navigation:</strong> Clicking a citation smoothly scrolls the host page directly to the cited section and pulses with a 3px outline.</li>
+      <li><strong>Citation Details Dialog:</strong> If an anchor is external or user presses Enter, a focus-trapped citation excerpt preview is available with <code>📋 Copy Citation</code>!</li>
     </ul>
   </div>
 
-  <!-- Citation Highlighting Listener (Host Integration) -->
+  <!-- Event Logger & Auto-Prompt Helper -->
   <script>
-    window.addEventListener('savanna-highlight-citation', (e) => {
-      const target = document.getElementById('target-section');
-      if (target) {
-        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        target.classList.add('highlight-active');
-        setTimeout(() => target.classList.remove('highlight-active'), 2500);
-      }
-    });
+    const logBox = document.getElementById('event-stream-log');
+    function logEvent(name, detail) {
+      const time = new Date().toLocaleTimeString();
+      const line = document.createElement('div');
+      line.textContent = `[${time}] ${name}: ${JSON.stringify(detail)}`;
+      logBox.appendChild(line);
+      logBox.scrollTop = logBox.scrollHeight;
+    }
+
+    window.addEventListener('assistant:opened', e => logEvent('assistant:opened', e.detail));
+    window.addEventListener('assistant:closed', e => logEvent('assistant:closed', e.detail));
+    window.addEventListener('assistant:citation-click', e => logEvent('assistant:citation-click', e.detail));
+    window.addEventListener('assistant:language-change', e => logEvent('assistant:language-change', e.detail));
+    window.addEventListener('assistant:simple-mode-toggle', e => logEvent('assistant:simple-mode-toggle', e.detail));
+
+    const widget = document.querySelector('multilingual-assistant');
+
+    function askTutor(query) {
+      widget.open();
+      widget.askQuestion(query);
+    }
+
+    function switchAndAsk(lang, query) {
+      widget.open();
+      widget.setLanguage(lang);
+      widget.askQuestion(query);
+    }
   </script>
 
   <!-- Level 1 Drop-in Script & Custom Element -->
   <script src="assistant.js" defer></script>
-  <multilingual-assistant partner="savanna" course="VA-1"></multilingual-assistant>
+  <multilingual-assistant partner="savanna" course="VA-1" theme-color="#059669" default-lang="am"></multilingual-assistant>
 </body>
 </html>
