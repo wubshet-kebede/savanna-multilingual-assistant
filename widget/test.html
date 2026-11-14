@@ -3,20 +3,92 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Multilingual Assistant - Standalone Testbed</title>
+  <title>Multilingual Assistant - Phase 1 Verification Testbed</title>
   <style>
-    body { font-family: system-ui, sans-serif; padding: 40px 20px; max-width: 800px; margin: auto; line-height: 1.6; }
-    .card { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 24px; margin-top: 20px; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      padding: 40px 20px;
+      max-width: 860px;
+      margin: auto;
+      line-height: 1.6;
+      color: #1f2937;
+      background: #fdfdfd;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 700;
+      background: #e0f2fe;
+      color: #0369a1;
+      margin-bottom: 8px;
+    }
+    .card {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 24px;
+      margin-top: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .highlight-target {
+      transition: background-color 0.8s ease, outline 0.8s ease;
+      padding: 12px;
+      border-radius: 8px;
+    }
+    .highlight-active {
+      background-color: #fef08a !important;
+      outline: 3px solid #eab308;
+    }
+    .checklist {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 24px;
+    }
+    .checklist h3 { margin-top: 0; color: #166534; }
+    .checklist ul { margin-bottom: 0; padding-left: 20px; }
   </style>
 </head>
 <body>
-  <h1>Partner Platform Demo (Generic LMS / Website)</h1>
-  <p>This page simulates any partner website installing the Multilingual Assistant via Level 1.</p>
-  
+  <span class="badge">Level 1: Drop-in Web Component</span>
+  <h1>Partner Course Testbed (Generic LMS Simulation)</h1>
+  <p>This page simulates any partner platform (Savanna, Canvas, or WordPress) embedding the Universal Multilingual Assistant with a single <code>&lt;script&gt;</code> tag.</p>
+
   <div class="card">
-    <h2>Module 2: The Future of the Virtual Assistant Industry</h2>
-    <p>Virtual Assistants work remotely to support global businesses. Increasingly, AI tools and human remote professionals collaborate together.</p>
+    <h2>VA-1: Virtual Assistant Foundations</h2>
+    <div id="target-section" class="highlight-target">
+      <h3>Module 2: An Important Distinction</h3>
+      <p>
+        Virtual Assistant can mean two different things. In some reports, a “virtual assistant” refers to AI software assistants such as chatbots, voice assistants, and digital agents. In other contexts, it refers to human remote professionals who provide business support online. The future of the industry includes both, and increasingly, they will work together.
+      </p>
+    </div>
   </div>
+
+  <div class="checklist">
+    <h3>✅ Phase 1 Verification Checklist (Try this in your browser!)</h3>
+    <ul>
+      <li><strong>Open Drawer:</strong> Click the floating green button at bottom-right or press <code>Enter</code> on it.</li>
+      <li><strong>Keyboard Trapping:</strong> Press <code>Tab</code> repeatedly. Focus will <em>never</em> escape into this host page while the dialog is open!</li>
+      <li><strong>Escape Key:</strong> Press <code>Escape</code> anywhere. The drawer closes and focus returns to the launcher button.</li>
+      <li><strong>Tabs Navigation:</strong> Focus on "Course Tutor" tab and press <code>ArrowRight</code> to switch to "Career Gateway".</li>
+      <li><strong>400% Zoom:</strong> Zoom your browser to 400%. The drawer automatically reflows without horizontal scrollbars.</li>
+    </ul>
+  </div>
+
+  <!-- Citation Highlighting Listener (Host Integration) -->
+  <script>
+    window.addEventListener('savanna-highlight-citation', (e) => {
+      const target = document.getElementById('target-section');
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        target.classList.add('highlight-active');
+        setTimeout(() => target.classList.remove('highlight-active'), 2500);
+      }
+    });
+  </script>
 
   <!-- Level 1 Drop-in Script & Custom Element -->
   <script src="assistant.js" defer></script>
