@@ -1,16 +1,20 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.config import settings
-from app.api import chat, escalate, jobs, teacher
+from app.core.config import settings
+
+# Import individual self-contained feature modules
+from app.modules.tutor.router import router as tutor_router
+from app.modules.career.router import router as career_router
+from app.modules.escalate.router import router as escalate_router
+from app.modules.channels.sms_handler import router as sms_router
+from app.modules.teacher.router import router as teacher_router
 
 app = FastAPI(
     title="Universal Multilingual Assistant & Live Help API",
     description="""
-    ## The Multi-Partner Inclusive Education Engine
-    Provides three levels of integration:
-    - **Level 1**: Drop-in Web Component (<script> tag with Shadow DOM)
-    - **Level 2**: This REST API with OpenAPI Specification
-    - **Level 3**: Standardized schemas (schema.org/JobPosting & LTI 1.3)
+    ## Feature-Based / Module-Based Inclusive Education Engine
+    Built for learners thinking in Amharic, Oromo, Tigrinya, Somali, or Arabic.
+    Supports Three Levels of Integration across ANY partner platform.
     """,
     version=settings.VERSION,
     docs_url="/docs",
@@ -25,10 +29,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(chat.router, prefix=settings.API_PREFIX, tags=["Level 2: AI Tutor Chat"])
-app.include_router(escalate.router, prefix=settings.API_PREFIX, tags=["Level 2: Human Escalation & Co-Browsing"])
-app.include_router(jobs.router, prefix=settings.API_PREFIX, tags=["Level 2 & 3: Career Gateway"])
-app.include_router(teacher.router, prefix=settings.API_PREFIX, tags=["Bonus: Teacher Intelligence"])
+# Register Feature Modules
+app.include_router(tutor_router, prefix=settings.API_PREFIX)
+app.include_router(career_router, prefix=settings.API_PREFIX)
+app.include_router(escalate_router, prefix=settings.API_PREFIX)
+app.include_router(sms_router, prefix=settings.API_PREFIX)
+app.include_router(teacher_router, prefix=settings.API_PREFIX)
 
 @app.get("/")
 def root():
@@ -36,5 +42,6 @@ def root():
         "platform": settings.APP_NAME,
         "version": settings.VERSION,
         "docs": "/docs",
+        "modules": ["tutor", "career", "escalate", "channels", "teacher"],
         "status": "healthy"
     }
