@@ -1,0 +1,11 @@
+{
+  "title": "Universal Multilingual Assistant & Live Help",
+  "description": "LTI 1.3 Tool Configuration for Canvas, Moodle, and Blackboard",
+  "oidc_initiation_url": "http://localhost:8000/api/v1/lti/login",
+  "target_link_uri": "http://localhost:8000/api/v1/lti/launch",
+  "public_jwk_url": "http://localhost:8000/api/v1/lti/jwks",
+  "scopes": [
+    "https://purl.imsglobal.org/spec/lti-ags/scope/score",
+    "https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly"
+  ]
+}

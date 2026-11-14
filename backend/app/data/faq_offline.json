@@ -1,0 +1,40 @@
+{
+  "savanna": [
+    {
+      "keywords": [
+        "difference",
+        "ai",
+        "human",
+        "ልዩነት",
+        "ሰው",
+        "ምንድነው",
+        "garaagarummaa",
+        "farqi"
+      ],
+      "answers": {
+        "am": "በኮርሱ መሰረት የሰው ረዳት (Human VA) ውስብስብ ውሳኔዎችን እና የደንበኛ ግንኙነቶችን የሚመራ ባለሙያ ሲሆን፣ የ AI ረዳት ግን ተደጋጋሚ እና ዲጂታል ስራዎችን ያከናውናል። ሁለቱም ተቀናጅተው ይሰራሉ።",
+        "en": "According to the course, a 'Virtual Assistant' can mean either AI software agents (chatbots, voice tools) or human remote business professionals. Increasingly, both work together.",
+        "om": "Akka koorsichatti, gargaaraan namootaa (Human VA) fi AI gargaaran gargar. Lamaan isaaniiyyuu waliin hojjetu.",
+        "ar": "وفقاً للدورة التدريبية، المساعد الافتراضي قد يشير إلى برمجيات الذكاء الاصطناعي أو المحترفين البشر الذين يقدمون الدعم عن بعد."
+      },
+      "citation": "Module 2: What is a VA · Section: An Important Distinction"
+    },
+    {
+      "keywords": [
+        "future",
+        "remote",
+        "የወደፊት",
+        "ፍላጎት",
+        "fuldura",
+        "mustaqbal"
+      ],
+      "answers": {
+        "am": "የ VA ስራ እየቀነሰ አይደለም፤ ይልቁንም እያደገ እና እየተቀየረ ነው። ንግዶች በርቀት ለመስራት እና በቀላሉ ሊለዋወጥ የሚችል ድጋፍ ይፈልጋሉ።",
+        "en": "The Virtual Assistant profession is not shrinking; it is evolving. Businesses are remote-first and value flexible, scalable support.",
+        "om": "Hojiin VA hir'achaa hin jiru; gara fuulduraatti bal'achaa fi jijjiiramaa jira.",
+        "ar": "مهنة المساعد الافتراضي لا تتقلص بل تتطور مع تحول الشركات إلى العمل عن بعد."
+      },
+      "citation": "Module 2: What is a VA · Section: What is Shaping the Future"
+    }
+  ]
+}

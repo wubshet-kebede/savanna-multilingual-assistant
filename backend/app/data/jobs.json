@@ -1,0 +1,49 @@
+[
+  {
+    "id": "job_01",
+    "partner_id": "savanna",
+    "title": "Junior Virtual Assistant (Inbox & Client Support)",
+    "company": "AfriRemote Solutions",
+    "location": "Remote (East Africa Timezone)",
+    "employment_type": "FULL_TIME",
+    "salary": "00 - 00 / month",
+    "course_alignment": "VA-1: VA Foundations",
+    "description": "Looking for entry-level Virtual Assistants skilled in professional communication, calendar management, and remote correspondence.",
+    "accommodations": {
+      "screen_reader_certified": true,
+      "extended_test_time": true,
+      "camera_optional_interview": true,
+      "contact": "careers-accommodations@afriremote.example.com"
+    },
+    "schema_org": {
+      "@context": "https://schema.org/",
+      "@type": "JobPosting",
+      "title": "Junior Virtual Assistant",
+      "description": "Remote entry-level virtual assistant position with certified accessibility support.",
+      "jobLocationType": "TELECOMMUTE",
+      "jobBenefits": "Screen reader compatible testing; interview accommodations upon request."
+    }
+  },
+  {
+    "id": "job_02",
+    "partner_id": "savanna",
+    "title": "Customer Support Communication Associate",
+    "company": "Kazi Connect",
+    "location": "Remote",
+    "employment_type": "PART_TIME",
+    "salary": "50 / month",
+    "course_alignment": "WR 100: Fundamentals of Effective Communication",
+    "description": "Seeking communicators with strong English and regional language fluency to handle written customer inquiries.",
+    "accommodations": {
+      "screen_reader_certified": true,
+      "written_questions_in_advance": true,
+      "contact": "hiring@kaziconnect.example.com"
+    },
+    "schema_org": {
+      "@context": "https://schema.org/",
+      "@type": "JobPosting",
+      "title": "Customer Support Communication Associate",
+      "jobLocationType": "TELECOMMUTE"
+    }
+  }
+]

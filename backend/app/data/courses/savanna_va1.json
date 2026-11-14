@@ -1,0 +1,29 @@
+{
+  "partner_id": "savanna",
+  "course_id": "VA-1",
+  "course_name": "VA Foundations & Professional Identity",
+  "modules": [
+    {
+      "module_id": "mod_02",
+      "title": "What is a VA",
+      "concept": "The Future of the VA Industry",
+      "sections": [
+        {
+          "heading": "An Important Distinction",
+          "text": "Virtual Assistant can mean two different things. In some reports, a 'virtual assistant' refers to AI software assistants such as chatbots, voice assistants, and digital agents. In other contexts, it refers to human remote professionals who provide business support online. The future of the industry includes both, and increasingly, they will work together.",
+          "citation": "Module 2: What is a VA · Section: An Important Distinction"
+        },
+        {
+          "heading": "What is Shaping the Future of VA Work?",
+          "text": "1. More remote-first businesses: Companies are comfortable building distributed teams and hiring remotely across locations and time zones. 2. Growing demand for flexibility: Businesses do not want full-time in-office staff for every task; they value flexible, scalable remote support.",
+          "citation": "Module 2: What is a VA · Section: What is Shaping the Future"
+        },
+        {
+          "heading": "Evolution of the VA Role",
+          "text": "The Virtual Assistant profession is not shrinking. It is evolving. As businesses become more digital, AI is changing how support work gets done and what clients value most: high emotional intelligence, strategic communication, and tool fluency.",
+          "citation": "Module 2: What is a VA · Section: Evolution of the VA Role"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "@context": "https://schema.org/",
+  "@type": "JobPosting",
+  "title": "Junior Virtual Assistant (Inbox & Client Support)",
+  "description": "Remote entry-level Virtual Assistant role with verified accessibility testing and interview accommodations.",
+  "employmentType": "FULL_TIME",
+  "jobLocationType": "TELECOMMUTE",
+  "jobBenefits": "Screen reader compatible testing; interview accommodations upon request."
+}

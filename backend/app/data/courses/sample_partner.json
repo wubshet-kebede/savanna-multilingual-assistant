@@ -1,0 +1,19 @@
+{
+  "partner_id": "generic_lms",
+  "course_id": "CS-101",
+  "course_name": "Introduction to Web Development",
+  "modules": [
+    {
+      "module_id": "mod_01",
+      "title": "HTML & Accessibility Basics",
+      "concept": "Building for Everyone",
+      "sections": [
+        {
+          "heading": "Semantic HTML",
+          "text": "Always use native buttons and headings. Semantic markup is the foundation of digital accessibility.",
+          "citation": "Module 1: HTML Basics · Section: Semantic HTML"
+        }
+      ]
+    }
+  ]
+}
