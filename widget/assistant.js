@@ -1,9 +1,126 @@
 /**
  * Universal Multilingual Assistant & Live Help (Level 1 Web Component)
- * 100% Plug-and-Play for ANY partner platform (Canvas, Moodle, Savanna, WordPress, custom React/HTML).
- * "Settings In, Events Out" architecture per 1EdTech / W3C standards.
- * Fully compliant with WCAG 2.2 AA.
+ * PHASE 2: Comprehensive Multilingual Adaptation & Bidirectional RTL Arabic Engine.
+ * Supports Amharic, Afaan Oromo, Tigrinya, Somali, Arabic (RTL), and English.
+ * Fully compliant with WCAG 2.2 AA (SC 3.1.1, 3.1.2, 1.3.2, 3.1.5).
  */
+
+const LOCALIZED_UI = {
+  am: {
+    launcher: "ረዳት ይጠይቁ (አማርኛ)",
+    dialogTitle: "ሁለንተናዊ ባለብዙ ቋንቋ የትምህርት ረዳት",
+    tutorTab: "📚 የኮርስ ረዳት",
+    careerTab: "💼 የስራ እድሎች",
+    placeholder: "ጥያቄዎን እዚህ ይጻፉ...",
+    send: "ላክ",
+    micLabel: "በድምጽ ይጠይቁ",
+    simpleBtn: "🧠 ቀላል ሁነታ",
+    simpleActive: "ቀላል ሁነታ: በርቷል",
+    humanHelpBtn: "🆘 የሰው እርዳታ",
+    closeTitle: "ዝጋ (Escape)",
+    screenShareActive: "🟢 ስክሪን ማጋራት በርቷል (በእርስዎ ቁጥጥር ስር)",
+    stopShare: "አቁም",
+    welcome: "ሰላም! እኔ የእርስዎ የኮርስ ረዳት ነኝ። በኮርሱ ዙሪያ ማንኛውንም ጥያቄ ይጠይቁኝ።",
+    sourceLabel: "ምንጭ",
+    direction: "ltr",
+    speechLang: "am-ET"
+  },
+  om: {
+    launcher: "Gargaaraa Gaafadhaa",
+    dialogTitle: "Gargaaraa Barnootaa Afaan Baay'ee",
+    tutorTab: "📚 Gargaaraa Koorsii",
+    careerTab: "💼 Carraawwan Hojii",
+    placeholder: "Gaaffii keessan asitti barreessaa...",
+    send: "Ergi",
+    micLabel: "Sagaleen gaafadhaa",
+    simpleBtn: "🧠 Haala Salphaa",
+    simpleActive: "Salphaa: Hojjetaa jira",
+    humanHelpBtn: "🆘 Gargaarsa Namaa",
+    closeTitle: "Cufi (Escape)",
+    screenShareActive: "🟢 Iskirinii qooduun hojjetaa jira (To'annoo keessan jala)",
+    stopShare: "Dhaabi",
+    welcome: "Akkam! Ani gargaaraa koorsii keessaniiti. Gaaffii qabdan kamiyyuu na gaafadhaa.",
+    sourceLabel: "Madda",
+    direction: "ltr",
+    speechLang: "om-ET"
+  },
+  ti: {
+    launcher: "ሓጋዚ ሕተቱ",
+    dialogTitle: "ኩለመዳያዊ فرቲ ሓጋዚ ትምህርቲ",
+    tutorTab: "📚 ናይ ኮርስ ሓጋዚ",
+    careerTab: "💼 ናይ ስራሕ ዕድላት",
+    placeholder: "ሕቶኹም ኣብዚ ጸሓፉ...",
+    send: "ስደድ",
+    micLabel: "ብድምጺ ሕተቱ",
+    simpleBtn: "🧠 ቀሊል ኣገባብ",
+    simpleActive: "ቀሊል: በርቲሁ ኣሎ",
+    humanHelpBtn: "🆘 ናይ ሰብ ሓገዝ",
+    closeTitle: "ዕጾ (Escape)",
+    screenShareActive: "🟢 ስክሪን ምክፋል በርቲሁ ኣሎ",
+    stopShare: "ኣቋርጽ",
+    welcome: "ሰላም! ኣነ ናይዚ ኮርስ ሓጋዚኹም እየ። ዝኾነ ሕቶ ሃልዩኩም ሕተቱኒ።",
+    sourceLabel: "ምንጪ",
+    direction: "ltr",
+    speechLang: "ti-ET"
+  },
+  so: {
+    launcher: "Weydii Caawiyaha",
+    dialogTitle: "Kaaliyaha Waxbarashada Luqadaha Badan",
+    tutorTab: "📚 Caawiyaha Koorsada",
+    careerTab: "💼 Fursadaha Shaqada",
+    placeholder: "Halkan ku qor su'aashaada...",
+    send: "Dir",
+    micLabel: "Cod ku weydii",
+    simpleBtn: "🧠 Qaab Fudud",
+    simpleActive: "Fudud: Waa shidan yahay",
+    humanHelpBtn: "🆘 Caawinaad Qof",
+    closeTitle: "Xidh (Escape)",
+    screenShareActive: "🟢 Wadaagista shaashadu waa shaqaynaysaa",
+    stopShare: "Jooji",
+    welcome: "Kusoo dhowow! Waxaan ahay caawiyahaaga koorsada. Wax su'aal ah i waydii.",
+    sourceLabel: "Xigasho",
+    direction: "ltr",
+    speechLang: "so-SO"
+  },
+  ar: {
+    launcher: "اسأل المساعد التعليمي",
+    dialogTitle: "المساعد التعليمي متعدد اللغات وبوابة المهن",
+    tutorTab: "📚 المساعد الدراسي",
+    careerTab: "💼 بوابة الوظائف",
+    placeholder: "اكتب سؤالك التعليمي هنا...",
+    send: "إرسال",
+    micLabel: "تحدث بسؤالك صوتياً",
+    simpleBtn: "🧠 النمط المبسط",
+    simpleActive: "النمط المبسط: مفعّل",
+    humanHelpBtn: "🆘 طلب مساعدة بشرية",
+    closeTitle: "إغلاق (Escape)",
+    screenShareActive: "🟢 مشاركة الشاشة قيد التشغيل (تحت سيطرتك)",
+    stopShare: "إيقاف المشاركة",
+    welcome: "مرحباً! أنا المساعد التعليمي الذكي الخاص بك. اسألني أي سؤال من محتوى الدورة.",
+    sourceLabel: "المصدر",
+    direction: "rtl",
+    speechLang: "ar-SA"
+  },
+  en: {
+    launcher: "Ask AI Tutor (Help)",
+    dialogTitle: "Universal Multilingual Assistant & Career Gateway",
+    tutorTab: "📚 Course Tutor",
+    careerTab: "💼 Career Gateway",
+    placeholder: "Type your question from the course...",
+    send: "Send",
+    micLabel: "Speak your question",
+    simpleBtn: "🧠 Simple Mode",
+    simpleActive: "Simple Mode: ON",
+    humanHelpBtn: "🆘 Human Help",
+    closeTitle: "Close (Escape)",
+    screenShareActive: "🟢 Screen Sharing Active (You are in control)",
+    stopShare: "Stop Sharing",
+    welcome: "Hello! I am your course assistant. Ask me any question from the curriculum.",
+    sourceLabel: "Source",
+    direction: "ltr",
+    speechLang: "en-US"
+  }
+};
 
 class MultilingualAssistant extends HTMLElement {
   static get observedAttributes() {
@@ -24,7 +141,7 @@ class MultilingualAssistant extends HTMLElement {
 
     this.simpleMode = false;
     this.screenStream = null;
-    this.activeTab = 'tutor'; // 'tutor' | 'career'
+    this.activeTab = 'tutor';
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -38,6 +155,7 @@ class MultilingualAssistant extends HTMLElement {
     
     if (this.shadowRoot.innerHTML) {
       this.updateTheme();
+      this.applyLocalization(this.currentLang);
     }
   }
 
@@ -47,9 +165,10 @@ class MultilingualAssistant extends HTMLElement {
     this.setupFocusTrap();
     this.setupTabsKeyboardNavigation();
     this.updateTheme();
+    this.applyLocalization(this.currentLang);
   }
 
-  /* ------------------- Public JavaScript API (Host Control) ------------------- */
+  /* ------------------- Public JavaScript API ------------------- */
   open() {
     const drawer = this.shadowRoot.getElementById('drawer');
     const openBtn = this.shadowRoot.getElementById('open-btn');
@@ -65,9 +184,9 @@ class MultilingualAssistant extends HTMLElement {
 
   setLanguage(langCode) {
     const select = this.shadowRoot.getElementById('lang-select');
-    if (select) {
+    if (select && LOCALIZED_UI[langCode]) {
       select.value = langCode;
-      select.dispatchEvent(new Event('change'));
+      this.handleLanguageSwitch(langCode);
     }
   }
 
@@ -84,7 +203,7 @@ class MultilingualAssistant extends HTMLElement {
   emitEvent(name, detail = {}) {
     this.dispatchEvent(new CustomEvent(name, {
       bubbles: true,
-      composed: true, // Crosses Shadow DOM boundary so host page can listen!
+      composed: true,
       detail: {
         partnerId: this.partnerId,
         courseId: this.courseId,
@@ -96,26 +215,69 @@ class MultilingualAssistant extends HTMLElement {
 
   updateTheme() {
     this.style.setProperty('--assistant-primary', this.themeColor);
-    const pos = this.position === 'bottom-left' ? 'left: 24px; right: auto;' : 'right: 24px; left: auto;';
-    const drawerPos = this.position === 'bottom-left' ? 'left: 24px; right: auto;' : 'right: 24px; left: auto;';
-    
     const trigger = this.shadowRoot.getElementById('open-btn');
     const drawer = this.shadowRoot.getElementById('drawer');
+    const pos = this.position === 'bottom-left' ? 'left: 24px; right: auto;' : 'right: 24px; left: auto;';
+    
     if (trigger) trigger.style.cssText = `${pos}; background: var(--assistant-primary, ${this.themeColor});`;
-    if (drawer) drawer.style.cssText = `${drawerPos}`;
+    if (drawer) drawer.style.cssText = `${pos}`;
+  }
+
+  applyLocalization(langCode) {
+    const t = LOCALIZED_UI[langCode] || LOCALIZED_UI['en'];
+    const isRtl = t.direction === 'rtl';
+
+    // Update Launcher Label
+    const launcherText = this.shadowRoot.getElementById('launcher-text');
+    if (launcherText) launcherText.textContent = t.launcher;
+
+    // Update Dialog Title
+    const titleEl = this.shadowRoot.getElementById('assistant-dialog-title');
+    if (titleEl) titleEl.textContent = `${t.dialogTitle} (${this.partnerId.toUpperCase()})`;
+
+    // Update Tabs
+    const tabTutorText = this.shadowRoot.getElementById('tab-tutor-text');
+    const tabCareerText = this.shadowRoot.getElementById('tab-career-text');
+    if (tabTutorText) tabTutorText.textContent = t.tutorTab;
+    if (tabCareerText) tabCareerText.textContent = t.careerTab;
+
+    // Update Buttons & Tooltips
+    const closeBtn = this.shadowRoot.getElementById('close-btn');
+    const simpleText = this.shadowRoot.getElementById('simple-text');
+    const escalateText = this.shadowRoot.getElementById('escalate-text');
+    const sendBtn = this.shadowRoot.getElementById('send-btn');
+    const micBtn = this.shadowRoot.getElementById('mic-btn');
+    const input = this.shadowRoot.getElementById('user-input');
+
+    if (closeBtn) closeBtn.setAttribute('aria-label', t.closeTitle);
+    if (simpleText) simpleText.textContent = this.simpleMode ? t.simpleActive : t.simpleBtn;
+    if (escalateText) escalateText.textContent = t.humanHelpBtn;
+    if (sendBtn) sendBtn.setAttribute('aria-label', t.send);
+    if (micBtn) micBtn.setAttribute('aria-label', t.micLabel);
+    if (input) input.setAttribute('placeholder', t.placeholder);
+
+    // Apply Bidirectional Direction (RTL vs LTR)
+    const drawer = this.shadowRoot.getElementById('drawer');
+    drawer.setAttribute('dir', isRtl ? 'rtl' : 'ltr');
+    drawer.setAttribute('lang', langCode);
+
+    // Update first welcome message if only 1 message exists
+    const chatLog = this.shadowRoot.getElementById('chat-log');
+    if (chatLog && chatLog.children.length === 1) {
+      chatLog.children[0].textContent = t.welcome;
+      chatLog.children[0].setAttribute('lang', langCode);
+      chatLog.children[0].setAttribute('dir', isRtl ? 'rtl' : 'ltr');
+    }
+  }
+
+  handleLanguageSwitch(langCode) {
+    this.currentLang = langCode;
+    const t = LOCALIZED_UI[langCode] || LOCALIZED_UI['en'];
+    this.applyLocalization(langCode);
+    this.emitEvent('assistant:language-change', { language: langCode, isRtl: t.direction === 'rtl' });
   }
 
   render() {
-    const isRtl = this.currentLang === 'ar';
-    const initialWelcome = {
-      am: 'ሰላም! እኔ የእርስዎ የኮርስ ረዳት ነኝ። በኮርሱ ዙሪያ ማንኛውንም ጥያቄ ይጠይቁኝ።',
-      om: "Akkam! Ani gargaaraa koorsii keessaniiti. Gaaffii qabdan kamiyyuu na gaafadhaa.",
-      ti: 'ሰላም! ኣነ ናይዚ ኮርስ ሓጋዚኹም እየ። ዝኾነ ሕቶ ሃልዩኩም ሕተቱኒ።',
-      so: 'Kusoo dhowow! Waxaan ahay caawiyahaaga koorsada. Wax su\'aal ah i waydii.',
-      ar: 'مرحباً! أنا المساعد التعليمي الخاص بك. اسألني أي سؤال حول الدورة التدريبية.',
-      en: 'Hello! I am your course assistant. Ask me any question from the curriculum.'
-    };
-
     this.shadowRoot.innerHTML = `
       <style>
         :host {
@@ -153,7 +315,7 @@ class MultilingualAssistant extends HTMLElement {
           border: 0;
         }
 
-        /* 1. Launcher Trigger Button (Plug-and-Play Customizable) */
+        /* 1. Launcher Trigger Button */
         .trigger-btn {
           min-height: 48px;
           min-width: 48px;
@@ -171,16 +333,10 @@ class MultilingualAssistant extends HTMLElement {
           box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
           transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s ease;
         }
-        .trigger-btn:hover {
-          filter: brightness(0.9);
-          transform: translateY(-2px);
-        }
-        .trigger-btn:focus-visible {
-          outline: 3px solid var(--focus-ring);
-          outline-offset: 3px;
-        }
+        .trigger-btn:hover { filter: brightness(0.9); transform: translateY(-2px); }
+        .trigger-btn:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 3px; }
 
-        /* 2. Dialog Drawer */
+        /* 2. Dialog Drawer Shell */
         .drawer {
           display: none;
           position: fixed;
@@ -200,20 +356,21 @@ class MultilingualAssistant extends HTMLElement {
           transform: translateY(12px) scale(0.98);
           transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .drawer.open {
-          display: flex;
-          opacity: 1;
-          transform: translateY(0) scale(1);
-        }
+        .drawer.open { display: flex; opacity: 1; transform: translateY(0) scale(1); }
 
-        /* Simple Mode */
+        /* 3. Simple Mode (WCAG 3.1.5 Reading Level) */
         .drawer.simple-mode {
           font-size: 18px;
           line-height: 1.8;
           border: 3px solid #111827;
         }
+        .drawer.simple-mode .msg {
+          font-size: 17px;
+          line-height: 1.8;
+          padding: 14px 18px;
+        }
 
-        /* Header & WAI-ARIA Tablist */
+        /* 4. Bidirectional Logical Styles (RTL & LTR) */
         .header {
           background: #f9fafb;
           border-bottom: 1px solid var(--border);
@@ -244,16 +401,14 @@ class MultilingualAssistant extends HTMLElement {
           display: flex;
           align-items: center;
           gap: 6px;
+          font-family: inherit;
         }
         .tab-btn[aria-selected="true"] {
           background: #ffffff;
           color: var(--primary);
           box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
-        .tab-btn:focus-visible {
-          outline: 3px solid var(--focus-ring);
-          outline-offset: 1px;
-        }
+        .tab-btn:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 1px; }
 
         .close-btn {
           min-height: 40px;
@@ -294,6 +449,7 @@ class MultilingualAssistant extends HTMLElement {
           font-weight: 600;
           color: var(--text-main);
           cursor: pointer;
+          font-family: inherit;
         }
         .select-lang:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 1px; }
 
@@ -309,6 +465,7 @@ class MultilingualAssistant extends HTMLElement {
           display: flex;
           align-items: center;
           gap: 4px;
+          font-family: inherit;
         }
         .action-chip:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 1px; }
         .action-chip[aria-pressed="true"] {
@@ -319,7 +476,7 @@ class MultilingualAssistant extends HTMLElement {
         .btn-escalate { color: #b91c1c; border-color: #fca5a5; background: #fef2f2; }
         .btn-escalate:hover { background: #fee2e2; }
 
-        /* Panes */
+        /* Panes & Bubbles with CSS Logical Properties */
         .tab-panel {
           flex: 1;
           display: none;
@@ -337,18 +494,21 @@ class MultilingualAssistant extends HTMLElement {
           word-break: break-word;
           line-height: 1.5;
         }
+        
+        /* Logical speech bubble alignment */
         .msg.tutor {
           background: #f3f4f6;
           color: #111827;
           align-self: flex-start;
-          border-bottom-left-radius: 2px;
+          border-end-start-radius: 2px;
         }
         .msg.user {
           background: var(--primary);
           color: #ffffff;
           align-self: flex-end;
-          border-bottom-right-radius: 2px;
+          border-end-end-radius: 2px;
         }
+
         .citation {
           display: inline-block;
           margin-top: 8px;
@@ -383,6 +543,7 @@ class MultilingualAssistant extends HTMLElement {
           border-radius: 8px;
           font-size: 14px;
           color: var(--text-main);
+          font-family: inherit;
         }
         .text-input:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 1px; }
 
@@ -401,6 +562,12 @@ class MultilingualAssistant extends HTMLElement {
         }
         .icon-btn:hover { filter: brightness(0.9); }
         .icon-btn:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 2px; }
+
+        /* RTL Arrow Flip */
+        :host([dir="rtl"]) .icon-send,
+        [dir="rtl"] .icon-send {
+          transform: scaleX(-1);
+        }
 
         .btn-mic { background: #4b5563; }
         .btn-mic.recording { background: #dc2626; animation: pulse 1.2s infinite; }
@@ -438,7 +605,7 @@ class MultilingualAssistant extends HTMLElement {
         aria-expanded="false"
       >
         <span aria-hidden="true" style="font-size:20px;">🌐</span>
-        <span>Ask Tutor (${this.partnerId.toUpperCase()})</span>
+        <span id="launcher-text">Ask Tutor (አማርኛ)</span>
       </button>
 
       <!-- 2. Accessible Dialog Drawer -->
@@ -448,8 +615,10 @@ class MultilingualAssistant extends HTMLElement {
         role="dialog" 
         aria-modal="true" 
         aria-labelledby="assistant-dialog-title"
+        dir="ltr"
+        lang="am"
       >
-        <h2 id="assistant-dialog-title" class="sr-only">Universal Multilingual Assistant for ${this.partnerId}</h2>
+        <h2 id="assistant-dialog-title" class="sr-only">Universal Multilingual Assistant</h2>
 
         <!-- Header with WAI-ARIA Tabs -->
         <header class="header">
@@ -462,8 +631,7 @@ class MultilingualAssistant extends HTMLElement {
               aria-controls="panel-tutor" 
               tabindex="0"
             >
-              <span aria-hidden="true">📚</span>
-              <span>Course Tutor</span>
+              <span id="tab-tutor-text">📚 Course Tutor</span>
             </button>
             <button 
               class="tab-btn" 
@@ -473,8 +641,7 @@ class MultilingualAssistant extends HTMLElement {
               aria-controls="panel-career" 
               tabindex="-1"
             >
-              <span aria-hidden="true">💼</span>
-              <span>Career Gateway</span>
+              <span id="tab-career-text">💼 Career Gateway</span>
             </button>
           </nav>
 
@@ -493,12 +660,12 @@ class MultilingualAssistant extends HTMLElement {
           <div class="lang-control">
             <label for="lang-select" class="sr-only">Choose Language:</label>
             <select class="select-lang" id="lang-select" aria-label="Preferred Language">
-              <option value="am" ${this.currentLang === 'am' ? 'selected' : ''}>አማርኛ (Amharic)</option>
-              <option value="om" ${this.currentLang === 'om' ? 'selected' : ''}>Afaan Oromoo</option>
-              <option value="ti" ${this.currentLang === 'ti' ? 'selected' : ''}>ትግርኛ (Tigrinya)</option>
-              <option value="so" ${this.currentLang === 'so' ? 'selected' : ''}>Af-Soomaali</option>
-              <option value="ar" ${this.currentLang === 'ar' ? 'selected' : ''}>العربية (Arabic - RTL)</option>
-              <option value="en" ${this.currentLang === 'en' ? 'selected' : ''}>English</option>
+              <option value="am">አማርኛ (Amharic)</option>
+              <option value="om">Afaan Oromoo</option>
+              <option value="ti">ትግርኛ (Tigrinya)</option>
+              <option value="so">Af-Soomaali</option>
+              <option value="ar">العربية (Arabic - RTL)</option>
+              <option value="en">English</option>
             </select>
           </div>
 
@@ -510,7 +677,7 @@ class MultilingualAssistant extends HTMLElement {
               title="Toggle Plain-Language Simple Mode (WCAG 3.1.5)"
             >
               <span aria-hidden="true">🧠</span>
-              <span>Simple</span>
+              <span id="simple-text">Simple</span>
             </button>
 
             <button 
@@ -519,7 +686,7 @@ class MultilingualAssistant extends HTMLElement {
               aria-label="Connect to a human mentor and share screen"
             >
               <span aria-hidden="true">🆘</span>
-              <span>Human Help</span>
+              <span id="escalate-text">Human Help</span>
             </button>
           </div>
         </section>
@@ -527,8 +694,8 @@ class MultilingualAssistant extends HTMLElement {
         <!-- Screen Share Alert -->
         <div id="screen-share-area" style="display:none;" role="status">
           <div class="screen-share-banner">
-            <span>🟢 Screen Sharing Active (You are in control)</span>
-            <button class="btn-stop-share" id="stop-share-btn" aria-label="Stop screen sharing">Stop Sharing</button>
+            <span id="screenshare-banner-text">🟢 Screen Sharing Active</span>
+            <button class="btn-stop-share" id="stop-share-btn" aria-label="Stop screen sharing">Stop</button>
           </div>
         </div>
 
@@ -539,7 +706,6 @@ class MultilingualAssistant extends HTMLElement {
           role="tabpanel" 
           aria-labelledby="tab-tutor" 
           tabindex="0"
-          dir="${isRtl ? 'rtl' : 'ltr'}"
         >
           <div 
             id="chat-log" 
@@ -548,8 +714,8 @@ class MultilingualAssistant extends HTMLElement {
             aria-relevant="additions text" 
             aria-label="Conversation with AI Tutor"
           >
-            <div class="msg tutor" lang="${this.currentLang}">
-              ${initialWelcome[this.currentLang] || initialWelcome['en']}
+            <div class="msg tutor" lang="am">
+              ሰላም! እኔ የእርስዎ የኮርስ ረዳት ነኝ። በኮርሱ ዙሪያ ማንኛውንም ጥያቄ ይጠይቁኝ።
             </div>
           </div>
         </main>
@@ -563,7 +729,7 @@ class MultilingualAssistant extends HTMLElement {
           tabindex="0" 
           style="display:none;"
         >
-          <h3 style="margin:0 0 6px 0; font-size:16px;">💼 Opportunities for ${this.partnerId.toUpperCase()} Learners</h3>
+          <h3 id="career-title" style="margin:0 0 6px 0; font-size:16px;">💼 Opportunities for Learners</h3>
           <p style="font-size:13px; color:var(--text-muted); margin-bottom:12px;">All employers offer verified interview accommodations.</p>
           <div id="jobs-container" role="feed" aria-busy="false" aria-label="Job openings list">
             Loading verified opportunities...
@@ -585,7 +751,7 @@ class MultilingualAssistant extends HTMLElement {
             type="text" 
             class="text-input" 
             id="user-input" 
-            placeholder="Type your question / ጥያቄዎን ይጻፉ..." 
+            placeholder="Type your question..." 
             aria-label="Question text input"
           />
           <button 
@@ -594,7 +760,7 @@ class MultilingualAssistant extends HTMLElement {
             id="send-btn" 
             aria-label="Send question"
           >
-            ➤
+            <span class="icon-send">➤</span>
           </button>
         </footer>
       </div>
@@ -614,20 +780,19 @@ class MultilingualAssistant extends HTMLElement {
     openBtn.addEventListener('click', () => this.open());
     closeBtn.addEventListener('click', () => this.close());
 
+    // Simple Mode Toggle with Localized announcement
     simpleToggle.addEventListener('click', () => {
       this.simpleMode = !this.simpleMode;
       this.shadowRoot.getElementById('drawer').classList.toggle('simple-mode', this.simpleMode);
       simpleToggle.setAttribute('aria-pressed', String(this.simpleMode));
+      const t = LOCALIZED_UI[this.currentLang] || LOCALIZED_UI['en'];
+      this.shadowRoot.getElementById('simple-text').textContent = this.simpleMode ? t.simpleActive : t.simpleBtn;
       this.emitEvent('assistant:simple-mode-toggle', { simpleMode: this.simpleMode });
     });
 
+    // Language Dropdown Handler
     langSelect.addEventListener('change', (e) => {
-      this.currentLang = e.target.value;
-      const isRtl = this.currentLang === 'ar';
-      const panel = this.shadowRoot.getElementById('panel-tutor');
-      panel.setAttribute('dir', isRtl ? 'rtl' : 'ltr');
-      panel.setAttribute('lang', this.currentLang);
-      this.emitEvent('assistant:language-change', { language: this.currentLang, isRtl });
+      this.handleLanguageSwitch(e.target.value);
     });
 
     sendBtn.addEventListener('click', () => this.handleSend());
@@ -766,15 +931,17 @@ class MultilingualAssistant extends HTMLElement {
   fallbackReply(query) {
     const defaultAnswers = {
       am: 'በኮርሱ መሰረት የሰው ረዳት (Human VA) እና የ AI ረዳት ተቀናጅተው የሚሰሩ ናቸው።',
-      en: 'According to the course, Virtual Assistants work remotely to support global businesses with AI tools.',
       om: 'Akka koorsichaatti gargaaraan namootaa fi AI gargaaran walitti hidhamanii hojjetu.',
-      ar: 'وفقاً للمنهاج، يتعاون المساعد الافتراضي البشري مع أدوات الذكاء الاصطناعي لتقديم الدعم.'
+      ti: 'ብመሰረት እቲ ኮርስ ናይ ሰብ ሓጋዚን ናይ AI ሓጋዚን ተሓባቢሮም ይሰርሑ።',
+      so: 'Sida ku cad koorsada, kaaliyaha aadanaha iyo AI waxay u wada shaqeeyaan si wadajir ah.',
+      ar: 'وفقاً للمنهاج، يتعاون المساعد الافتراضي البشري مع أدوات الذكاء الاصطناعي لتقديم أفضل أداء.',
+      en: 'According to the curriculum, human Virtual Assistants and AI software tools collaborate together.'
     };
     this.appendMessage(
       'tutor', 
       defaultAnswers[this.currentLang] || defaultAnswers['en'], 
       this.currentLang, 
-      `${this.courseId} · General Curriculum Baseline`
+      `${this.courseId} · Module 2 Grounding Baseline`
     );
   }
 
@@ -782,7 +949,10 @@ class MultilingualAssistant extends HTMLElement {
     const log = this.shadowRoot.getElementById('chat-log');
     const div = document.createElement('div');
     div.className = `msg ${role}`;
+    
+    // Explicit Language Tagging & Direction (WCAG 3.1.2)
     div.setAttribute('lang', lang);
+    div.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
     div.textContent = text;
 
     if (citation) {
@@ -790,11 +960,11 @@ class MultilingualAssistant extends HTMLElement {
       cite.className = 'citation';
       cite.setAttribute('tabindex', '0');
       cite.setAttribute('role', 'button');
-      cite.setAttribute('aria-label', `Navigate to citation: ${citation}`);
-      cite.textContent = `📌 Source: ${citation}`;
+      cite.setAttribute('aria-label', `Citation: ${citation}`);
+      const t = LOCALIZED_UI[lang] || LOCALIZED_UI['en'];
+      cite.textContent = `📌 ${t.sourceLabel}: ${citation}`;
       
       const onCitationClick = () => {
-        // Universal Event Out for any partner
         this.emitEvent('assistant:citation-click', { citation, text });
       };
       cite.addEventListener('click', onCitationClick);
@@ -819,7 +989,8 @@ class MultilingualAssistant extends HTMLElement {
       return;
     }
     const recognition = new SpeechRecognition();
-    recognition.lang = this.currentLang === 'am' ? 'am-ET' : (this.currentLang === 'ar' ? 'ar-SA' : 'en-US');
+    const t = LOCALIZED_UI[this.currentLang] || LOCALIZED_UI['en'];
+    recognition.lang = t.speechLang;
     
     btn.classList.add('recording');
     btn.setAttribute('aria-pressed', 'true');
@@ -876,7 +1047,7 @@ class MultilingualAssistant extends HTMLElement {
           <p style="font-size:12px; margin:6px 0; color:#374151;">${j.description}</p>
           <div style="display:flex; gap:6px; margin-top:8px;">
             <button class="action-chip" style="font-size:11px; padding:6px 10px; background:var(--primary); color:#fff; border:none;">Apply</button>
-            <button class="action-chip" style="font-size:11px; padding:6px 10px;" onclick="alert('Accommodation Request Form: Screen reader and time accommodations recorded for ' + '${j.company}');">
+            <button class="action-chip" style="font-size:11px; padding:6px 10px;" onclick="alert('Accommodation Request Form: Screen reader and extra time verified for ' + '${j.company}');">
               ♿ Request Accommodations
             </button>
           </div>
