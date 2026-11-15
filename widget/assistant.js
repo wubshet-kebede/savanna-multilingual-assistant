@@ -2953,18 +2953,30 @@ class MultilingualAssistant extends HTMLElement {
     setTimeout(() => {
       announcer.textContent = text;
     }, 60);
-    this.speakVoice(text, lang);
+    // Note: Do NOT call speakVoice() here. Screen readers natively read #sr-announcer.
+    // Audio speech synthesis (window.speechSynthesis) is reserved for explicit user clicks on 🔊 listen buttons.
   }
 
   speakVoice(text, lang = this.currentLang) {
-    if (!this.soundEnabled) return;
     if (!('speechSynthesis' in window)) return;
     try {
+      // If already speaking the same text, act as a toggle to stop it
+      if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        if (this.currentSpeakingText === text) {
+          this.currentSpeakingText = null;
+          return;
+        }
+      }
+
       window.speechSynthesis.cancel();
+      this.currentSpeakingText = text;
       const t = LOCALIZED_UI[lang] || LOCALIZED_UI['en'];
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = t.speechLang || 'en-US';
       utterance.rate = 1.0;
+      utterance.onend = () => { this.currentSpeakingText = null; };
+      utterance.onerror = () => { this.currentSpeakingText = null; };
 
       const voices = window.speechSynthesis.getVoices();
       if (voices && voices.length > 0) {
@@ -4896,8 +4908,7 @@ class MultilingualAssistant extends HTMLElement {
             class="chat-log" 
             id="chat-log" 
             role="log" 
-            aria-live="polite" 
-            aria-relevant="additions text" 
+            aria-live="off" 
             aria-label="Conversation with AI Tutor"
           >
             <div class="msg tutor" lang="${this.currentLang}" dir="${t.direction}" role="article" tabindex="0">
@@ -5454,6 +5465,10 @@ class MultilingualAssistant extends HTMLElement {
   }
 
   close() {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+    this.currentSpeakingText = null;
     const drawer = this.shadowRoot.getElementById('drawer');
     const openBtn = this.shadowRoot.getElementById('open-btn');
     drawer.classList.remove('open');
@@ -5879,8 +5894,7 @@ class MultilingualAssistant extends HTMLElement {
     const div = document.createElement('div');
     div.id = 'typing-indicator';
     div.className = 'msg tutor typing-bubble';
-    div.setAttribute('role', 'status');
-    div.setAttribute('aria-label', 'AI tutor is preparing answer');
+    div.setAttribute('aria-hidden', 'true');
     div.innerHTML = '<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>';
     log.appendChild(div);
     const panel = this.shadowRoot.getElementById('panel-tutor');
