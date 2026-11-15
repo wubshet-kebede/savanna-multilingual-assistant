@@ -3,10 +3,28 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from sentence_transformers import SentenceTransformer
+import re
 import database
 import models
 import schemas
 import llm_router
+
+STOPWORDS = {
+    "what", "is", "the", "of", "in", "and", "to", "for", "a", "an", "are", 
+    "on", "how", "do", "does", "why", "can", "with", "about", "this", "that",
+    "these", "those", "or", "by", "from", "at", "as", "be", "so", "it", "its"
+}
+
+def extract_keywords(text: str) -> set[str]:
+    words = re.findall(r"\b[a-zA-Z]{2,}\b", (text or "").lower())
+    keywords = set()
+    for w in words:
+        if w not in STOPWORDS:
+            keywords.add(w)
+            if w == "ai":
+                keywords.add("artificial")
+                keywords.add("intelligence")
+    return keywords
 
 # 1. Initialize the embedding model (this will load into memory when FastAPI boots)
 # all-MiniLM-L6-v2 is a fantastic, lightweight 384-dimension model perfect for local execution
@@ -82,7 +100,7 @@ def ask_question(payload: schemas.AskRequest, db: Session = Depends(get_db)):
     results_with_dist = db.query(
         models.LessonChunk,
         dist_expr.label("distance")
-    ).filter(dist_expr < 0.78).order_by("distance").limit(3).all()
+    ).filter(dist_expr < 0.78).order_by("distance").limit(5).all()
 
     if not results_with_dist:
         return {
@@ -91,7 +109,20 @@ def ask_question(payload: schemas.AskRequest, db: Session = Depends(get_db)):
             "engine": "none"
         }
 
-    results = [r[0] for r in results_with_dist]
+    # Hybrid re-ranking: prioritize sections whose titles match query keywords
+    query_kw = extract_keywords(payload.query)
+
+    def hybrid_rank_key(item):
+        chunk, dist = item
+        title_kw = extract_keywords(chunk.title)
+        overlap = len(query_kw & title_kw)
+        # 0.12 boost per matching title keyword
+        return float(dist) - (0.12 * overlap)
+
+    reranked = sorted(results_with_dist, key=hybrid_rank_key)
+    top_results = reranked[:3]
+
+    results = [r[0] for r in top_results]
     context_texts = [f"{r.title}: {r.content}" for r in results]
     sources = [{"title": r.title, "url": r.url_id} for r in results]
 
