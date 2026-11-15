@@ -5864,10 +5864,15 @@ class MultilingualAssistant extends HTMLElement {
     this.showTypingIndicator();
 
     try {
-      const res = await fetch(`${this.apiUrl}/tutor/chat`, {
+      const askEndpoint = this.apiUrl.endsWith('/api/v1') 
+        ? `${this.apiUrl}/tutor/chat` 
+        : `${this.apiUrl}/api/v1/tutor/chat`;
+
+      const res = await fetch(askEndpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          query: text,
           message: text,
           language: this.currentLang,
           partner_id: this.partnerId,
@@ -5875,9 +5880,21 @@ class MultilingualAssistant extends HTMLElement {
           simple_mode: this.simpleMode
         })
       });
+
       if (res.ok) {
         const data = await res.json();
-        this.appendMessage('tutor', data.reply, data.language || this.currentLang, data.citation);
+        const replyText = data.reply || data.answer;
+        let citation = data.citation;
+        if (!citation && data.sources && data.sources.length > 0) {
+          const s = data.sources[0];
+          citation = {
+            title: s.title,
+            targetId: s.url ? s.url.replace(/^#/, '') : null,
+            module: 'Curriculum Vector Store',
+            excerpt: s.title
+          };
+        }
+        this.appendMessage('tutor', replyText, data.language || this.currentLang, citation);
       } else {
         this.groundedFallbackReply(text);
       }

@@ -93,6 +93,7 @@ def ask_question(payload: schemas.AskRequest, db: Session = Depends(get_db)):
         "sources": sources
     }
 
+@app.post("/api/v1/tutor/chat", tags=["Widget Compatibility"])
 @app.post("/tutor/chat", tags=["Widget Compatibility"])
 def tutor_chat(payload: dict, db: Session = Depends(get_db)):
     """
