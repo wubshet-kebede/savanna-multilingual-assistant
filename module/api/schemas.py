@@ -22,3 +22,4 @@ class SourceDetail(BaseModel):
 class AskResponse(BaseModel):
     answer: str
     sources: List[SourceDetail]
+    engine: Optional[str] = "offline-rag"

@@ -21,6 +21,7 @@ services:
       - db
     environment:
       - DATABASE_URL=postgresql+psycopg2://${POSTGRES_USER:-admin}:${POSTGRES_PASSWORD:-password}@db:5432/savanna_db
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
 
   web:
     image: nginx:alpine

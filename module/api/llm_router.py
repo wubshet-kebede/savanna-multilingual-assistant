@@ -67,7 +67,7 @@ class LocalLLM(LLMEngine):
             with urllib.request.urlopen(req, timeout=4) as response:
                 result = json.loads(response.read().decode('utf-8'))
                 return result.get("response", "I could not generate an answer.")
-        except Exception as e:
+        except Exception:
             if context:
                 first_ctx = context[0]
                 if ":" in first_ctx:
@@ -75,7 +75,7 @@ class LocalLLM(LLMEngine):
                 if len(first_ctx) > 380:
                     first_ctx = first_ctx[:380] + "..."
                 return f"Based on the course materials: {first_ctx}"
-            return "I could not find a clear answer in the offline curriculum."
+            return "I couldn't find any relevant information about that in the course material."
 
 # ==========================================
 # 4. The Router (The Socket)
@@ -94,18 +94,27 @@ class LLMRouter:
         except Exception:
             return False
 
-    def route_query(self, query: str, context: list[str]) -> str:
+    def route_query(self, query: str, context: list[str]) -> tuple[str, str]:
         is_online = self.check_connection()
-        gemini_key = os.getenv("GEMINI_API_KEY")
+        gemini_key = os.getenv("GEMINI_API_KEY", "")
 
-        if is_online and gemini_key and gemini_key != "YOUR_GEMINI_API_KEY_HERE":
+        if is_online and gemini_key and gemini_key.strip() and gemini_key != "YOUR_GEMINI_API_KEY_HERE":
+            print("[Router] Network detected and GEMINI_API_KEY set. Routing to Cloud (Gemini)...")
             ans = self.cloud_engine.generate(query, context)
             if not ans.startswith("Cloud API Error:"):
-                return ans
+                return ans, "gemini-1.5-flash"
+            print(f"[Router] Cloud engine error ({ans}). Falling back to local/offline engine...")
 
-        return self.local_engine.generate(query, context)
+        print("[Router] Routing to Local / Offline engine...")
+        ans = self.local_engine.generate(query, context)
+        engine = "ollama" if not ans.startswith("Based on the course materials:") else "offline-rag"
+        return ans, engine
 
 _router = LLMRouter()
 
 def get_answer(query: str, context: list[str]) -> str:
+    ans, _ = _router.route_query(query, context)
+    return ans
+
+def get_answer_with_engine(query: str, context: list[str]) -> tuple[str, str]:
     return _router.route_query(query, context)

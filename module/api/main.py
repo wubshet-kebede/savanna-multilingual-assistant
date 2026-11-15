@@ -73,25 +73,34 @@ def ingest_content(payload: schemas.ContentIngestRequest, db: Session = Depends(
 def ask_question(payload: schemas.AskRequest, db: Session = Depends(get_db)):
     """
     Embeds the user query, performs vector similarity search in pgvector,
-    and returns the LLM response with sources.
+    and returns the LLM response with sources. Enforces a 0.78 distance threshold
+    to prevent false positives for out-of-domain queries.
     """
     query_vector = model.encode(payload.query).tolist()
+    dist_expr = models.LessonChunk.embedding.cosine_distance(query_vector)
 
-    results = db.query(models.LessonChunk).order_by(
-        models.LessonChunk.embedding.cosine_distance(query_vector)
-    ).limit(3).all()
+    results_with_dist = db.query(
+        models.LessonChunk,
+        dist_expr.label("distance")
+    ).filter(dist_expr < 0.78).order_by("distance").limit(3).all()
 
-    if not results:
-        return {"answer": "I couldn't find any relevant information in the lesson.", "sources": []}
+    if not results_with_dist:
+        return {
+            "answer": "I couldn't find any relevant information about that in the course material.",
+            "sources": [],
+            "engine": "none"
+        }
 
+    results = [r[0] for r in results_with_dist]
     context_texts = [f"{r.title}: {r.content}" for r in results]
     sources = [{"title": r.title, "url": r.url_id} for r in results]
 
-    final_answer = llm_router.get_answer(payload.query, context_texts)
+    final_answer, engine_used = llm_router.get_answer_with_engine(payload.query, context_texts)
 
     return {
         "answer": final_answer,
-        "sources": sources
+        "sources": sources,
+        "engine": engine_used
     }
 
 @app.post("/api/v1/tutor/chat", tags=["Widget Compatibility"])
@@ -104,16 +113,19 @@ def tutor_chat(payload: dict, db: Session = Depends(get_db)):
     ask_req = schemas.AskRequest(query=query)
     resp = ask_question(ask_req, db)
     sources = resp.get("sources", [])
+    engine = resp.get("engine", "offline-rag")
     citation = None
     if sources:
+        engine_label = "Gemini AI" if "gemini" in engine else "Curriculum Vector Store"
         citation = {
             "title": sources[0]["title"],
             "targetId": sources[0]["url"],
-            "module": "Curriculum Vector Store",
+            "module": engine_label,
             "excerpt": resp.get("answer", "")[:160]
         }
     return {
         "reply": resp.get("answer", ""),
         "citation": citation,
-        "language": payload.get("language", "en")
+        "language": payload.get("language", "en"),
+        "engine": engine
     }
