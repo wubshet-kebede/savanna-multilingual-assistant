@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  db:
+    image: ankane/pgvector:latest  # PostgreSQL pre-packaged with pgvector
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: savanna_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  api:
+    build: ./module/api
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload # Assuming FastAPI
+    volumes:
+      - ./module/api:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-admin}:${POSTGRES_PASSWORD:-password}@db:5432/savanna_db
+
+  web:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./savanna:/usr/share/nginx/html:ro
+      - ./module:/usr/share/nginx/html/module:ro
+      - ./demo:/usr/share/nginx/html/demo:ro
