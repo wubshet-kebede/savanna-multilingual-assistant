@@ -144,22 +144,51 @@ class DbAssistant extends HTMLElement {
       }
     });
 
-    // Handle Sending Messages
-    const handleSend = () => {
+    // Handle Sending Messages with Hybrid Routing
+    const handleSend = async () => {
       const text = input.value.trim();
       if (!text) return;
 
       this.appendMessage(text, 'user');
       input.value = '';
 
-      // Trigger the offline MiniSearch engine
-      const result = this.searchEngine.search(text);
+      // Add a temporary loading indicator
+      this.appendMessage('<span class="loading">Thinking...</span>', 'bot');
+      const messagesDiv = this.shadowRoot.getElementById('messages');
+      const loadingBubble = messagesDiv.lastElementChild;
 
-      if (result) {
-        const reply = `${result.content}<br><br><a href="${result.url}" style="color: #002b56; font-weight: bold;">Read this section</a>`;
+      try {
+        // 1. Attempt to hit the Local AI Backend (FastAPI)
+        const response = await fetch('http://localhost:8000/api/v1/ask', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: text })
+        });
+
+        if (!response.ok) throw new Error("API unreachable");
+
+        const data = await response.json();
+        loadingBubble.remove();
+
+        // 2. Display the RAG AI response
+        let reply = data.answer;
+        if (data.sources && data.sources.length > 0) {
+            reply += `<br><br><a href="#${data.sources[0].url}" style="color: #002b56; font-weight: bold;">Source: ${data.sources[0].title}</a>`;
+        }
         this.appendMessage(reply, 'bot');
-      } else {
-        this.appendMessage("I couldn't find that in this lesson.", 'bot');
+
+      } catch (error) {
+        // 3. The "Deep Offline" Fallback: Trigger MiniSearch
+        loadingBubble.remove();
+        console.warn("AI Backend unreachable. Falling back to offline MiniSearch.", error);
+
+        const result = this.searchEngine.search(text);
+        if (result) {
+          const reply = `<em>(Offline Mode)</em><br>${result.content}<br><br><a href="${result.url}" style="color: #002b56; font-weight: bold;">Read this section</a>`;
+          this.appendMessage(reply, 'bot');
+        } else {
+          this.appendMessage("I couldn't find that in this lesson.", 'bot');
+        }
       }
     };
 
