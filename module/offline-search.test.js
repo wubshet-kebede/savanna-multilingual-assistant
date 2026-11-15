@@ -41,11 +41,27 @@ describe('OfflineSearcher ETL and TF-IDF Pipeline', () => {
     expect(result.content).toContain('AI is one of the most important forces');
   });
 
-  it('should return null for completely irrelevant queries', () => {
+  it('should return null for completely irrelevant queries (zero false positives)', () => {
     const searchEngine = new OfflineSearcher();
     searchEngine.buildIndex();
 
-    const result = searchEngine.search("how to bake a chocolate cake");
-    expect(result).toBeNull();
+    // Test a wide variety of off-topic queries including substring edge cases
+    const offTopicQueries = [
+      "how to bake a chocolate cake",
+      "what is the weather like in spain",
+      "who won the world cup",
+      "how to fix a car engine",
+      "trending dance on tiktok",
+      "start the car",
+      "do you like rain",
+      "what is email",
+      "tell me a joke about dogs",
+      "clean the bottom of the pan"
+    ];
+
+    for (const q of offTopicQueries) {
+      const result = searchEngine.search(q);
+      expect(result, `Expected "${q}" to return null`).toBeNull();
+    }
   });
 });

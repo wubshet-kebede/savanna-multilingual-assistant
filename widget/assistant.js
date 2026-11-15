@@ -2674,21 +2674,50 @@ const MiniSearch = ((function () { 'use strict';
  * Scrapes host page headings and paragraphs into an in-memory TF-IDF index
  * with typo-tolerance and stop-words filtering.
  */
+const MULTILINGUAL_STOP_WORDS = new Set([
+  // English stop words & conversational question words
+  'a', 'about', 'above', 'after', 'again', 'against', 'all', 'am', 'an', 'and', 'any', 'are', 'as', 'at',
+  'be', 'because', 'been', 'before', 'being', 'below', 'between', 'both', 'but', 'by',
+  'can', 'could', 'did', 'do', 'does', 'doing', 'down', 'during',
+  'each', 'few', 'for', 'from', 'further',
+  'had', 'has', 'have', 'having', 'he', 'her', 'here', 'hers', 'herself', 'him', 'himself', 'his', 'how',
+  'i', 'if', 'in', 'into', 'is', 'it', 'its', 'itself',
+  'let', 'me', 'more', 'most', 'my', 'myself',
+  'no', 'nor', 'not', 'of', 'off', 'on', 'once', 'only', 'or', 'other', 'our', 'ours', 'ourselves', 'out', 'over', 'own',
+  'same', 'she', 'should', 'so', 'some', 'such',
+  'than', 'that', 'the', 'their', 'theirs', 'them', 'themselves', 'then', 'there', 'these', 'they', 'this', 'those', 'through', 'to', 'too',
+  'under', 'until', 'up', 'very',
+  'was', 'we', 'were', 'what', 'when', 'where', 'which', 'while', 'who', 'whom', 'why', 'with', 'would',
+  'you', 'your', 'yours', 'yourself', 'yourselves',
+  'tell', 'give', 'show', 'like', 'just', 'know', 'want', 'please', 'hi', 'hello', 'hey', 'start',
+  // Amharic function words
+  'ሁኔታ', 'ሁኔታዎች', 'ላይ', 'ውስጥ', 'ጋር', 'ስለ', 'እንደ', 'ነው', 'ናቸው', 'ይህ', 'ያሉ', 'ዛሬ', 'ምን', 'እንዴት', 'የት', 'መቼ', 'ማን', 'ለምን',
+  // Somali function words
+  'waa', 'maxay', 'sidee', 'xagee', 'goorma', 'yaa', 'maxaa', 'ku', 'ka', 'ee', 'ah', 'iyo', 'loo', 'soo', 'oo', 'la', 'kan', 'tan',
+  // Arabic function words
+  'في', 'من', 'على', 'إلى', 'عن', 'مع', 'ما', 'ماذا', 'كيف', 'أين', 'متى', 'هل', 'كم', 'هو', 'هي', 'أن', 'هذا', 'هذه', 'الان',
+  // Tigrinya function words
+  'ናይ', 'ኣብ', 'ምስ', 'እንታይ', 'ከመይ', 'ኣበይ', 'መዓስ', 'መን', 'ስለ', 'እዩ', 'እዮም', 'እቲ', 'እታ',
+  // Afaan Oromo function words
+  'akka', 'keessatti', 'irraa', 'maaloo', 'akkamitti', 'maaliif', 'eessa', 'yoom', 'eenyu', 'kun', 'sun', 'fi', 'ti', 'kan'
+]);
+
 class OfflineSearcher {
   constructor() {
-    const stopWords = new Set(['how', 'to', 'a', 'an', 'the', 'is', 'does', 'what', 'are', 'in', 'of', 'and', 'for', 'it']);
+    this.stopWords = MULTILINGUAL_STOP_WORDS;
 
     this.miniSearch = new MiniSearch({
       fields: ['title', 'content'],
       storeFields: ['title', 'content', 'url', 'targetId', 'module', 'isCurriculum', 'dbItem'],
       idField: 'id',
       processTerm: (term) => {
-        const lowerTerm = term.toLowerCase();
-        return stopWords.has(lowerTerm) ? null : lowerTerm;
+        const lowerTerm = term.toLowerCase().replace(/[^a-z0-9ሀ-፿؀-ۿ]/g, '');
+        if (!lowerTerm || lowerTerm.length < 2) return null;
+        return MULTILINGUAL_STOP_WORDS.has(lowerTerm) ? null : lowerTerm;
       },
       searchOptions: {
-        fuzzy: term => term.length > 3 ? 0.2 : false,
-        prefix: term => term.length > 3
+        fuzzy: term => term.length >= 5 ? 0.25 : false,
+        prefix: false
       }
     });
   }
@@ -2780,7 +2809,11 @@ class OfflineSearcher {
     if (!query || !query.trim()) return null;
     const results = this.miniSearch.search(query);
     if (results.length > 0) {
-      return results[0];
+      const top = results[0];
+      // Require either sufficient relevance score or match on core domain tokens
+      if (top.score >= 1.0 || (top.terms && top.terms.length > 0 && ['ai', 'va', 'chatgpt', 'notion', 'zapier'].includes(top.terms[0]))) {
+        return top;
+      }
     }
     return null;
   }
@@ -5752,34 +5785,39 @@ class MultilingualAssistant extends HTMLElement {
       }
     }
 
-    // 2. Keyword fallback across COURSE_GROUNDING_DB
-    const q = query.toLowerCase();
-    let bestMatch = null;
-    let maxScore = 0;
+    // 2. Strict Whole-Word Keyword Fallback across COURSE_GROUNDING_DB (Zero substring leakage)
+    const tokens = (query.toLowerCase().match(/[\p{L}\p{N}]+/gu) || [])
+      .filter(t => t.length > 1 && !MULTILINGUAL_STOP_WORDS.has(t));
 
-    for (const item of COURSE_GROUNDING_DB) {
-      let score = 0;
-      for (const k of item.keywords) {
-        if (q.includes(k.toLowerCase())) {
-          score += k.length;
+    if (tokens.length > 0) {
+      let bestMatch = null;
+      let maxScore = 0;
+
+      for (const item of COURSE_GROUNDING_DB) {
+        const kwSet = new Set(item.keywords.map(k => k.toLowerCase()));
+        let score = 0;
+        for (const token of tokens) {
+          if (kwSet.has(token)) {
+            score += token.length;
+          }
+        }
+        if (score > maxScore) {
+          maxScore = score;
+          bestMatch = item;
         }
       }
-      if (score > maxScore) {
-        maxScore = score;
-        bestMatch = item;
-      }
-    }
 
-    if (bestMatch && maxScore > 0) {
-      return {
-        reply: bestMatch.replies[lang] || bestMatch.replies['en'],
-        citation: {
-          title: bestMatch.title,
-          targetId: bestMatch.targetId,
-          module: bestMatch.module,
-          excerpt: bestMatch.excerpt
-        }
-      };
+      if (bestMatch && maxScore >= 3) {
+        return {
+          reply: bestMatch.replies[lang] || bestMatch.replies['en'],
+          citation: {
+            title: bestMatch.title,
+            targetId: bestMatch.targetId,
+            module: bestMatch.module,
+            excerpt: bestMatch.excerpt
+          }
+        };
+      }
     }
 
     // 3. Graceful Fallback for Irrelevant / Off-topic Queries (Zero Hallucination)
