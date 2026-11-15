@@ -5883,6 +5883,7 @@ class MultilingualAssistant extends HTMLElement {
 
       if (res.ok) {
         const data = await res.json();
+        console.log('[Assistant] Backend response received:', data);
         const replyText = data.reply || data.answer;
         let citation = data.citation;
         if (!citation && data.sources && data.sources.length > 0) {
@@ -5896,9 +5897,12 @@ class MultilingualAssistant extends HTMLElement {
         }
         this.appendMessage('tutor', replyText, data.language || this.currentLang, citation);
       } else {
+        const errText = await res.text();
+        console.warn('[Assistant] Backend HTTP error:', res.status, errText);
         this.groundedFallbackReply(text);
       }
-    } catch {
+    } catch (err) {
+      console.warn('[Assistant] Backend unreachable or blocked:', err);
       this.groundedFallbackReply(text);
     }
   }
