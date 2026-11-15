@@ -2941,17 +2941,123 @@ class MultilingualAssistant extends HTMLElement {
   }
 
   /**
+   * Accessible Text & Markdown Normalizers (WCAG 2.2 AA / XSS-safe)
+   */
+  escapeHtml(str) {
+    return String(str || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  renderInline(text) {
+    let s = this.escapeHtml(text);
+    // Bold + Italic: ***text*** or ___text___
+    s = s.replace(/\*{3}\s*([^*]+?)\s*\*{3}/g, '<strong><em>$1</em></strong>');
+    s = s.replace(/_{3}\s*([^_]+?)\s*_{3}/g, '<strong><em>$1</em></strong>');
+    // Bold: **text** or __text__
+    s = s.replace(/\*{2}\s*([^*]+?)\s*\*{2}/g, '<strong>$1</strong>');
+    s = s.replace(/_{2}\s*([^_]+?)\s*_{2}/g, '<strong>$1</strong>');
+    // Italic: *text* or _text_
+    s = s.replace(/\*([^*\s][^*]*?)\*/g, '<em>$1</em>');
+    s = s.replace(/\b_([^_]+)_\b/g, '<em>$1</em>');
+    // Inline code: `code`
+    s = s.replace(/`([^`]+)`/g, '<code>$1</code>');
+    return s;
+  }
+
+  renderMarkdown(raw) {
+    if (!raw) return '';
+    const lines = raw.split(/\r?\n/);
+    const out = [];
+    let currentListType = null; // 'ul' or 'ol'
+
+    const closeList = () => {
+      if (currentListType) {
+        out.push(`</${currentListType}>`);
+        currentListType = null;
+      }
+    };
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trimEnd();
+      const trimmed = line.trim();
+
+      if (!trimmed) {
+        closeList();
+        continue;
+      }
+
+      // Headings: ### or ## or #
+      const headMatch = line.match(/^#{1,4}\s+(.*)$/);
+      if (headMatch) {
+        closeList();
+        out.push(`<p class="msg-subheading"><strong>${this.renderInline(headMatch[1])}</strong></p>`);
+        continue;
+      }
+
+      // Unordered list item: * , - , + , •
+      const ulMatch = line.match(/^(\s*)(?:[\*\-\+]|•)\s+(.*)$/);
+      if (ulMatch) {
+        if (currentListType !== 'ul') {
+          closeList();
+          out.push('<ul>');
+          currentListType = 'ul';
+        }
+        out.push(`  <li>${this.renderInline(ulMatch[2])}</li>`);
+        continue;
+      }
+
+      // Ordered list item: 1. , 2. etc.
+      const olMatch = line.match(/^(\s*)\d+\.\s+(.*)$/);
+      if (olMatch) {
+        if (currentListType !== 'ol') {
+          closeList();
+          out.push('<ol>');
+          currentListType = 'ol';
+        }
+        out.push(`  <li>${this.renderInline(olMatch[2])}</li>`);
+        continue;
+      }
+
+      // Normal paragraph line
+      closeList();
+      out.push(`<p>${this.renderInline(trimmed)}</p>`);
+    }
+
+    closeList();
+    return out.join('\n');
+  }
+
+  cleanSpeechText(raw) {
+    if (!raw) return '';
+    return raw
+      .replace(/^#{1,4}\s+/gm, '')
+      .replace(/\*{1,3}/g, '')
+      .replace(/_{1,3}/g, '')
+      .replace(/^(\s*)(?:[\*\-\+]|•)\s+/gm, '')
+      .replace(/^(\s*)\d+\.\s+/gm, '')
+      .replace(/`([^`]+)`/g, '$1')
+      .replace(/\n+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  /**
    * Screen Reader Live Announcer with Dynamic Language Tagging (WCAG 3.1.2 / 4.1.3)
    * Dynamically switches speech synthesis acoustic model to match active language.
    */
   announce(text, lang = this.currentLang) {
     const announcer = this.shadowRoot.getElementById('sr-announcer');
     if (!announcer) return;
+    const clean = this.cleanSpeechText(text);
     announcer.setAttribute('lang', lang);
     announcer.setAttribute('dir', (LOCALIZED_UI[lang] || {}).direction || 'ltr');
     announcer.textContent = '';
     setTimeout(() => {
-      announcer.textContent = text;
+      announcer.textContent = clean;
     }, 60);
     // Note: Do NOT call speakVoice() here. Screen readers natively read #sr-announcer.
     // Audio speech synthesis (window.speechSynthesis) is reserved for explicit user clicks on 🔊 listen buttons.
@@ -2960,19 +3066,20 @@ class MultilingualAssistant extends HTMLElement {
   speakVoice(text, lang = this.currentLang) {
     if (!('speechSynthesis' in window)) return;
     try {
+      const clean = this.cleanSpeechText(text);
       // If already speaking the same text, act as a toggle to stop it
       if (window.speechSynthesis.speaking) {
         window.speechSynthesis.cancel();
-        if (this.currentSpeakingText === text) {
+        if (this.currentSpeakingText === clean) {
           this.currentSpeakingText = null;
           return;
         }
       }
 
       window.speechSynthesis.cancel();
-      this.currentSpeakingText = text;
+      this.currentSpeakingText = clean;
       const t = LOCALIZED_UI[lang] || LOCALIZED_UI['en'];
-      const utterance = new SpeechSynthesisUtterance(text);
+      const utterance = new SpeechSynthesisUtterance(clean);
       utterance.lang = t.speechLang || 'en-US';
       utterance.rate = 1.0;
       utterance.onend = () => { this.currentSpeakingText = null; };
@@ -3192,6 +3299,12 @@ class MultilingualAssistant extends HTMLElement {
         line-height: 1.8 !important;
       }
       .drawer.simple-mode .msg-body {
+        font-size: 17px !important;
+        line-height: 1.8 !important;
+      }
+      .drawer.simple-mode .msg-body p,
+      .drawer.simple-mode .msg-body li,
+      .drawer.simple-mode .msg-body strong {
         font-size: 17px !important;
         line-height: 1.8 !important;
       }
@@ -3729,6 +3842,47 @@ class MultilingualAssistant extends HTMLElement {
         font-size: 13.5px;
         line-height: 1.58;
         color: inherit;
+        word-break: break-word;
+      }
+      .msg-body p {
+        margin: 0 0 8px 0;
+      }
+      .msg-body p:last-child {
+        margin-bottom: 0;
+      }
+      .msg-body p.msg-subheading {
+        margin: 10px 0 6px 0;
+        font-size: 13.5px;
+        font-weight: 700;
+        color: inherit;
+      }
+      .msg-body ul, .msg-body ol {
+        margin: 6px 0 8px 0;
+        padding-inline-start: 22px;
+      }
+      .msg-body ul:last-child, .msg-body ol:last-child {
+        margin-bottom: 0;
+      }
+      .msg-body li {
+        margin-bottom: 5px;
+        line-height: 1.55;
+      }
+      .msg-body li:last-child {
+        margin-bottom: 0;
+      }
+      .msg-body strong {
+        font-weight: 700;
+        color: inherit;
+      }
+      .msg-body em {
+        font-style: italic;
+      }
+      .msg-body code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 12px;
+        background: rgba(0, 0, 0, 0.06);
+        padding: 2px 6px;
+        border-radius: 4px;
       }
 
       /* Quick Prompts Container */
@@ -5944,6 +6098,8 @@ class MultilingualAssistant extends HTMLElement {
     div.setAttribute('lang', lang);
     div.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
 
+    const cleanSpoken = this.cleanSpeechText(text);
+
     if (role === 'tutor') {
       const header = document.createElement('div');
       header.className = 'msg-header';
@@ -5957,19 +6113,19 @@ class MultilingualAssistant extends HTMLElement {
       listenBtn.innerHTML = '<span aria-hidden="true">🔊</span>';
       listenBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        this.speakVoice(text, lang);
+        this.speakVoice(cleanSpoken, lang);
       });
       header.appendChild(listenBtn);
       div.appendChild(header);
 
       const body = document.createElement('div');
       body.className = 'msg-body';
-      body.textContent = text;
+      body.innerHTML = this.renderMarkdown(text);
       div.appendChild(body);
     } else {
       const body = document.createElement('div');
       body.className = 'msg-body';
-      body.textContent = text;
+      body.innerHTML = this.renderMarkdown(text);
       div.appendChild(body);
     }
 
@@ -6002,7 +6158,7 @@ class MultilingualAssistant extends HTMLElement {
       this.playChime('message');
       const t = LOCALIZED_UI[this.currentLang] || LOCALIZED_UI['en'];
       const citeAnnouncement = citation ? ` (${t.citationAnnounce} ${citation.title || citation})` : '';
-      this.announce(`${t.assistantReplied} ${text}${citeAnnouncement}`);
+      this.announce(`${t.assistantReplied} ${cleanSpoken}${citeAnnouncement}`);
     }
   }
 

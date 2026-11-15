@@ -21,7 +21,14 @@ class CloudLLM(LLMEngine):
         api_key = os.getenv("GEMINI_API_KEY", "YOUR_GEMINI_API_KEY_HERE")
         nl = chr(10)
         context_str = nl.join(context)
-        prompt = f"You are a helpful Savanna teaching assistant.{nl}Answer the user's question using ONLY the following course material.{nl}{nl}Course Material:{nl}{context_str}{nl}{nl}Question: {query}"
+        prompt = (
+            f"You are a helpful Savanna teaching assistant.{nl}"
+            f"Answer the user's question accurately using ONLY the following course material.{nl}"
+            f"Format your response clearly with concise paragraphs and clean bullet points for lists.{nl}"
+            f"Use **bold** for key terms and concepts.{nl}{nl}"
+            f"Course Material:{nl}{context_str}{nl}{nl}"
+            f"Question: {query}"
+        )
 
         payload = {
             "contents": [{
