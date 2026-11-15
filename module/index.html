@@ -5,10 +5,9 @@
   <title>Savanna Assistant Local Test</title>
   <style>
     body { font-family: sans-serif; max-width: 800px; margin: 40px auto; line-height: 1.6; }
-    /* Mocking Savanna's CSS variables so your component can steal them */
     :root {
-      --bs-primary: #5648b7;
-      --bs-primary-subtle: #e6e2fa;
+      --bs-primary: #047857;
+      --bs-primary-subtle: #ecfdf5;
     }
   </style>
 </head>
@@ -32,12 +31,10 @@
   <p>AI is one of the most important forces shaping the future.</p>
   <p>Many modern workplaces already use AI tools to help draft and summarize.</p>
 
+  <!-- Universal Multilingual Assistant (Plug-and-Play Level 1 Web Component) -->
+  <multilingual-assistant partner="savanna" course="VA-1" theme-color="#047857" default-lang="en"></multilingual-assistant>
 
-  <!-- 1. Mount your Web Component -->
-  <db-assistant></db-assistant>
-
-  <!-- 2. Load your JavaScript via Vite -->
-  <script type="module" src="./db-assistant.js"></script>
+  <script src="../widget/assistant.js" defer></script>
 
 </body>
 </html>
