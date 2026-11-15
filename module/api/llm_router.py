@@ -19,8 +19,6 @@ class LLMEngine(ABC):
 class CloudLLM(LLMEngine):
     def generate(self, query: str, context: list[str]) -> str:
         api_key = os.getenv("GEMINI_API_KEY", "YOUR_GEMINI_API_KEY_HERE")
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
-
         nl = chr(10)
         context_str = nl.join(context)
         prompt = f"You are a helpful Savanna teaching assistant.{nl}Answer the user's question using ONLY the following course material.{nl}{nl}Course Material:{nl}{context_str}{nl}{nl}Question: {query}"
@@ -30,16 +28,25 @@ class CloudLLM(LLMEngine):
                 "parts": [{"text": prompt}]
             }]
         }
-
         data = json.dumps(payload).encode('utf-8')
-        req = urllib.request.Request(url, data=data, headers={'Content-Type': 'application/json'})
 
-        try:
-            with urllib.request.urlopen(req, timeout=5) as response:
-                result = json.loads(response.read().decode('utf-8'))
-                return result['candidates'][0]['content']['parts'][0]['text']
-        except Exception as e:
-            return f"Cloud API Error: {str(e)}"
+        # Fast resilient fallback sequence across Gemini tiers
+        candidate_models = ["gemini-3.1-flash-lite-preview", "gemini-3.8-flash", "gemini-flash-latest"]
+        last_error = ""
+
+        for model_name in candidate_models:
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
+            req = urllib.request.Request(url, data=data, headers={'Content-Type': 'application/json'})
+            try:
+                with urllib.request.urlopen(req, timeout=15) as response:
+                    result = json.loads(response.read().decode('utf-8'))
+                    return result['candidates'][0]['content']['parts'][0]['text']
+            except Exception as e:
+                last_error = str(e)
+                print(f"[CloudLLM] {model_name} failed ({last_error}), trying next model...")
+                continue
+
+        return f"Cloud API Error: {last_error}"
 
 # ==========================================
 # 3. The Local Engine (Ollama / Qwen)
@@ -102,7 +109,7 @@ class LLMRouter:
             print("[Router] Network detected and GEMINI_API_KEY set. Routing to Cloud (Gemini)...")
             ans = self.cloud_engine.generate(query, context)
             if not ans.startswith("Cloud API Error:"):
-                return ans, "gemini-1.5-flash"
+                return ans, "gemini-3.8-flash"
             print(f"[Router] Cloud engine error ({ans}). Falling back to local/offline engine...")
 
         print("[Router] Routing to Local / Offline engine...")
