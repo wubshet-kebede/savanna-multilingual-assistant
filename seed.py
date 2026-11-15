@@ -26,10 +26,15 @@ def seed_database():
         if filename.endswith(".html"):
             filepath = os.path.join(COURSE_DIRECTORY, filename)
             text = extract_text_from_html(filepath)
+            title = filename.replace(".html", "").replace("-", " ").title()
 
             for chunk in chunk_text(text):
                 # Send each chunk to FastAPI to be vectorized and saved in pgvector
-                response = requests.post(API_URL, json={"text": chunk})
+                response = requests.post(API_URL, json={
+                    "text": chunk,
+                    "title": title,
+                    "url_id": filename
+                })
                 if response.status_code == 200:
                     print(f"Ingested chunk from {filename}")
                 else:

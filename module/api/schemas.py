@@ -1,13 +1,16 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 
 class ChunkBase(BaseModel):
-    url_id: str
-    title: str
+    url_id: Optional[str] = "lesson"
+    title: Optional[str] = "Savanna Course Material"
     content: str
 
 class ContentIngestRequest(BaseModel):
-    chunks: List[ChunkBase]
+    chunks: Optional[List[ChunkBase]] = None
+    text: Optional[str] = None
+    url_id: Optional[str] = "lesson"
+    title: Optional[str] = "Savanna Course Material"
 
 class AskRequest(BaseModel):
     query: str

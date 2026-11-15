@@ -6,7 +6,7 @@ from models import Base
 # Pulls the exact URL from your docker-compose.yml (falls back to localhost if run outside Docker)
 SQLALCHEMY_DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "postgresql://admin:password@localhost:5432/savanna_db"
+    "postgresql+psycopg2://admin:password@localhost:5432/savanna_db"
 )
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)

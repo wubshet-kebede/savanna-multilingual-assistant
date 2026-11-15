@@ -20,7 +20,7 @@ services:
     depends_on:
       - db
     environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER:-admin}:${POSTGRES_PASSWORD:-password}@db:5432/savanna_db
+      - DATABASE_URL=postgresql+psycopg2://${POSTGRES_USER:-admin}:${POSTGRES_PASSWORD:-password}@db:5432/savanna_db
 
   web:
     image: nginx:alpine
