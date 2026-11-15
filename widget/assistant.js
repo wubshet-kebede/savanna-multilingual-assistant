@@ -5770,15 +5770,31 @@ class MultilingualAssistant extends HTMLElement {
       }
     }
 
-    const matched = bestMatch || COURSE_GROUNDING_DB[0];
+    if (bestMatch && maxScore > 0) {
+      return {
+        reply: bestMatch.replies[lang] || bestMatch.replies['en'],
+        citation: {
+          title: bestMatch.title,
+          targetId: bestMatch.targetId,
+          module: bestMatch.module,
+          excerpt: bestMatch.excerpt
+        }
+      };
+    }
+
+    // 3. Graceful Fallback for Irrelevant / Off-topic Queries (Zero Hallucination)
+    const ungroundedMsgs = {
+      am: "ይቅርታ፣ በዚህ የኮርስ ትምህርት ውስጥ ስለዚህ ርዕስ የተገኘ መረጃ የለም። እባክዎ ከኮርሱ ትምህርት ጋር የተያያዘ ጥያቄ ይጠይቁ።",
+      om: "Dhiifama, barnoota kana keessatti waa'ee kanaa odeeffannoon hin argamne. Maaloo gaaffii koorsichaan walqabatu gaafadhaa.",
+      ti: "ይቕሬታ፣ ኣብዚ ትምህርቲ ብዛዕባዚ ዝተረኽበ ሓበሬታ የለን። በጃኹም ምስዚ ትምህርቲ ዝተኣሳሰር ሕቶ ሕተቱ።",
+      so: "Waan ka xumahay, kooraskan laguma helin xog ku saabsan mawduucaas. Fadlan weydii su'aal la xiriirta casharka.",
+      ar: "عذراً، لم أتمكن من العثور على معلومات حول هذا الموضوع في هذا المنهج. يرجى طرح سؤال متعلق بمحتوى الدرس.",
+      en: "I couldn't find information about that in this course curriculum. Please ask a question related to the lesson topics."
+    };
+
     return {
-      reply: matched.replies[lang] || matched.replies['en'],
-      citation: {
-        title: matched.title,
-        targetId: matched.targetId,
-        module: matched.module,
-        excerpt: matched.excerpt
-      }
+      reply: ungroundedMsgs[lang] || ungroundedMsgs['en'],
+      citation: null
     };
   }
 
