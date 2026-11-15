@@ -6018,9 +6018,25 @@ class MultilingualAssistant extends HTMLElement {
       excerpt: citationObj.excerpt
     });
 
+    const targetId = citationObj.targetId || '';
+    let filePart = '';
+    let anchorPart = '';
+
+    if (targetId.includes('#')) {
+      const parts = targetId.split('#');
+      filePart = parts[0];
+      anchorPart = parts[1];
+    } else if (targetId.endsWith('.html')) {
+      filePart = targetId;
+      anchorPart = '';
+    } else {
+      anchorPart = targetId.replace(/^#/, '');
+    }
+
     let jumped = false;
-    if (citationObj.targetId) {
-      const hostElem = document.getElementById(citationObj.targetId);
+    // 1. In-page jump if anchor element exists on current document
+    if (anchorPart) {
+      const hostElem = document.getElementById(anchorPart);
       if (hostElem) {
         hostElem.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
@@ -6049,12 +6065,13 @@ class MultilingualAssistant extends HTMLElement {
       }
     }
 
+    // 2. If target is in another lesson page or not found locally, open accessible citation modal
     if (!jumped) {
-      this.showCitationModal(citationObj);
+      this.showCitationModal(citationObj, filePart, anchorPart);
     }
   }
 
-  showCitationModal(citationObj) {
+  showCitationModal(citationObj, filePart = '', anchorPart = '') {
     const modal = this.shadowRoot.getElementById('citation-modal');
     const title = this.shadowRoot.getElementById('modal-cite-title');
     const content = this.shadowRoot.getElementById('modal-cite-content');
@@ -6062,16 +6079,33 @@ class MultilingualAssistant extends HTMLElement {
     const jumpBtn = this.shadowRoot.getElementById('modal-jump-btn');
     const t = LOCALIZED_UI[this.currentLang] || LOCALIZED_UI['en'];
 
+    // Resolve cross-page or external navigation URL
+    let targetUrl = '';
+    if (filePart) {
+      if (filePart.startsWith('http://') || filePart.startsWith('https://') || filePart.startsWith('/')) {
+        targetUrl = filePart + (anchorPart ? `#${anchorPart}` : '');
+      } else if (window.location.pathname.includes('/widget/')) {
+        targetUrl = `../html_course_files/${filePart}${anchorPart ? '#' + anchorPart : ''}`;
+      } else if (window.location.pathname.includes('/pages/')) {
+        targetUrl = `./${filePart}${anchorPart ? '#' + anchorPart : ''}`;
+      } else {
+        targetUrl = `/html_course_files/${filePart}${anchorPart ? '#' + anchorPart : ''}`;
+      }
+    } else if (anchorPart) {
+      targetUrl = `#${anchorPart}`;
+    }
+
     title.textContent = `📌 ${citationObj.title}`;
     content.innerHTML = `
       <p style="margin:0 0 8px 0; font-weight:600; color:#1f2937;">${citationObj.module || 'Course Grounding Reference'}:</p>
-      <blockquote style="margin:0 0 8px 0; padding:8px 12px; background:#f9fafb; border-inline-start:3px solid var(--primary); border-radius:4px;">
+      <blockquote style="margin:0 0 8px 0; padding:8px 12px; background:#f9fafb; border-inline-start:3px solid var(--primary, #047857); border-radius:4px;">
         "${citationObj.excerpt || citationObj.title}"
       </blockquote>
-      <span style="font-size:11px; color:#6b7280;">Target anchor: <code>#${citationObj.targetId || 'general'}</code></span>
+      <span style="font-size:11px; color:#6b7280;">Target: <code>${targetUrl || citationObj.targetId || 'Course Reference'}</code></span>
     `;
 
     copyBtn.textContent = `📋 ${t.copyCitation}`;
+    copyBtn.setAttribute('aria-label', `${t.copyCitation}: ${citationObj.title}`);
     copyBtn.onclick = () => {
       const citeText = `[Citation] ${citationObj.title} - ${citationObj.excerpt || ''}`;
       navigator.clipboard.writeText(citeText).then(() => {
@@ -6082,18 +6116,29 @@ class MultilingualAssistant extends HTMLElement {
     };
 
     jumpBtn.textContent = `↗ ${t.jumpToSection}`;
+    jumpBtn.setAttribute('aria-label', `${t.jumpToSection}: ${citationObj.title}`);
     jumpBtn.onclick = () => {
-      if (citationObj.targetId) {
-        const el = document.getElementById(citationObj.targetId);
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
       this.closeCitationModal();
+      if (anchorPart) {
+        const el = document.getElementById(anchorPart);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '-1');
+          el.focus();
+          this.announce(`${t.navigatedTo} ${citationObj.title}`);
+          return;
+        }
+      }
+      if (targetUrl) {
+        this.announce(`${t.navigatedTo} ${citationObj.title}`);
+        window.location.href = targetUrl;
+      }
     };
 
     modal.style.display = 'flex';
     this.announce(`Citation preview dialog opened: ${citationObj.title}`);
     const closeBtn = this.shadowRoot.getElementById('modal-cite-close');
-    closeBtn.focus();
+    if (closeBtn) closeBtn.focus();
   }
 
   closeCitationModal() {
