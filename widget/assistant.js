@@ -9,14 +9,14 @@ const LOCALIZED_UI = {
   am: {
     launcher: "ረዳት ይጠይቁ (አማርኛ)",
     dialogTitle: "ሁለንተናዊ ባለብዙ ቋንቋ የትምህርት ረዳት",
-    tutorTab: "📚 የኮርስ ረዳት",
-    careerTab: "💼 የስራ እድሎች",
+    tutorTab: "የኮርስ ረዳት",
+    careerTab: "የስራ እድሎች",
     placeholder: "ጥያቄዎን ከኮርሱ እዚህ ይጻፉ...",
     send: "ላክ",
     micLabel: "በድምጽ ይጠይቁ",
-    simpleBtn: "🧠 ቀላል ሁነታ",
+    simpleBtn: "ቀላል ሁነታ",
     simpleActive: "ቀላል ሁነታ: በርቷል",
-    humanHelpBtn: "🆘 የሰው እርዳታ",
+    humanHelpBtn: "የሰው እርዳታ",
     closeTitle: "ዝጋ (Escape)",
     screenShareActive: "🟢 ስክሪን ማጋራት በርቷል (በእርስዎ ቁጥጥር ስር)",
     stopShare: "አቁም",
@@ -82,14 +82,14 @@ const LOCALIZED_UI = {
   om: {
     launcher: "Gargaaraa Gaafadhaa",
     dialogTitle: "Gargaaraa Barnootaa Afaan Baay'ee",
-    tutorTab: "📚 Gargaaraa Koorsii",
-    careerTab: "💼 Carraawwan Hojii",
+    tutorTab: "Gargaaraa Koorsii",
+    careerTab: "Carraawwan Hojii",
     placeholder: "Gaaffii keessan asitti barreessaa...",
     send: "Ergi",
     micLabel: "Sagaleen gaafadhaa",
-    simpleBtn: "🧠 Haala Salphaa",
+    simpleBtn: "Haala Salphaa",
     simpleActive: "Salphaa: Hojjetaa jira",
-    humanHelpBtn: "🆘 Gargaarsa Namaa",
+    humanHelpBtn: "Gargaarsa Namaa",
     closeTitle: "Cufi (Escape)",
     screenShareActive: "🟢 Iskirinii qooduun hojjetaa jira (To'annoo keessan jala)",
     stopShare: "Dhaabi",
@@ -155,14 +155,14 @@ const LOCALIZED_UI = {
   ti: {
     launcher: "ሓጋዚ ሕተቱ",
     dialogTitle: "ኩለመዳያዊ فرቲ ሓጋዚ ትምህርቲ",
-    tutorTab: "📚 ናይ ኮርስ ሓጋዚ",
-    careerTab: "💼 ናይ ስራሕ ዕድላት",
+    tutorTab: "ናይ ኮርስ ሓጋዚ",
+    careerTab: "ናይ ስራሕ ዕድላት",
     placeholder: "ሕቶኹም ኣብዚ ጸሓፉ...",
     send: "ስደድ",
     micLabel: "ብድምጺ ሕተቱ",
-    simpleBtn: "🧠 ቀሊል ኣገባብ",
+    simpleBtn: "ቀሊል ኣገባብ",
     simpleActive: "ቀሊል: በርቲሁ ኣሎ",
-    humanHelpBtn: "🆘 ናይ ሰብ ሓገዝ",
+    humanHelpBtn: "ናይ ሰብ ሓገዝ",
     closeTitle: "ዕጾ (Escape)",
     screenShareActive: "🟢 ስክሪን ምክፋል በርቲሁ ኣሎ",
     stopShare: "ኣቋርጽ",
@@ -228,14 +228,14 @@ const LOCALIZED_UI = {
   so: {
     launcher: "Weydii Caawiyaha",
     dialogTitle: "Kaaliyaha Waxbarashada Luqadaha Badan",
-    tutorTab: "📚 Caawiyaha Koorsada",
-    careerTab: "💼 Fursadaha Shaqada",
+    tutorTab: "Caawiyaha Koorsada",
+    careerTab: "Fursadaha Shaqada",
     placeholder: "Halkan ku qor su'aashaada...",
     send: "Dir",
     micLabel: "Cod ku weydii",
-    simpleBtn: "🧠 Qaab Fudud",
+    simpleBtn: "Qaab Fudud",
     simpleActive: "Fudud: Waa shidan yahay",
-    humanHelpBtn: "🆘 Caawinaad Qof",
+    humanHelpBtn: "Caawinaad Qof",
     closeTitle: "Xidh (Escape)",
     screenShareActive: "🟢 Wadaagista shaashadu waa shaqaynaysaa",
     stopShare: "Jooji",
@@ -301,14 +301,14 @@ const LOCALIZED_UI = {
   ar: {
     launcher: "اسأل المساعد التعليمي",
     dialogTitle: "المساعد التعليمي متعدد اللغات وبوابة المهن",
-    tutorTab: "📚 المساعد الدراسي",
-    careerTab: "💼 بوابة الوظائف",
+    tutorTab: "المساعد الدراسي",
+    careerTab: "بوابة الوظائف",
     placeholder: "اكتب سؤالك التعليمي هنا...",
     send: "إرسال",
     micLabel: "تحدث بسؤالك صوتياً",
-    simpleBtn: "🧠 النمط المبسط",
+    simpleBtn: "النمط المبسط",
     simpleActive: "النمط المبسط: مفعّل",
-    humanHelpBtn: "🆘 طلب مساعدة بشرية",
+    humanHelpBtn: "طلب مساعدة بشرية",
     closeTitle: "إغلاق (Escape)",
     screenShareActive: "🟢 مشاركة الشاشة قيد التشغيل (تحت سيطرتك)",
     stopShare: "إيقاف المشاركة",
@@ -374,14 +374,14 @@ const LOCALIZED_UI = {
   en: {
     launcher: "Ask AI Tutor (Help)",
     dialogTitle: "Universal Multilingual Assistant & Career Gateway",
-    tutorTab: "📚 Course Tutor",
-    careerTab: "💼 Career Gateway",
+    tutorTab: "Course Tutor",
+    careerTab: "Career Gateway",
     placeholder: "Type your question from the curriculum...",
     send: "Send",
     micLabel: "Speak your question",
-    simpleBtn: "🧠 Simple Mode",
+    simpleBtn: "Simple Mode",
     simpleActive: "Simple Mode: ON",
-    humanHelpBtn: "🆘 Human Help",
+    humanHelpBtn: "Human Help",
     closeTitle: "Close (Escape)",
     screenShareActive: "🟢 Screen Sharing Active (You are in control)",
     stopShare: "Stop Sharing",
@@ -1395,6 +1395,62 @@ class MultilingualAssistant extends HTMLElement {
       .tab-panel:focus-visible {
         outline: 2px solid var(--primary);
         outline-offset: -2px;
+      }
+
+      
+      /* High-Precision SVG Icons */
+      .tab-svg {
+        width: 16px;
+        height: 16px;
+        display: block;
+        flex-shrink: 0;
+        stroke: currentColor;
+        transition: transform 0.2s ease;
+      }
+      .tab-btn:hover .tab-svg {
+        transform: scale(1.1);
+      }
+      .tab-btn[aria-selected="true"] .tab-svg {
+        stroke: #047857;
+      }
+
+      .chip-svg {
+        width: 14px;
+        height: 14px;
+        display: block;
+        flex-shrink: 0;
+        stroke: currentColor;
+        transition: transform 0.2s ease;
+      }
+      .action-chip:hover .chip-svg {
+        transform: scale(1.1);
+      }
+
+      .mic-svg {
+        width: 19px;
+        height: 19px;
+        display: block;
+        stroke: currentColor;
+        transition: transform 0.2s ease, stroke 0.2s ease;
+      }
+      .btn-mic:hover .mic-svg {
+        stroke: #047857;
+        transform: scale(1.08);
+      }
+      .btn-mic.recording .mic-svg {
+        stroke: #ffffff;
+      }
+
+      .send-svg {
+        width: 17px;
+        height: 17px;
+        display: block;
+        stroke: #ffffff;
+        margin-left: 2px;
+        transition: transform 0.2s ease;
+      }
+      .btn-send:hover .send-svg {
+        transform: translate(1px, -1px);
       }
 
       /* Chat Log */
@@ -2585,7 +2641,10 @@ class MultilingualAssistant extends HTMLElement {
             aria-pressed="false"
             aria-label="${t.simpleBtn}"
           >
-            <span aria-hidden="true">🧠</span>
+            <svg class="chip-svg chip-svg-brain" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-5.04z"></path>
+              <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-5.04z"></path>
+            </svg>
             <span id="simple-text">${t.simpleBtn}</span>
           </button>
           <button 
@@ -2594,7 +2653,10 @@ class MultilingualAssistant extends HTMLElement {
             id="escalate-btn" 
             aria-label="${t.humanHelpBtn}"
           >
-            <span aria-hidden="true">🆘</span>
+            <svg class="chip-svg chip-svg-help" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+              <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+            </svg>
             <span id="escalate-text">${t.humanHelpBtn}</span>
           </button>
         </div>
@@ -2621,7 +2683,11 @@ class MultilingualAssistant extends HTMLElement {
             aria-controls="panel-tutor" 
             tabindex="0"
           >
-            📚 ${t.tutorTab}
+            <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+            <span id="tab-tutor-text">${t.tutorTab}</span>
           </button>
           <button 
             type="button" 
@@ -2632,7 +2698,11 @@ class MultilingualAssistant extends HTMLElement {
             aria-controls="panel-career" 
             tabindex="-1"
           >
-            💼 ${t.careerTab}
+            <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+            </svg>
+            <span id="tab-career-text">${t.careerTab}</span>
           </button>
         </div>
 
@@ -2764,7 +2834,12 @@ class MultilingualAssistant extends HTMLElement {
             aria-label="${t.micLabel}" 
             aria-pressed="false"
           >
-            🎙️
+            <svg class="mic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+              <line x1="12" y1="19" x2="12" y2="23"></line>
+              <line x1="8" y1="23" x2="16" y2="23"></line>
+            </svg>
           </button>
           <input 
             type="text" 
@@ -2779,7 +2854,10 @@ class MultilingualAssistant extends HTMLElement {
             id="send-btn" 
             aria-label="${t.send}"
           >
-            <span class="icon-send">➤</span>
+            <svg class="send-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
           </button>
         </footer>
 
@@ -3380,8 +3458,10 @@ class MultilingualAssistant extends HTMLElement {
     this.shadowRoot.getElementById('btn-confirm-chatonly').textContent = t.chatHelpOnlyBtn;
     this.shadowRoot.getElementById('btn-cancel-escalate').textContent = t.cancelBtn;
 
-    this.shadowRoot.getElementById('tab-tutor').textContent = `📚 ${t.tutorTab}`;
-    this.shadowRoot.getElementById('tab-career').textContent = `💼 ${t.careerTab}`;
+    const tabTutorText = this.shadowRoot.getElementById('tab-tutor-text');
+    if (tabTutorText) tabTutorText.textContent = t.tutorTab;
+    const tabCareerText = this.shadowRoot.getElementById('tab-career-text');
+    if (tabCareerText) tabCareerText.textContent = t.careerTab;
 
     const input = this.shadowRoot.getElementById('user-input');
     input.placeholder = t.placeholder;
