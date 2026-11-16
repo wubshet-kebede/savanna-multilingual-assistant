@@ -113,11 +113,12 @@ def format_telegram_response(rag_result: dict, lang: str = "en") -> tuple[str, l
 
     return formatted_text, buttons
 
+
 # ====================================================================
 # Telegram Handlers (python-telegram-bot v20+)
 # ====================================================================
 try:
-    from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+    from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, BotCommand
     from telegram.constants import ParseMode, ChatAction
     from telegram.ext import (
         Application,
@@ -130,6 +131,18 @@ try:
     TELEGRAM_LIB_AVAILABLE = True
 except ImportError:
     TELEGRAM_LIB_AVAILABLE = False
+
+if TELEGRAM_LIB_AVAILABLE:
+    BOT_COMMANDS = [
+        BotCommand("start", "👋 Start tutoring & curriculum overview"),
+        BotCommand("lang", "🌐 Switch language (Amharic, Oromo, Tigrinya, Arabic...)"),
+        BotCommand("jobs", "💼 Browse verified inclusive jobs & accommodations"),
+        BotCommand("mentor", "🆘 Escalate to a live human mentor"),
+        BotCommand("simple", "♿ Toggle cognitive plain-language mode"),
+        BotCommand("help", "ℹ️ How vector grounding & citations work")
+    ]
+else:
+    BOT_COMMANDS = []
 
 
 def create_inline_keyboard(buttons_spec: list[list[dict]]) -> Optional["InlineKeyboardMarkup"]:
@@ -447,6 +460,33 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
 
+async def unknown_command_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not update.message or not update.message.text:
+        return
+    cmd = update.message.text.strip()
+    msg = (
+        f"❓ Unrecognized command: <code>{html.escape(cmd)}</code>\n\n"
+        "<b>Available Commands:</b>\n"
+        "• /start - Start tutoring & overview\n"
+        "• /lang - Switch language (Amharic, Oromo, Tigrinya, Arabic, English)\n"
+        "• /jobs - View inclusive jobs & accommodations\n"
+        "• /mentor - Alert a human coach\n"
+        "• /simple - Plain language mode (WCAG 3.1.5)\n"
+        "• /help - Grounding & citations guide\n\n"
+        "💡 <i>Tip: Tap the <b>Menu (☰)</b> button next to the input box!</i>"
+    )
+    buttons = [
+        [
+            {"text": "🌐 Choose Language", "callback_data": "action_lang"},
+            {"text": "💼 Inclusive Jobs", "callback_data": "action_jobs"}
+        ],
+        [
+            {"text": "🆘 Human Mentor", "callback_data": "action_mentor"}
+        ]
+    ]
+    await safe_reply(update.message, msg, reply_markup=create_inline_keyboard(buttons))
+
+
 def build_telegram_application(token: str) -> Optional["Application"]:
     if not TELEGRAM_LIB_AVAILABLE:
         print("[Telegram Bot] python-telegram-bot is not installed.", flush=True)
@@ -454,14 +494,15 @@ def build_telegram_application(token: str) -> Optional["Application"]:
 
     app = Application.builder().token(token).build()
 
-    app.add_handler(CommandHandler("start", start_handler))
-    app.add_handler(CommandHandler("help", help_handler))
-    app.add_handler(CommandHandler("jobs", jobs_handler))
-    app.add_handler(CommandHandler("mentor", mentor_handler))
-    app.add_handler(CommandHandler("lang", lang_handler))
-    app.add_handler(CommandHandler("simple", simple_mode_handler))
+    app.add_handler(CommandHandler(["start", "restart"], start_handler))
+    app.add_handler(CommandHandler(["help", "info", "faq"], help_handler))
+    app.add_handler(CommandHandler(["jobs", "job", "career", "careers"], jobs_handler))
+    app.add_handler(CommandHandler(["mentor", "coach", "human", "escalate"], mentor_handler))
+    app.add_handler(CommandHandler(["lang", "language", "languages", "lnag"], lang_handler))
+    app.add_handler(CommandHandler(["simple", "easy", "plain"], simple_mode_handler))
     app.add_handler(CallbackQueryHandler(callback_handler))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, message_handler))
+    app.add_handler(MessageHandler(filters.COMMAND, unknown_command_handler))
 
     return app
 
@@ -530,6 +571,11 @@ async def run_telegram_bot_service():
     if app:
         await app.initialize()
         await app.start()
+        try:
+            await app.bot.set_my_commands(BOT_COMMANDS)
+            print("[Telegram Bot] Registered interactive commands menu with Telegram.", flush=True)
+        except Exception as e:
+            print(f"[Telegram Bot] Notice: set_my_commands error: {e}", flush=True)
         await app.updater.start_polling(drop_pending_updates=True)
         print(f"[Telegram Bot] Polling started successfully for @Savanna_AI_Tutor_Bot!", flush=True)
         try:
