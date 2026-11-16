@@ -18,4 +18,10 @@ def init_db():
         conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
         conn.execute(text("ALTER TABLE IF EXISTS user_profiles ADD COLUMN IF NOT EXISTS auto_voice BOOLEAN DEFAULT FALSE"))
         conn.commit()
+
+    # Import models so Base.metadata knows about all tables
+    import app.modules.tutor.models  # noqa
+    import app.core.user_settings   # noqa
+    import app.modules.channels.sms_models  # noqa
+
     Base.metadata.create_all(bind=engine)

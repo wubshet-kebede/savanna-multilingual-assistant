@@ -1,6 +1,6 @@
 import asyncio
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from app.core.config import settings
@@ -12,7 +12,7 @@ from app.modules.tutor.service import TutorService
 from app.modules.tutor import schemas as tutor_schemas
 from app.modules.career.router import router as career_router
 from app.modules.escalate.router import router as escalate_router
-from app.modules.channels.sms_handler import router as sms_router
+from app.modules.channels.sms_handler import router as sms_router, process_inbound_sms
 from app.modules.channels.telegram_router import router as telegram_router
 from app.modules.teacher.router import router as teacher_router
 
@@ -71,10 +71,25 @@ app.include_router(sms_router, prefix=settings.API_PREFIX)
 app.include_router(telegram_router, prefix=settings.API_PREFIX)
 app.include_router(teacher_router, prefix=settings.API_PREFIX)
 
-# 2. Root-Level Direct Bridges for Widget & Legacy Client Compatibility
+# 2. Root-Level Direct Bridges for Widget, SMS, & Legacy Client Compatibility
 @app.post("/tutor/chat", tags=["Widget Compatibility"])
 def root_tutor_chat(payload: tutor_schemas.TutorChatRequest, db: Session = Depends(get_db)):
     return TutorService.chat(db, payload)
+
+@app.post("/sms/inbound", tags=["Module 4: Low-Bandwidth SMS Route"])
+async def root_sms_inbound_post(request: Request, db: Session = Depends(get_db)):
+    """
+    Direct root bridge satisfying hackathon specification:
+    POST /sms/inbound receives a phone number and text message,
+    sends the question to the RAG system, limits the response to 160 characters,
+    and returns plain text.
+    """
+    return await process_inbound_sms(request, db)
+
+@app.get("/sms/inbound", tags=["Module 4: Low-Bandwidth SMS Route"])
+async def root_sms_inbound_get(request: Request, db: Session = Depends(get_db)):
+    """Diagnostic and telecom webhook verification for GET /sms/inbound."""
+    return await process_inbound_sms(request, db)
 
 @app.get("/")
 def root():

@@ -24,9 +24,9 @@ def translate_query_for_search(query: str, language: str = "en") -> str:
     if not query:
         return query
 
-    # If mostly ASCII, keep original query
+    # If English and mostly ASCII, keep original query
     ascii_chars = sum(1 for c in query if ord(c) < 128)
-    if ascii_chars / max(len(query), 1) > 0.8:
+    if language == "en" and (ascii_chars / max(len(query), 1) > 0.8):
         return query
 
     api_key = settings.GEMINI_API_KEY or os.getenv("GEMINI_API_KEY", "")
@@ -41,7 +41,7 @@ def translate_query_for_search(query: str, language: str = "en") -> str:
         )
         data = json.dumps({"contents": [{"parts": [{"text": prompt}]}]}).encode("utf-8")
         req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json"})
-        with urllib.request.urlopen(req, timeout=4) as response:
+        with urllib.request.urlopen(req, timeout=8) as response:
             res = json.loads(response.read().decode("utf-8"))
             translated = res["candidates"][0]["content"]["parts"][0]["text"].strip()
             print(f"[TutorService] Translated non-English query '{query[:30]}' -> '{translated}'")
