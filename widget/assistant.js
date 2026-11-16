@@ -3869,17 +3869,19 @@ class MultilingualAssistant extends HTMLElement {
         color: var(--primary);
       }
       .btn-msg-listen {
-        background: #f1f5f9;
-        border: 1px solid var(--border);
+        min-width: 24px;
+        min-height: 24px;
+        padding: 4px 8px;
         border-radius: 6px;
-        font-size: 11px;
-        padding: 2px 6px;
-        cursor: pointer;
-        color: var(--text-muted);
-        transition: all 0.15s ease;
         display: inline-flex;
         align-items: center;
         justify-content: center;
+        font-size: 12px;
+        background: #f1f5f9;
+        border: 1px solid var(--border);
+        cursor: pointer;
+        color: var(--text-muted);
+        transition: all 0.15s ease;
       }
       .btn-msg-listen:hover {
         background: var(--primary-light);
