@@ -5129,19 +5129,13 @@ class MultilingualAssistant extends HTMLElement {
             </div>
 
             <!-- Instant Starter Prompts -->
-            <div class="quick-prompts-bar" id="quick-prompts" role="group" aria-label="Suggested Prompts">
-              <button type="button" class="quick-prompt-btn" data-prompt="Will AI replace virtual assistants?">
-                <span>🤖 Will AI replace virtual assistants?</span>
-                <span class="quick-prompt-arrow" aria-hidden="true">↗</span>
-              </button>
-              <button type="button" class="quick-prompt-btn" data-prompt="What skills do clients value most?">
-                <span>🎯 What skills do clients value most?</span>
-                <span class="quick-prompt-arrow" aria-hidden="true">↗</span>
-              </button>
-              <button type="button" class="quick-prompt-btn" data-prompt="How do I request interview accommodations?">
-                <span>♿ How to request accommodations?</span>
-                <span class="quick-prompt-arrow" aria-hidden="true">↗</span>
-              </button>
+            <div class="quick-prompts-bar" id="quick-prompts" role="group" aria-label="${t.suggestedPrompts || 'Suggested Prompts'}">
+              ${(t.quickPrompts || []).map(p => `
+                <button type="button" class="quick-prompt-btn" data-prompt="${p.prompt}">
+                  <span>${p.text}</span>
+                  <span class="quick-prompt-arrow" aria-hidden="true">↗</span>
+                </button>
+              `).join('')}
             </div>
           </div>
         </section>
@@ -5603,8 +5597,13 @@ class MultilingualAssistant extends HTMLElement {
       });
     }
 
-    // Quick Starter Prompts (WCAG 3.1.2 Dynamic Localization)
-    this.updateQuickPrompts(this.currentLang);
+    // Quick Starter Prompts Event Handlers
+    this.shadowRoot.querySelectorAll('#quick-prompts .quick-prompt-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const query = btn.getAttribute('data-prompt');
+        if (query) this.askQuestion(query);
+      });
+    });
 
     // Accommodations Modal Handlers
     const modalAccClose = this.shadowRoot.getElementById('modal-acc-close');
@@ -5851,8 +5850,26 @@ class MultilingualAssistant extends HTMLElement {
     const drawer = this.shadowRoot.getElementById('drawer');
     if (!drawer) return;
 
-    // Dynamically update localized starter prompt buttons
-    this.updateQuickPrompts(lang);
+    // Dynamically update localized starter prompt buttons (WCAG 3.1.2)
+    const quickPromptsBar = this.shadowRoot.getElementById('quick-prompts');
+    if (quickPromptsBar) {
+      quickPromptsBar.setAttribute('aria-label', t.suggestedPrompts || 'Suggested Prompts');
+      if (t.direction) quickPromptsBar.setAttribute('dir', t.direction);
+      const isNonEn = lang !== 'en';
+      const isAscii = (str) => /^[\x20-\x7E\s\d\p{P}]+$/u.test(str || '');
+      quickPromptsBar.innerHTML = (t.quickPrompts || []).map(p => `
+        <button type="button" class="quick-prompt-btn" data-prompt="${p.prompt}">
+          <span ${isNonEn && isAscii(p.text) ? 'lang="en"' : ''}>${p.text}</span>
+          <span class="quick-prompt-arrow" aria-hidden="true">↗</span>
+        </button>
+      `).join('');
+      quickPromptsBar.querySelectorAll('.quick-prompt-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const query = btn.getAttribute('data-prompt');
+          if (query) this.askQuestion(query);
+        });
+      });
+    }
 
     // Dynamically update WCAG 3.1.2 Language of Parts and Direction
     drawer.setAttribute('dir', t.direction);
