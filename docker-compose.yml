@@ -31,6 +31,7 @@ services:
     volumes:
       - ./widget:/usr/share/nginx/html/widget:ro
       - ./html_course_files:/usr/share/nginx/html/html_course_files:ro
+      - ./assets:/usr/share/nginx/html/assets:ro
 
 # This missing block caused the error
 volumes:

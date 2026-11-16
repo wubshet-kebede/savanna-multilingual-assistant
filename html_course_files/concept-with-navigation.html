@@ -47,20 +47,101 @@
     <link rel="stylesheet" href="../assets/css/app.css" media="all" />
 
     <link rel="stylesheet" href="../assets/css/static-page.css" media="all" />
+    <style>
+      /* Layout & Content Viewport Accessibility */
+      #layout-bars {
+        padding-top: 135px !important;
+      }
+      #curriculum_navigation_content {
+        width: auto !important;
+        min-width: 0 !important;
+        flex: 1 1 0% !important;
+        max-width: 100% !important;
+      }
+      #curriculum_navigation_menu {
+        max-width: 100% !important;
+        width: 320px !important;
+      }
+      @media (max-width: 767.98px) {
+        #curriculum_navigation_menu {
+          width: 100% !important;
+        }
+      }
+      /* Modern, accessible card styles & typography */
+      .savanna-styles .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.25rem;
+        margin: 1.5rem 0;
+      }
+      .savanna-styles .feature-card {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 1.25rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+        border: 1px solid #e2e8f0;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+      }
+      .savanna-styles .feature-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      }
+      .savanna-styles .callout {
+        background: #f8fafc;
+        border-left: 4px solid #047857;
+        border-radius: 8px;
+        padding: 1.25rem;
+        margin: 1.5rem 0;
+      }
+      .savanna-styles h2 {
+        color: #0f172a;
+        font-size: 1.45rem;
+        font-weight: 700;
+        margin-top: 2.25rem;
+        margin-bottom: 0.75rem;
+      }
+      .savanna-styles a {
+        color: #1d4ed8 !important;
+        text-decoration: underline !important;
+      }
+      .savanna-styles a:hover, .savanna-styles a:focus-visible {
+        color: #1e40af !important;
+      }
+      .skip-link:focus {
+        position: fixed !important;
+        top: 10px !important;
+        left: 10px !important;
+        z-index: 999999 !important;
+        background: #047857 !important;
+        color: #ffffff !important;
+        padding: 8px 16px !important;
+        border-radius: 6px !important;
+        text-decoration: none !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *, ::before, ::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
   </head>
 
   <body class="signed_in env_development notranslate" translate="no" data-theme-suffix="_alx">
+    <a href="#curriculum_navigation_content" class="visually-hidden-focusable skip-link">Skip to main content</a>
     <!-- Google Tag Manager (noscript) -->
 
     <!-- End Google Tag Manager (noscript) -->
 
     <div data-react-class="header/Header" data-react-cache-id="header/Header-0">
-      <div class="header d-flex align-items-center position-fixed top-0 w-100" style="z-index: 1000">
+      <header class="header d-flex align-items-center position-fixed top-0 w-100" style="z-index: 1000">
         <div class="header-left align-items-center d-flex position-fixed px-2" style="z-index: 2">
-          <div class="hamburger mb-0 p-2 color-primary" style="cursor: pointer; font-size: 24px">
+          <div class="hamburger mb-0 p-2 color-primary" role="button" tabindex="0" aria-label="Toggle navigation sidebar" aria-expanded="true" style="cursor: pointer; font-size: 24px">
             <i class="fa-solid fa-fas fa-bars"></i>
           </div>
-          <a class="logo-container p-1" href="#" rel="noreferrer" target=""
+          <a class="logo-container p-1" href="#" rel="noreferrer" target="" aria-label="ALX Learning Platform Home"
             ><div
               class="logo mx-auto"
               style="background-image: url(&quot;../assets/img/holberton-logo-full-alx.png&quot;)"
@@ -68,11 +149,12 @@
           ></a>
         </div>
         <div class="header-right d-flex align-items-center flex-grow-1 justify-content-end pe-4" style="z-index: 1"><a href="/html_course_files/teacher-dashboard.html" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #0f4c81, #1e3a8a); color: white; padding: 7px 16px; border-radius: 9999px; font-size: 13px; font-weight: 700; box-shadow: 0 2px 6px rgba(15,76,129,0.3); border: 1px solid rgba(255,255,255,0.2); transition: all 0.2s ease;"><span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #34d399;"></span><span>👩‍🏫 Instructor Analytics</span></a></div>
-      </div>
-      <div
+      </header>
+      <nav
         class="sidebar navigation bg-white border-end position-fixed overflow-scroll bottom-0 start-0 expanded"
         id="sidebar"
         style="background-color: rgb(255, 255, 255); border-color: rgb(238, 238, 238)"
+        aria-label="Main Navigation"
       >
         <ul class="px-2">
           <li>
@@ -130,12 +212,12 @@
             style="background-color: rgb(255, 255, 255); border-color: rgb(238, 238, 238)"
           >
             <a href="#"
-              ><div class="image"><i aria-hidden="true" class="fa-solid fa-user"></i></div>
+              ><div class="icon"><i aria-hidden="true" class="fa-solid fa-user"></i></div>
               <div class="flex-grow-1 ps-3 overflow-hidden text-nowrap" style="display: block">My Profile</div></a
             >
           </li>
         </ul>
-      </div>
+      </nav>
     </div>
 
     <main class="content" id="content">
@@ -153,7 +235,9 @@
                 aria-expanded="false"
                 data-bs-auto-close="outside"
                 data-bs-toggle="dropdown"
-                type="button"
+                role="button"
+                tabindex="0"
+                aria-label="Switch curriculum: VA-1: VA Foundations & Professional Identity"
               >
                 <div class="curriculum-switcher-label d-flex flex-column">
                   <span class="fs-sm fw-medium text-muted text-truncate"> ALX program </span>
@@ -544,9 +628,9 @@
             <div class="gap formatted-content container-xl ms-0">
               <span>
                 <div class="savanna-styles">
-                  <p><img src="../assets/img/VA-Content-Banner.png" alt="VA-Content-Banner" loading="lazy" /></p>
+                  <p><img src="../assets/img/VA-Content-Banner.png" alt="Virtual Assistant Course: The Future of the VA Industry" class="img-fluid rounded" loading="lazy" /></p>
                   <figure>
-                    <img src="../assets/img/1lhlc1k4XRfVWDFTjczeaSoRpKlMY3dAX.png" alt="Evon afro" loading="lazy" />
+                    <img src="../assets/img/1lhlc1k4XRfVWDFTjczeaSoRpKlMY3dAX.png" alt="Virtual Assistant professional collaborating remotely" class="img-fluid rounded" loading="lazy" />
                   </figure>
                   <br />
                   <mark>The Virtual Assistant profession is not shrinking. It is evolving.</mark> As businesses become
@@ -554,9 +638,9 @@
                   support professionals continues to grow. At the same time, new technologies like Artificial
                   Intelligence are changing <span class="bold-accent">how</span> support work gets done and
                   <span class="bold-accent">what clients will value most</span> in the years ahead.
-                  <div class="callout" style="margin: 16px 0px">
+                  <div class="callout" style="margin: 20px 0px">
                     <div class="callout-content">
-                      <h><p>⚠️ An Important Distinction</p></h><br />
+                      <h3 class="h5" style="color: #047857; margin-top: 0; font-weight: 700;">⚠️ An Important Distinction</h3>
                       Virtual Assistant can mean two different things. In some reports, a “virtual assistant” refers to
                       <span class="bold-accent">AI software assistants</span> such as chatbots, voice assistants, and
                       digital agents. In other contexts, it refers to
@@ -565,101 +649,39 @@
                     </div>
                   </div>
                   <hr />
-                  <h4>
-                    <a
-                      href="#"
-                      aria-hidden="true"
-                      class="anchor"
-                      id="what-is-shaping-the-future-of-va-work"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      title=""
-                    ></a
-                    >What is Shaping the Future of VA Work?
-                  </h4>
-                  <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px">
-                    <div style="border: 2px solid rgb(106, 169, 255); border-radius: 10px; padding: 16px">
-                      <h5 style="margin-top: 0px">
-                        <ol>
-                          <li>More remote-first businesses</li>
-                        </ol>
-                      </h5>
-                      <p>
-                        Companies are now more comfortable building distributed teams, hiring remotely, and working
-                        across locations and time zones. That makes remote support roles more normal and more scalable.
-                      </p>
+                  <h2>
+                    <a class="anchor" id="what-is-shaping-the-future-of-va-work" tabindex="-1" aria-hidden="true"></a>What is Shaping the Future of VA Work?
+                  </h2>
+                  <div class="feature-grid">
+                    <div class="feature-card" style="border-top: 4px solid #3b82f6;">
+                      <h3 class="h5 mt-0" style="color: #1d4ed8; font-weight: 700;">1. More remote-first businesses</h3>
+                      <p>Companies are now more comfortable building distributed teams, hiring remotely, and working across locations and time zones. That makes remote support roles more normal and more scalable.</p>
                     </div>
-                    <div style="border: 2px solid rgb(102, 194, 165); border-radius: 10px; padding: 16px">
-                      <h5 style="margin-top: 0px">
-                        <ol start="2">
-                          <li>Growing demand for flexibility</li>
-                        </ol>
-                      </h5>
-                      <p>
-                        Many businesses do not want to hire full-time, in-office staff for every task. They increasingly
-                        value support that is flexible, efficient, and easy to scale up or down.
-                      </p>
+                    <div class="feature-card" style="border-top: 4px solid #10b981;">
+                      <h3 class="h5 mt-0" style="color: #047857; font-weight: 700;">2. Growing demand for flexibility</h3>
+                      <p>Many businesses do not want to hire full-time, in-office staff for every task. They increasingly value support that is flexible, efficient, and easy to scale up or down.</p>
                     </div>
-                    <div style="border: 2px solid rgb(246, 178, 107); border-radius: 10px; padding: 16px">
-                      <h5 style="margin-top: 0px">
-                        <ol start="3">
-                          <li>More digital operations</li>
-                        </ol>
-                      </h5>
-                      <p>
-                        As businesses move more of their work online, they need people who can manage digital tools,
-                        communication systems, content workflows, and online coordination smoothly.
-                      </p>
+                    <div class="feature-card" style="border-top: 4px solid #f59e0b;">
+                      <h3 class="h5 mt-0" style="color: #b45309; font-weight: 700;">3. More digital operations</h3>
+                      <p>As businesses move more of their work online, they need people who can manage digital tools, communication systems, content workflows, and online coordination smoothly.</p>
                     </div>
-                    <div style="border: 2px solid rgb(197, 138, 249); border-radius: 10px; padding: 16px">
-                      <h5 style="margin-top: 0px">
-                        <ol start="4">
-                          <li>Rising specialization</li>
-                        </ol>
-                      </h5>
-                      <p>
-                        General support will still matter, but more clients are looking for VAs with niche strengths in
-                        areas like customer support, e-commerce, project coordination, social media, tech tools, and
-                        operations.
-                      </p>
+                    <div class="feature-card" style="border-top: 4px solid #8b5cf6;">
+                      <h3 class="h5 mt-0" style="color: #6d28d9; font-weight: 700;">4. Rising specialization</h3>
+                      <p>General support will still matter, but more clients are looking for VAs with niche strengths in areas like customer support, e-commerce, project coordination, social media, tech tools, and operations.</p>
                     </div>
-                    <div style="border: 2px solid rgb(242, 139, 130); border-radius: 10px; padding: 16px">
-                      <h5 style="margin-top: 0px">
-                        <ol start="5">
-                          <li>AI-powered productivity</li>
-                        </ol>
-                      </h5>
-                      <p>
-                        Artificial Intelligence is making it easier to draft, summarize, organize, research, schedule,
-                        and automate routine tasks. This will not remove the need for human VAs, but it will change what
-                        strong VA work looks like.
-                      </p>
+                    <div class="feature-card" style="border-top: 4px solid #ef4444;">
+                      <h3 class="h5 mt-0" style="color: #b91c1c; font-weight: 700;">5. AI-powered productivity</h3>
+                      <p>Artificial Intelligence is making it easier to draft, summarize, organize, research, schedule, and automate routine tasks. This will not remove the need for human VAs, but it will change what strong VA work looks like.</p>
                     </div>
-                    <div style="border: 2px solid rgb(124, 199, 201); border-radius: 10px; padding: 16px">
-                      <h5 style="margin-top: 0px">
-                        <ol start="6">
-                          <li>Greater value placed on human skills</li>
-                        </ol>
-                      </h5>
-                      <p>
-                        As automation handles more routine work, qualities like judgment, reliability, communication,
-                        empathy, problem-solving, and client care become even more valuable.
-                      </p>
+                    <div class="feature-card" style="border-top: 4px solid #06b6d4;">
+                      <h3 class="h5 mt-0" style="color: #0e7490; font-weight: 700;">6. Greater value placed on human skills</h3>
+                      <p>As automation handles more routine work, qualities like judgment, reliability, communication, empathy, problem-solving, and client care become even more valuable.</p>
                     </div>
                   </div>
                   <hr />
-                  <h4>
-                    <a
-                      href="#"
-                      aria-hidden="true"
-                      class="anchor"
-                      id="artificial-intelligence-and-the-future-of-va-work"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      title=""
-                    ></a
-                    >Artificial Intelligence and the Future of VA Work
-                  </h4>
+                  <h2>
+                    <a class="anchor" id="artificial-intelligence-and-the-future-of-va-work" tabindex="-1" aria-hidden="true"></a>Artificial Intelligence and the Future of VA Work
+                  </h2>
                   <p>
                     Artificial Intelligence is one of the most important forces shaping the future of the Virtual
                     Assistant profession. Many modern workplaces already use AI tools to help draft, summarize,
@@ -672,18 +694,11 @@
                       >how to use AI tools effectively to improve productivity and quality of work.</span
                     >
                   </p>
-                  <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px">
-                    <div
-                      style="
-                        background-color: rgb(243, 240, 255);
-                        border-left: 6px solid rgb(86, 72, 183);
-                        padding: 16px;
-                        border-radius: 8px;
-                      "
-                    >
-                      <p><strong>How AI tools can support Virtual Assistants</strong></p>
+                  <div class="feature-grid">
+                    <div style="background-color: #f5f3ff; border-left: 5px solid #6366f1; padding: 1.25rem; border-radius: 8px;">
+                      <h3 class="h5 mt-0" style="color: #4338ca; font-weight: 700;">How AI tools can support Virtual Assistants</h3>
                       <p>AI systems can assist with many routine or time-consuming tasks, including:</p>
-                      <ul class="custom-alx-list">
+                      <ul class="custom-alx-list mb-0">
                         <li>Drafting emails, notes, and first-pass documents</li>
                         <li>Summarizing meetings or long reports</li>
                         <li>Researching information quickly</li>
@@ -692,17 +707,10 @@
                         <li>Handling simple customer queries through chatbots</li>
                       </ul>
                     </div>
-                    <div
-                      style="
-                        background-color: rgb(238, 247, 255);
-                        border-left: 6px solid rgb(30, 136, 229);
-                        padding: 16px;
-                        border-radius: 8px;
-                      "
-                    >
-                      <p><strong>Where human Virtual Assistants still add the most value</strong></p>
+                    <div style="background-color: #f0f9ff; border-left: 5px solid #0284c7; padding: 1.25rem; border-radius: 8px;">
+                      <h3 class="h5 mt-0" style="color: #0369a1; font-weight: 700;">Where human Virtual Assistants still add the most value</h3>
                       <p>Even as AI tools improve, there are many areas where human VAs remain essential:</p>
-                      <ul class="custom-alx-list">
+                      <ul class="custom-alx-list mb-0">
                         <li>Managing client relationships with care and professionalism</li>
                         <li>Using judgment when priorities change or instructions are unclear</li>
                         <li>Communicating with empathy and emotional intelligence</li>
@@ -713,58 +721,31 @@
                     </div>
                   </div>
                   <hr />
-                  <h4>
-                    <a
-                      href="#"
-                      aria-hidden="true"
-                      class="anchor"
-                      id="what-clients-are-likely-to-value-more-and-more"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      title=""
-                    ></a
-                    >What Clients Are Likely to Value More and More
-                  </h4>
+                  <h2>
+                    <a class="anchor" id="what-clients-are-likely-to-value-more-and-more" tabindex="-1" aria-hidden="true"></a>What Clients Are Likely to Value More and More
+                  </h2>
                   <p>
                     As the profession evolves, the most valuable VAs will likely be those who combine
                     <span class="bold-accent">tool fluency</span> with <span class="bold-accent">human strength</span>.
                   </p>
-                  <div style="display: flex; gap: 18px; margin-top: 14px">
-                    <div style="flex: 1 1 0%; border: 2px solid rgb(106, 169, 255); border-radius: 10px; padding: 18px">
-                      <h5 style="margin-top: 0px"><p>AI fluency</p></h5>
-                      <p>
-                        Clients will increasingly value VAs who can use AI tools responsibly to save time, improve
-                        output quality, and streamline repetitive work.
-                      </p>
+                  <div class="feature-grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));">
+                    <div class="feature-card" style="border-top: 4px solid #3b82f6;">
+                      <h3 class="h5 mt-0" style="color: #1d4ed8; font-weight: 700;">AI Fluency</h3>
+                      <p>Clients will increasingly value VAs who can use AI tools responsibly to save time, improve output quality, and streamline repetitive work.</p>
                     </div>
-                    <div style="flex: 1 1 0%; border: 2px solid rgb(102, 194, 165); border-radius: 10px; padding: 18px">
-                      <h5 style="margin-top: 0px"><p>Specialized expertise</p></h5>
-                      <p>
-                        The future will likely reward VAs who go beyond general support and develop deeper skills in one
-                        or two service areas.
-                      </p>
+                    <div class="feature-card" style="border-top: 4px solid #10b981;">
+                      <h3 class="h5 mt-0" style="color: #047857; font-weight: 700;">Specialized Expertise</h3>
+                      <p>The future will likely reward VAs who go beyond general support and develop deeper skills in one or two service areas.</p>
                     </div>
-                    <div style="flex: 1 1 0%; border: 2px solid rgb(246, 178, 107); border-radius: 10px; padding: 18px">
-                      <h5 style="margin-top: 0px"><p>Excellent human service</p></h5>
-                      <p>
-                        Responsiveness, dependability, emotional intelligence, professionalism, and clear communication
-                        will remain major differentiators.
-                      </p>
+                    <div class="feature-card" style="border-top: 4px solid #f59e0b;">
+                      <h3 class="h5 mt-0" style="color: #b45309; font-weight: 700;">Excellent Human Service</h3>
+                      <p>Responsiveness, dependability, emotional intelligence, professionalism, and clear communication will remain major differentiators.</p>
                     </div>
                   </div>
                   <hr />
-                  <h4>
-                    <a
-                      href="#"
-                      aria-hidden="true"
-                      class="anchor"
-                      id="what-this-means-for-aspiring-virtual-assistants"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      title=""
-                    ></a
-                    >What This Means for Aspiring Virtual Assistants
-                  </h4>
+                  <h2>
+                    <a class="anchor" id="what-this-means-for-aspiring-virtual-assistants" tabindex="-1" aria-hidden="true"></a>What This Means for Aspiring Virtual Assistants
+                  </h2>
                   <p>
                     The future of this profession is encouraging, but it does call for growth. A strong future-ready VA
                     will likely need to:
@@ -776,9 +757,9 @@
                     <li>Develop a niche or service specialization over time</li>
                     <li>Work with adaptability, curiosity, and a problem-solving mindset</li>
                   </ul>
-                  <div class="callout" style="margin: 16px 0px">
+                  <div class="callout" style="margin: 20px 0px">
                     <div class="callout-content">
-                      <h><p>An encouraging truth</p></h><br />
+                      <h3 class="h5" style="color: #047857; margin-top: 0; font-weight: 700;">An Encouraging Truth</h3>
                       <p>
                         You do not need to master everything immediately. What matters is building a strong foundation,
                         staying teachable, and growing with the industry as it changes.
@@ -786,18 +767,9 @@
                     </div>
                   </div>
                   <hr />
-                  <h4>
-                    <a
-                      href="#"
-                      aria-hidden="true"
-                      class="anchor"
-                      id="so-is-the-future-of-va-promising"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      title=""
-                    ></a
-                    >So, is the Future of VA Promising?
-                  </h4>
+                  <h2>
+                    <a class="anchor" id="so-is-the-future-of-va-promising" tabindex="-1" aria-hidden="true"></a>So, is the Future of VA Promising?
+                  </h2>
                   <p>
                     Yes, but not in a passive way. The profession appears to be moving toward a future where Virtual
                     Assistants who are
@@ -810,18 +782,9 @@
                   </p>
                   <hr />
 
-                  <h4>
-                    <a
-                      href="#"
-                      aria-hidden="true"
-                      class="anchor"
-                      id="optional-reads-and-market-signals"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      title=""
-                    ></a
-                    >Optional Reads and Market Signals
-                  </h4>
+                  <h2>
+                    <a class="anchor" id="optional-reads-and-market-signals" tabindex="-1" aria-hidden="true"></a>Optional Reads and Market Signals
+                  </h2>
                   <p>
                     If you would like to explore the future of the VA industry further, start with these articles and
                     reports:
@@ -893,25 +856,16 @@
                     </li>
                   </ul>
                   <hr />
-                  <h4>
-                    <a
-                      href="#"
-                      aria-hidden="true"
-                      class="anchor"
-                      id="up-next"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      title=""
-                    ></a
-                    >Up Next
-                  </h4>
+                  <h2>
+                    <a class="anchor" id="up-next" tabindex="-1" aria-hidden="true"></a>Up Next
+                  </h2>
                   <p>
                     Now that you have explored where the VA industry is heading, the next question becomes personal:
                     <mark>Why might becoming a Virtual Assistant be the right path for you?</mark> In the next lesson,
                     you’ll explore the value of the role from a more personal perspective and reflect on why this career
                     path may be worth pursuing.
                   </p>
-                  <p><img src="../assets/img/VA-Content-Banner.png" alt="VA-Content-Banner" loading="lazy" /></p></div
+                  <p><img src="../assets/img/VA-Content-Banner.png" alt="Virtual Assistant Course Summary Banner" class="img-fluid rounded" loading="lazy" /></p></div
               ></span>
             </div>
 
@@ -944,7 +898,7 @@
         </div>
       </article>
 
-      <div class="copyright">Copyright © 2026 ALX, All rights reserved.</div>
+      <footer class="copyright">Copyright © 2026 ALX, All rights reserved.</footer>
     </main>
 
     <div
@@ -1013,7 +967,7 @@
                   >
                 </div>
               </div>
-              <h3 class="fw-bold mb-2">Congratulations, Amara!</h3>
+              <h3 class="fw-bold mb-2" id="curriculum-validation-congrats-label">Congratulations, Amara!</h3>
               <p class="text-muted mb-0">You earned a new badge for VA-1: VA Foundations &amp; Professional Identity</p>
             </div>
             <div class="modal-footer border-0 justify-content-center gap-2 pb-4">
@@ -1037,7 +991,7 @@
       <div class="modal-dialog modal-dialog-scrollable">
         <div class="modal-content">
           <div class="modal-header">
-            <h1 class="modal-title fs-5" id="markdown-guide-modal-label">Markdown guide</h1>
+            <h2 class="modal-title fs-5" id="markdown-guide-modal-label">Markdown guide</h2>
             <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
           </div>
           <div class="modal-body">
