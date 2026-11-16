@@ -86,6 +86,10 @@ async def root_career_jobs(partner_id: str = "savanna"):
 async def root_career_accommodations(req: career_schemas.AccommodationRequest):
     return CareerService.create_accommodation_request(req.job_id, req.applicant_name, req.accommodations)
 
+@app.post("/career/alerts/broadcast", tags=["Module 2: Career Gateway (Level 3)"])
+async def root_career_alerts_broadcast(job_id: str = "job_01"):
+    return CareerService.broadcast_job_alert(job_id)
+
 @app.post("/sms/inbound", tags=["Module 4: Low-Bandwidth SMS Route"])
 async def root_sms_inbound_post(request: Request, db: Session = Depends(get_db)):
     """

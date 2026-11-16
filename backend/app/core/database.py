@@ -25,3 +25,12 @@ def init_db():
     import app.modules.channels.sms_models  # noqa
 
     Base.metadata.create_all(bind=engine)
+
+    # Seed career knowledge for RAG answers about jobs & accommodations
+    try:
+        from app.modules.career.service import CareerService
+        db = SessionLocal()
+        CareerService.seed_career_knowledge(db)
+        db.close()
+    except Exception as e:
+        print(f"[InitDB] Career seed warning: {e}", flush=True)

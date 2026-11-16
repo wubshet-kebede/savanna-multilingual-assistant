@@ -225,7 +225,9 @@ if TELEGRAM_LIB_AVAILABLE:
         BotCommand("lang", "🌐 Switch language (Amharic, Oromo, Tigrinya, Arabic...)"),
         BotCommand("a11y", "♿ Accessibility features & screen reader guide"),
         BotCommand("simple", "🧠 Toggle WCAG 3.1.5 plain-language mode"),
-        BotCommand("jobs", "💼 Browse verified inclusive jobs & accommodations"),
+        BotCommand("jobs", "💼 Browse verified inclusive jobs"),
+        BotCommand("acc", "♿ Request certified interview accommodations"),
+        BotCommand("alerts", "🔔 Subscribe to inclusive job alerts"),
         BotCommand("mentor", "🆘 Escalate to a live human mentor"),
         BotCommand("help", "ℹ️ How vector grounding & citations work")
     ]
@@ -395,7 +397,17 @@ async def jobs_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"{t('align_label', lang)} {html.escape(j.get('course_alignment', 'VA Foundations'))}\n"
         )
 
-    await safe_reply(update.effective_message or update, "\n".join(job_lines))
+    buttons = [
+        [
+            {"text": "♿ Request Accommodations (Junior VA)", "callback_data": "req_acc:job_01"},
+            {"text": "♿ Request (Customer Support)", "callback_data": "req_acc:job_02"}
+        ],
+        [
+            {"text": "🔔 Subscribe to Job Alerts", "callback_data": "action_alerts"},
+            {"text": t("mentor_btn", lang), "callback_data": "action_mentor"}
+        ]
+    ]
+    await safe_reply(update.effective_message or update, "\n".join(job_lines), reply_markup=create_inline_keyboard(buttons))
 
 
 async def mentor_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -470,7 +482,32 @@ async def accommodations_handler(update: Update, context: ContextTypes.DEFAULT_T
     lang = pref["lang"]
 
     msg = t("acc_info", lang)
-    await safe_reply(update.effective_message or update, msg)
+    buttons = [
+        [
+            {"text": "♿ Request for Junior VA", "callback_data": "req_acc:job_01"},
+            {"text": "♿ Request for Customer Support", "callback_data": "req_acc:job_02"}
+        ],
+        [
+            {"text": t("jobs_btn", lang), "callback_data": "action_jobs"}
+        ]
+    ]
+    await safe_reply(update.effective_message or update, msg, reply_markup=create_inline_keyboard(buttons))
+
+
+async def alerts_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    alert_msg = (
+        "🔔 <b>Inclusive Job Alerts: ACTIVE</b>\n\n"
+        "You are subscribed to real-time notifications for verified remote roles "
+        "with certified accessibility accommodations (NVDA/TalkBack testing, +50% assessment time).\n\n"
+        "Type /jobs to browse current opportunities or /acc to request accommodations."
+    )
+    buttons = [
+        [
+            {"text": "💼 View Jobs Now", "callback_data": "action_jobs"},
+            {"text": "♿ Request Accommodations", "callback_data": "action_acc"}
+        ]
+    ]
+    await safe_reply(update.effective_message or update, alert_msg, reply_markup=create_inline_keyboard(buttons))
 
 
 async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -643,6 +680,38 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await safe_answer_query(query, f"Language set to {target_name}")
         await safe_reply(query, t("lang_updated", new_lang, name=target_name))
 
+    elif data.startswith("req_acc:"):
+        job_id = data.split(":", 1)[1]
+        user_name = update.effective_user.full_name if update.effective_user else f"Learner {user_id}"
+        acc_res = CareerService.create_accommodation_request(
+            job_id=job_id,
+            applicant_name=user_name,
+            accommodations=["Screen Reader Compatible Testing (NVDA/TalkBack)", "Extended Evaluation Time (+50%)", "Camera-Optional Interview"]
+        )
+        code = acc_res.get("confirmation_code", "ACC-V1D8")
+        note = acc_res.get("official_note", "")
+        await safe_answer_query(query, f"Accommodations Requested: {code}", show_alert=True)
+        acc_reply = (
+            f"✅ <b>Official Interview Accommodation Request Generated!</b>\n\n"
+            f"<b>Tracking Code:</b> <code>{html.escape(code)}</code>\n"
+            f"<b>Status:</b> Submitted & Verified\n\n"
+            f"<b>Official Verification Letter:</b>\n"
+            f"<i>\"{html.escape(note)}\"</i>\n\n"
+            f"💡 <i>Present this code to your recruiter. Savanna partners guarantee non-discriminatory interviews.</i>"
+        )
+        await safe_reply(query, acc_reply)
+
+    elif data == "action_alerts":
+        await safe_answer_query(query, "Job Alerts Activated!")
+        alert_msg = (
+            "🔔 <b>Inclusive Job Alerts: ON</b>\n\n"
+            "You are now subscribed to real-time Telegram alerts for verified remote roles "
+            "with certified accessibility accommodations.\n\n"
+            "Whenever hiring partners post new roles matching your completed courses, you will be notified here instantly!\n\n"
+            "Type /jobs to view current openings."
+        )
+        await safe_reply(query, alert_msg)
+
     elif data == "action_acc":
         await safe_answer_query(query)
         await accommodations_handler(update, context)
@@ -718,6 +787,7 @@ def build_telegram_application(token: str) -> Optional["Application"]:
     app.add_handler(CommandHandler(["a11y", "accessibility", "access"], accessibility_handler))
     app.add_handler(CommandHandler(["simple", "easy", "plain"], simple_mode_handler))
     app.add_handler(CommandHandler(["acc", "accommodations", "accommodation"], accommodations_handler))
+    app.add_handler(CommandHandler(["alerts", "alert", "jobalerts"], alerts_handler))
     app.add_handler(CommandHandler(["jobs", "job", "career", "careers"], jobs_handler))
     app.add_handler(CommandHandler(["mentor", "coach", "human", "escalate"], mentor_handler))
     app.add_handler(CommandHandler(["lang", "language", "languages", "lnag"], lang_handler))

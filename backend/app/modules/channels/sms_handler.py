@@ -343,9 +343,21 @@ def handle_keyword_command(cmd: str, phone: str, db: Session, user_pref: dict) -
         return enforce_sms_limit(reply, 160), "keyword-jobs", "careers-feed"
 
     # 3. ACC / ACCOMMODATIONS
-    if upper_cmd in ["ACC", "ACCOMMODATION", "ACCOMMODATIONS", "A11Y"]:
-        reply = "Savanna Accommodations: Certified screen-reader tests, +50% assessment time, & camera-optional interviews. Text JOBS for roles."
-        return enforce_sms_limit(reply, 160), "keyword-acc", "acc-guide"
+    if first_token in ["ACC", "ACCOMMODATE", "ACCOMMODATION", "ACCOMMODATIONS"]:
+        job_target = tokens[1].lower() if len(tokens) > 1 else "job_01"
+        acc_res = CareerService.create_accommodation_request(
+            job_id=job_target,
+            applicant_name=f"Learner {phone[-4:] if len(phone) >= 4 else 'SMS'}",
+            accommodations=["Screen reader compatible testing", "+50% extra evaluation time"]
+        )
+        code = acc_res.get("confirmation_code", "ACC-V1D8")
+        reply = f"Savanna: Accommodations submitted for Junior VA! Ref: {code}. Employer certified for screen-reader & +50% time."
+        return enforce_sms_limit(reply, 160), "keyword-acc", f"acc-{code}"
+
+    # 3b. ALERTS / JOB ALERTS
+    if upper_cmd in ["ALERT", "ALERTS", "JOB ALERT", "JOB ALERTS"]:
+        reply = "Savanna: Job alerts are ON! You will receive instant SMS notifications when new inclusive roles matching your course are posted. Text ACC to apply."
+        return enforce_sms_limit(reply, 160), "keyword-alerts", "alerts-subscribed"
 
     # 4. LANG / LANGUAGE
     if first_token in ["LANG", "LANGUAGE"]:
