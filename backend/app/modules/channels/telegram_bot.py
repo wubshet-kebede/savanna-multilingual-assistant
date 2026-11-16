@@ -49,21 +49,45 @@ def render_telegram_html(text: str) -> str:
     return escaped
 
 
-def generate_speech_audio(text: str, lang: str = "en") -> Optional[bytes]:
+def clean_speech_text(text: str) -> str:
     """
-    Generates an accessible MP3 voice audio buffer from answer text.
-    Strips raw code/anchors so screen readers and listeners hear natural spoken language.
+    Strips markdown formatting, asterisks (***, **, *), underscores, headers,
+    bullet symbols, and citation anchors so Google TTS speaks natural human language
+    without pronouncing punctuation characters out loud.
     """
     if not text:
-        return None
-    # Strip HTML tags
+        return ""
+    # 1. Strip HTML tags
     clean = re.sub(r'<[^>]+>', '', text)
-    # Strip technical metadata labels across all languages
+    # 2. Strip technical citation metadata across all languages
     clean = re.sub(r'📚.*', '', clean, flags=re.DOTALL)
     clean = re.sub(r'📌.*', '', clean)
     clean = re.sub(r'🔗.*', '', clean)
     clean = re.sub(r'⚡.*', '', clean)
-    clean = clean.strip()
+    clean = re.sub(r'🎓\s*Savanna AI Tutor', '', clean)
+    # 3. Strip markdown emphasis asterisks and underscores (e.g. ***Draft*** or **Bold**)
+    clean = re.sub(r'\*{1,3}', '', clean)
+    clean = re.sub(r'_{1,3}', '', clean)
+    # 4. Strip markdown headings (# Header -> Header)
+    clean = re.sub(r'(?m)^#{1,6}\s*', '', clean)
+    # 5. Strip bullet markers (* item, - item, • item -> item)
+    clean = re.sub(r'(?m)^[\s]*[\*\-\+•]\s*', '', clean)
+    # 6. Strip code backticks (`code` -> code)
+    clean = re.sub(r"`([^`]+)`", r"\1", clean)
+    # 7. Convert line breaks into natural speech pauses (. )
+    clean = re.sub(r"[\r\n]+", ". ", clean)
+    # 8. Collapse whitespace and redundant punctuation
+    clean = re.sub(r'\s{2,}', ' ', clean)
+    clean = re.sub(r'\.{2,}', '.', clean)
+    return clean.strip()
+
+
+def generate_speech_audio(text: str, lang: str = "en") -> Optional[bytes]:
+    """
+    Generates an accessible MP3 voice audio buffer from sanitized answer text.
+    Strips raw code/anchors/asterisks so listeners hear natural spoken language.
+    """
+    clean = clean_speech_text(text)
     if not clean:
         return None
 
