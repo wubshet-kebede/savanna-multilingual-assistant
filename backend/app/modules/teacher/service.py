@@ -150,6 +150,20 @@ class TeacherService:
         return {"status": "logged_anonymously", "stored_pii": False, "matched_topic": matched}
 
     @staticmethod
+    def record_escalation(course_id: str = "VA-1", topic: str = "Live Escalation", language: str = "en") -> dict:
+        _SEEDED_QUESTIONS[1]["human_escalations"] += 1
+        entry = {
+            "course_id": course_id,
+            "question": f"[HUMAN ESCALATION] Student requested live mentor assistance for: {topic}",
+            "topic": topic,
+            "language": language,
+            "channel": "web",
+            "is_escalation": True
+        }
+        _ANONYMOUS_LOGS.append(entry)
+        return {"status": "escalation_recorded", "total_escalations": sum(q["human_escalations"] for q in _SEEDED_QUESTIONS)}
+
+    @staticmethod
     def export_csv() -> str:
         output = io.StringIO()
         writer = csv.writer(output)
