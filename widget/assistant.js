@@ -4769,6 +4769,272 @@ class MultilingualAssistant extends HTMLElement {
         outline: 2px solid var(--primary);
       }
 
+      /* Accommodations Generator Modal Styling (WCAG 2.2 AA / CRPD Verified) */
+      .modal-card.acc-modal-card {
+        max-width: 440px;
+        max-height: 90vh;
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        border-radius: 18px;
+        box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25), 0 0 0 1px rgba(15, 23, 42, 0.08);
+        border-top: 5px solid var(--assistant-primary, #047857);
+      }
+      .acc-badge-crpd {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #047857;
+        background: #ecfdf5;
+        border: 1px solid #a7f3d0;
+        border-radius: 9999px;
+        padding: 3px 9px;
+        margin-bottom: 6px;
+      }
+      .acc-modal-title {
+        font-size: 15px;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        line-height: 1.3;
+      }
+      .acc-job-banner {
+        background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+        border: 1.5px solid #86efac;
+        border-radius: 12px;
+        padding: 10px 12px;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .acc-job-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: #ffffff;
+        border: 1px solid #bbf7d0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        flex-shrink: 0;
+      }
+      .acc-job-info {
+        flex: 1;
+        min-width: 0;
+      }
+      .acc-job-company {
+        font-size: 12px;
+        font-weight: 700;
+        color: #14532d;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .acc-job-title {
+        font-size: 11px;
+        color: #166534;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .acc-job-badge {
+        font-size: 10px;
+        font-weight: 700;
+        color: #047857;
+        background: #ffffff;
+        border: 1px solid #86efac;
+        padding: 2px 7px;
+        border-radius: 9999px;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+      .acc-intro-text {
+        font-size: 12px;
+        color: #334155;
+        line-height: 1.5;
+        margin: 0 0 12px 0;
+      }
+      .acc-fieldset {
+        border: 1.5px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 12px;
+        margin: 0 0 14px 0;
+        background: #fafafa;
+      }
+      .acc-legend {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        color: #475569;
+        padding: 0 6px;
+      }
+      .acc-card-option {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 9px 11px;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 8px;
+        background: #ffffff;
+        margin-bottom: 7px;
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+      .acc-card-option:last-child {
+        margin-bottom: 0;
+      }
+      .acc-card-option:hover {
+        border-color: #cbd5e1;
+        background: #f8fafc;
+      }
+      .acc-card-option:has(input:checked) {
+        border-color: #86efac;
+        background: #f0fdf4;
+      }
+      .acc-checkbox {
+        width: 17px;
+        height: 17px;
+        margin-top: 2px;
+        accent-color: var(--assistant-primary, #047857);
+        cursor: pointer;
+        flex-shrink: 0;
+      }
+      .acc-checkbox:focus-visible {
+        outline: 2px solid var(--assistant-primary, #047857);
+        outline-offset: 2px;
+      }
+      .acc-card-details {
+        flex: 1;
+        min-width: 0;
+      }
+      .acc-card-title {
+        font-size: 12px;
+        font-weight: 700;
+        color: #1e293b;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        line-height: 1.35;
+      }
+      .acc-card-desc {
+        font-size: 11px;
+        color: #64748b;
+        line-height: 1.35;
+        margin-top: 2px;
+        display: block;
+      }
+      .acc-textarea {
+        width: 100%;
+        min-height: 52px;
+        font-size: 12px;
+        font-family: inherit;
+        line-height: 1.45;
+        padding: 8px 10px;
+        border: 1.5px solid #cbd5e1;
+        border-radius: 8px;
+        background: #ffffff;
+        color: #0f172a;
+        box-sizing: border-box;
+        resize: vertical;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+      .acc-textarea:focus {
+        outline: none;
+        border-color: var(--assistant-primary, #047857);
+        box-shadow: 0 0 0 3px rgba(4, 120, 87, 0.15);
+      }
+      .acc-preview-box {
+        background: #ffffff;
+        border: 1.5px solid #cbd5e1;
+        border-radius: 8px;
+        padding: 10px 12px;
+        font-size: 11px;
+        line-height: 1.55;
+        white-space: pre-wrap;
+        word-break: break-word;
+        max-height: 110px;
+        overflow-y: auto;
+        color: #0f172a;
+        margin: 0;
+        font-family: inherit;
+        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
+      }
+      .acc-preview-box:focus-visible {
+        outline: 2px solid var(--assistant-primary, #047857);
+        outline-offset: 2px;
+      }
+      .acc-actions-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+        border-top: 1px solid var(--border);
+        padding-top: 12px;
+        margin-top: 8px;
+      }
+      .btn-acc-copy {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 14px;
+        font-size: 11.5px;
+        font-weight: 600;
+        border-radius: 8px;
+        background: #f8fafc;
+        border: 1.5px solid #cbd5e1;
+        color: #334155;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        font-family: inherit;
+      }
+      .btn-acc-copy:hover {
+        background: #f1f5f9;
+        border-color: #94a3b8;
+        color: #0f172a;
+      }
+      .btn-acc-copy:focus-visible {
+        outline: 2px solid var(--assistant-primary, #047857);
+        outline-offset: 2px;
+      }
+      .btn-acc-submit {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 18px;
+        font-size: 12px;
+        font-weight: 700;
+        border-radius: 8px;
+        background: var(--assistant-primary, #047857);
+        color: #ffffff;
+        border: none;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        box-shadow: 0 2px 4px rgba(4, 120, 87, 0.25);
+        font-family: inherit;
+      }
+      .btn-acc-submit:hover {
+        filter: brightness(1.08);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(4, 120, 87, 0.3);
+      }
+      .btn-acc-submit:active {
+        transform: translateY(0);
+      }
+      .btn-acc-submit:focus-visible {
+        outline: 2px solid var(--assistant-primary, #047857);
+        outline-offset: 2px;
+      }
+
       /* Responsive Rules Across All Devices (Mobile Bottom-Sheet & Reflow) */
       @media screen and (max-width: 480px) {
         :host {
@@ -5320,92 +5586,144 @@ class MultilingualAssistant extends HTMLElement {
           role="dialog" 
           aria-modal="true" 
           aria-labelledby="modal-acc-title" 
+          aria-describedby="modal-acc-intro"
           style="display:none;"
         >
-          <div class="modal-card" style="max-width:370px; max-height:86vh; display:flex; flex-direction:column;">
-            <div class="modal-header">
-              <strong id="modal-acc-title" style="font-size:13px; color:#1d4ed8;">♿ ${t.accModalTitle}</strong>
-              <button type="button" class="modal-close-btn" id="modal-acc-close" aria-label="${t.closeTitle}">✕</button>
+          <div class="modal-card acc-modal-card">
+            <div class="modal-header" style="align-items:flex-start; margin-bottom:10px;">
+              <div>
+                <span class="acc-badge-crpd">
+                  <span aria-hidden="true">🛡️</span> Verified Inclusive Hiring Standard
+                </span>
+                <h3 class="acc-modal-title" id="modal-acc-title">
+                  <span aria-hidden="true">♿</span> <span>${t.accModalTitle}</span>
+                </h3>
+              </div>
+              <button 
+                type="button" 
+                class="modal-close-btn" 
+                id="modal-acc-close" 
+                aria-label="${t.closeTitle}"
+              >
+                ✕
+              </button>
             </div>
             
             <div style="overflow-y:auto; padding-right:4px; flex:1;">
-              <div id="acc-job-summary" style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:6px; padding:8px 10px; margin-bottom:10px; font-size:11px; color:#166534;">
-                <!-- Populated dynamically: Title & Company -->
+              <div id="acc-job-summary" class="acc-job-banner">
+                <div class="acc-job-avatar" aria-hidden="true">🏢</div>
+                <div class="acc-job-info">
+                  <div class="acc-job-company">AfriRemote Solutions</div>
+                  <div class="acc-job-title">Junior Virtual Assistant (Remote)</div>
+                </div>
+                <div class="acc-job-badge">✓ Guaranteed</div>
               </div>
 
-              <p id="modal-acc-intro" style="font-size:11px; color:#4b5563; margin:0 0 10px 0; line-height:1.4;">
+              <p id="modal-acc-intro" class="acc-intro-text">
                 ${t.accModalIntro}
               </p>
 
               <!-- Checkbox Options Fieldset -->
-              <fieldset style="border:1px solid var(--border); border-radius:8px; padding:10px; margin:0 0 10px 0; font-size:12px;">
-                <legend style="font-size:11px; font-weight:700; color:var(--text); padding:0 4px;">Accommodation Options</legend>
+              <fieldset class="acc-fieldset">
+                <legend class="acc-legend">Accommodation Options</legend>
                 
-                <label style="display:flex; align-items:flex-start; gap:8px; margin-bottom:8px; cursor:pointer;">
-                  <input type="checkbox" id="chk-sr" aria-labelledby="label-chk-sr" checked style="margin-top:2px;" />
-                  <span id="label-chk-sr" style="font-size:11px; color:#1f2937;">${t.optScreenReader}</span>
+                <label class="acc-card-option" for="chk-sr">
+                  <input type="checkbox" id="chk-sr" checked class="acc-checkbox" />
+                  <div class="acc-card-details">
+                    <span class="acc-card-title">
+                      <span aria-hidden="true">🖥️</span>
+                      <span id="label-chk-sr">${t.optScreenReader}</span>
+                    </span>
+                    <span class="acc-card-desc">NVDA, JAWS, VoiceOver keyboard accessibility and text alternatives.</span>
+                  </div>
                 </label>
 
-                <label style="display:flex; align-items:flex-start; gap:8px; margin-bottom:8px; cursor:pointer;">
-                  <input type="checkbox" id="chk-time" aria-labelledby="label-chk-time" checked style="margin-top:2px;" />
-                  <span id="label-chk-time" style="font-size:11px; color:#1f2937;">${t.optExtendedTime}</span>
+                <label class="acc-card-option" for="chk-time">
+                  <input type="checkbox" id="chk-time" checked class="acc-checkbox" />
+                  <div class="acc-card-details">
+                    <span class="acc-card-title">
+                      <span aria-hidden="true">⏱️</span>
+                      <span id="label-chk-time">${t.optExtendedTime}</span>
+                    </span>
+                    <span class="acc-card-desc">+50% to +100% additional time on technical assessments and skill tasks.</span>
+                  </div>
                 </label>
 
-                <label style="display:flex; align-items:flex-start; gap:8px; margin-bottom:8px; cursor:pointer;">
-                  <input type="checkbox" id="chk-camera" aria-labelledby="label-chk-camera" style="margin-top:2px;" />
-                  <span id="label-chk-camera" style="font-size:11px; color:#1f2937;">${t.optCameraOptional}</span>
+                <label class="acc-card-option" for="chk-camera">
+                  <input type="checkbox" id="chk-camera" class="acc-checkbox" />
+                  <div class="acc-card-details">
+                    <span class="acc-card-title">
+                      <span aria-hidden="true">📷</span>
+                      <span id="label-chk-camera">${t.optCameraOptional}</span>
+                    </span>
+                    <span class="acc-card-desc">Option to keep camera off for sensory comfort or neurodivergent focus.</span>
+                  </div>
                 </label>
 
-                <label style="display:flex; align-items:flex-start; gap:8px; margin-bottom:8px; cursor:pointer;">
-                  <input type="checkbox" id="chk-advance" aria-labelledby="label-chk-advance" style="margin-top:2px;" />
-                  <span id="label-chk-advance" style="font-size:11px; color:#1f2937;">${t.optAdvanceNotice}</span>
+                <label class="acc-card-option" for="chk-advance">
+                  <input type="checkbox" id="chk-advance" class="acc-checkbox" />
+                  <div class="acc-card-details">
+                    <span class="acc-card-title">
+                      <span aria-hidden="true">📅</span>
+                      <span id="label-chk-advance">${t.optAdvanceNotice}</span>
+                    </span>
+                    <span class="acc-card-desc">Interview questions and evaluation rubric provided 24-48 hours in advance.</span>
+                  </div>
                 </label>
 
-                <label style="display:flex; align-items:flex-start; gap:8px; cursor:pointer;">
-                  <input type="checkbox" id="chk-chat" aria-labelledby="label-chk-chat" style="margin-top:2px;" />
-                  <span id="label-chk-chat" style="font-size:11px; color:#1f2937;">${t.optChatInterview}</span>
+                <label class="acc-card-option" for="chk-chat">
+                  <input type="checkbox" id="chk-chat" class="acc-checkbox" />
+                  <div class="acc-card-details">
+                    <span class="acc-card-title">
+                      <span aria-hidden="true">💬</span>
+                      <span id="label-chk-chat">${t.optChatInterview}</span>
+                    </span>
+                    <span class="acc-card-desc">Real-time messaging, asynchronous text exchange, or assistive chat format.</span>
+                  </div>
                 </label>
               </fieldset>
 
               <!-- Custom Notes Input -->
-              <div style="margin-bottom:10px;">
-                <label for="acc-custom-notes" id="label-custom-notes" style="display:block; font-size:11px; font-weight:600; color:#374151; margin-bottom:4px;">
-                  ${t.customNotesLabel}
+              <div style="margin-bottom:12px;">
+                <label for="acc-custom-notes" id="label-custom-notes" style="display:flex; justify-content:space-between; font-size:11px; font-weight:700; color:#334155; margin-bottom:5px;">
+                  <span>${t.customNotesLabel}</span>
+                  <span style="font-weight:400; color:#64748b;">(Optional)</span>
                 </label>
                 <textarea 
                   id="acc-custom-notes" 
-                  class="text-input" 
-                  style="width:100%; height:44px; font-size:11px; box-sizing:border-box; resize:none;" 
+                  class="acc-textarea" 
                   placeholder="${t.customNotesPlaceholder}"
                 ></textarea>
               </div>
 
               <!-- Live Letter Preview -->
               <div style="margin-bottom:6px;">
-                <label style="display:block; font-size:11px; font-weight:700; color:#1f2937; margin-bottom:4px;" id="label-letter-title">
-                  ${t.letterPreviewTitle}
-                </label>
-                <pre id="acc-letter-preview" style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:8px 10px; font-size:10px; line-height:1.45; white-space:pre-wrap; word-break:break-word; max-height:95px; overflow-y:auto; color:#0f172a; margin:0; font-family:inherit;"></pre>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+                  <label style="display:flex; align-items:center; gap:5px; font-size:11px; font-weight:700; color:#334155; margin:0;" id="label-letter-title">
+                    <span aria-hidden="true">📄</span> <span>${t.letterPreviewTitle}</span>
+                  </label>
+                  <span style="font-size:10px; font-weight:700; color:#047857; background:#ecfdf5; border:1px solid #a7f3d0; border-radius:9999px; padding:1px 6px;">Live Draft</span>
+                </div>
+                <pre id="acc-letter-preview" class="acc-preview-box" tabindex="0" role="region" aria-label="Generated accommodation request letter preview"></pre>
               </div>
             </div>
 
             <!-- Modal Action Buttons -->
-            <div style="display:flex; justify-content:flex-end; gap:6px; border-top:1px solid var(--border); padding-top:10px; margin-top:6px;">
+            <div class="acc-actions-bar">
               <button 
                 type="button" 
-                class="action-chip" 
+                class="btn-acc-copy" 
                 id="btn-copy-letter" 
-                style="padding:6px 10px; font-size:11px;"
+                aria-label="${t.copyLetterBtn}"
               >
-                ${t.copyLetterBtn}
+                <span aria-hidden="true">📋</span> <span>${t.copyLetterBtn}</span>
               </button>
               <button 
                 type="button" 
-                class="action-chip" 
+                class="btn-acc-submit" 
                 id="btn-submit-acc" 
-                style="padding:6px 12px; font-size:11px; background:#1d4ed8; color:#ffffff; border:none;"
               >
-                ${t.submitAccBtn}
+                <span aria-hidden="true">✨</span> <span>${t.submitAccBtn}</span>
               </button>
             </div>
           </div>
@@ -6908,7 +7226,16 @@ class MultilingualAssistant extends HTMLElement {
     const title = job.titles?.[this.currentLang] || job.title;
     const t = LOCALIZED_UI[this.currentLang] || LOCALIZED_UI['en'];
 
-    summary.innerHTML = `<strong>🏢 ${job.company}</strong> · <span>${title}</span> (${job.location})`;
+    if (summary) {
+      summary.innerHTML = `
+        <div class="acc-job-avatar" aria-hidden="true">🏢</div>
+        <div class="acc-job-info">
+          <div class="acc-job-company">${job.company}</div>
+          <div class="acc-job-title">${title} <span style="font-weight:400; color:#15803d;">(${job.location})</span></div>
+        </div>
+        <div class="acc-job-badge">✓ Guaranteed</div>
+      `;
+    }
     this.updateAccLetterPreview();
 
     modal.style.display = 'flex';
@@ -7010,10 +7337,10 @@ class MultilingualAssistant extends HTMLElement {
 
     navigator.clipboard.writeText(text).then(() => {
       this.playChime('citation');
-      btn.textContent = `✅ ${t.letterCopied}`;
+      btn.innerHTML = `<span aria-hidden="true">✅</span> <span>${t.letterCopied}</span>`;
       this.announce(t.letterCopied);
       setTimeout(() => {
-        btn.textContent = t.copyLetterBtn;
+        btn.innerHTML = `<span aria-hidden="true">📋</span> <span>${t.copyLetterBtn}</span>`;
       }, 2000);
     });
   }
