@@ -3100,7 +3100,7 @@ class MultilingualAssistant extends HTMLElement {
     // If text to announce consists purely of ASCII Latin characters while in non-English mode,
     // dynamically enforce lang="en" and dir="ltr" so non-English screen reader synthesizers
     // (such as Amharic Ge'ez or Arabic voices) do not mangle English pronunciation.
-    const isPureEnglish = /^[ -\s\d\p{P}]+$/u.test(clean);
+    const isPureEnglish = /^[\x20-\x7E\s]+$/.test(clean) && /[a-zA-Z]/.test(clean);
     const targetLang = (lang !== 'en' && isPureEnglish) ? 'en' : lang;
     const targetDir = (LOCALIZED_UI[targetLang] || {}).direction || 'ltr';
 
