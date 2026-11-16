@@ -1,6 +1,32 @@
 # 🌐 Universal Multilingual Assistant & Live Help Platform
 > **An inclusive educational assistant, career gateway, and educator intelligence engine built for learners who think in Amharic, Afaan Oromo, Tigrinya, Somali, or Arabic, or who are new to computers.**
 
+> ### 🏆 Live Hackathon Evaluation Links (Zero-Setup Cloud Demo)
+> The entire platform is deployed live in production on Render! Judges and reviewers can test all student, educator, and developer features immediately in their browser without installing Docker or local dependencies:
+>
+> * 🎓 **Student Interactive Course & Multilingual AI Tutor (Client-Side Experience):**  
+>   [https://savanna-multilingual-assistant.onrender.com/html_course_files/concept-with-navigation.html](https://savanna-multilingual-assistant.onrender.com/html_course_files/concept-with-navigation.html)  
+>   *(Test: Floating AI assistant, Amharic/English answers, voice input, click-to-highlight citations, Plain-Language Simple Mode, screen sharing escalation, and Interview Accommodation letter generator)*
+>
+> * 👩‍🏫 **Educator Intelligence & Curriculum Confusion Dashboard:**  
+>   [https://savanna-multilingual-assistant.onrender.com/html_course_files/teacher-dashboard.html](https://savanna-multilingual-assistant.onrender.com/html_course_files/teacher-dashboard.html)  
+>   *(Test: Real-time telemetry, topic confusion heatmaps, instant Amharic/Oromo UI translation, live human escalation counter, and 1-click RFC-4180 CSV report export)*
+>
+> * ⚡ **Interactive Swagger REST API Documentation (OpenAPI 3.1):**  
+>   [https://savanna-multilingual-assistant.onrender.com/docs](https://savanna-multilingual-assistant.onrender.com/docs)  
+>   *(Test: Interactive execution of all `/api/v1/tutor`, `/api/v1/career`, `/api/v1/teacher`, and `/sms` endpoints)*
+>
+> * 📖 **Alternative ReDoc API Specification:**  
+>   [https://savanna-multilingual-assistant.onrender.com/redoc](https://savanna-multilingual-assistant.onrender.com/redoc)
+>
+> * 🧩 **Standalone Drop-In Web Component Sandbox (Level 1 Integration):**  
+>   [https://savanna-multilingual-assistant.onrender.com/widget/test.html](https://savanna-multilingual-assistant.onrender.com/widget/test.html)  
+>   *(Test: Verifying `<multilingual-assistant>` drop-in web component in an isolated host environment)*
+>
+> * 📱 **Live 2G SMS Inbound Webhook Endpoint:**  
+>   `https://savanna-multilingual-assistant.onrender.com/sms/inbound`  
+>   *(Test: Live webhook for Africa's Talking / Twilio, or direct test via cURL with $\le 160$ char guarantees)*
+
 ---
 
 ## 🎯 The Real-World Mission
@@ -145,22 +171,22 @@ npx serve -l 8086 .
 
 ## 🌐 Application URL Directory
 
-Once running, access each portal in your web browser:
+You can access each portal either directly via our **live production deployment on Render** (zero installation needed) or on your **local development machine**:
 
-| Portal | Local URL | What to Test |
-| :--- | :--- | :--- |
-| **Student Web Experience** | **`http://localhost:8086/html_course_files/concept-with-navigation.html`** | Floating AI Assistant, voice input, click-to-highlight citations, Simple Mode toggle |
-| **Educator Intelligence Portal** | **`http://localhost:8086/html_course_files/teacher-dashboard.html`** | Real-time confusion heatmap, Amharic/Oromo UI language toggle, CSV report export |
-| **Interactive OpenAPI Documentation** | **`http://localhost:8000/docs`** | Live Swagger UI to execute and inspect every REST endpoint |
-| **Alternative ReDoc Specification** | **`http://localhost:8000/redoc`** | Clean API schemas and payload models |
-| **Web Component Isolated Sandbox** | **`http://localhost:8086/widget/test.html`** | Standalone testbed verifying `<multilingual-assistant>` drop-in tag |
+| Portal / Service | 🚀 Live Production URL (Render) | 💻 Local URL | What to Test |
+| :--- | :--- | :--- | :--- |
+| **Student Web Experience** | [Open Live Course & Tutor](https://savanna-multilingual-assistant.onrender.com/html_course_files/concept-with-navigation.html) | `http://localhost:8086/html_course_files/concept-with-navigation.html` | Floating AI Assistant, voice input, click-to-highlight citations, Simple Mode toggle, Accommodations generator |
+| **Educator Intelligence Portal** | [Open Live Teacher Dashboard](https://savanna-multilingual-assistant.onrender.com/html_course_files/teacher-dashboard.html) | `http://localhost:8086/html_course_files/teacher-dashboard.html` | Real-time confusion heatmap, Amharic/Oromo UI language toggle, CSV report export |
+| **Interactive OpenAPI Documentation** | [Open Live Swagger UI](https://savanna-multilingual-assistant.onrender.com/docs) | `http://localhost:8000/docs` | Live Swagger UI to execute and inspect every REST endpoint |
+| **Alternative ReDoc Specification** | [Open Live ReDoc](https://savanna-multilingual-assistant.onrender.com/redoc) | `http://localhost:8000/redoc` | Clean API schemas and payload models |
+| **Web Component Isolated Sandbox** | [Open Live Component Sandbox](https://savanna-multilingual-assistant.onrender.com/widget/test.html) | `http://localhost:8086/widget/test.html` | Standalone testbed verifying `<multilingual-assistant>` drop-in tag |
 
 ---
 
 ## 🧪 Step-by-Step Testing & Verification Guide
 
 ### Test 1: Grounded Multilingual Web Tutor (Voice & Text)
-1. Open **`http://localhost:8086/html_course_files/concept-with-navigation.html`**.
+1. Open the live course at **[https://savanna-multilingual-assistant.onrender.com/html_course_files/concept-with-navigation.html](https://savanna-multilingual-assistant.onrender.com/html_course_files/concept-with-navigation.html)** (or local `http://localhost:8086/html_course_files/concept-with-navigation.html`).
 2. Click the floating AI Assistant button at the bottom right.
 3. Ask a question in English or Amharic:
    * **English:** *"What is the main distinction between an AI assistant and a human Virtual Assistant?"*
@@ -180,8 +206,14 @@ Once running, access each portal in your web browser:
 ### Test 3: Production 2G Low-Bandwidth SMS Channel (`POST /sms/inbound`)
 Built for feature phones across Africa. Strictly limits responses to $\le 160$ characters and returns `text/plain`:
 
-* **Command Menu:**
+* **Command Menu (Live Render or Local):**
   ```bash
+  # Live Cloud Test:
+  curl -s -X POST https://savanna-multilingual-assistant.onrender.com/sms/inbound \
+    -H "Content-Type: application/json" \
+    -d '{"from_number": "+251911223344", "body": "JOBS"}'
+
+  # Local Test:
   curl -s -X POST http://localhost:8000/sms/inbound \
     -H "Content-Type: application/json" \
     -d '{"from_number": "+251911223344", "body": "JOBS"}'
@@ -191,7 +223,8 @@ Built for feature phones across Africa. Strictly limits responses to $\le 160$ c
 
 * **Career RAG Query with Citation:**
   ```bash
-  curl -s -X POST http://localhost:8000/sms/inbound \
+  # Live Cloud Test:
+  curl -s -X POST https://savanna-multilingual-assistant.onrender.com/sms/inbound \
     -H "Content-Type: application/json" \
     -d '{"from_number": "+251911223344", "body": "What jobs after VA-1?"}'
   ```
@@ -207,24 +240,26 @@ Built for feature phones across Africa. Strictly limits responses to $\le 160$ c
 
 ### Test 4: Inclusive Career Gateway (Level 3 & schema.org)
 1. **Explore Jobs:**  
-   `GET http://localhost:8000/api/v1/career/jobs?partner_id=savanna`  
+   * Live Cloud: `GET https://savanna-multilingual-assistant.onrender.com/api/v1/career/jobs?partner_id=savanna`  
+   * Local: `GET http://localhost:8000/api/v1/career/jobs?partner_id=savanna`  
    Returns structured jobs with `schema.org/JobPosting` JSON-LD metadata and certified accessibility features.
 2. **Request Interview Accommodations:**  
    Ask the tutor on Web or Telegram: *"How can I request interview accommodations?"*  
    Or submit an accommodation request directly:
    ```bash
-   curl -s -X POST http://localhost:8000/api/v1/career/accommodations \
+   # Live Cloud Test:
+   curl -s -X POST https://savanna-multilingual-assistant.onrender.com/api/v1/career/accommodations \
      -H "Content-Type: application/json" \
      -d '{"job_id": "job_01", "applicant_name": "Abebe B.", "accommodations": ["Screen reader compatible test", "Extended time"]}'
    ```
    *Returns a certified tracking letter with code `ACC-XXXXXX`.*
 3. **Broadcast Job Alerts:**  
-   `POST http://localhost:8000/api/v1/career/alerts/broadcast?job_id=job_01` dispatches alerts to Telegram and SMS subscribers.
+   `POST https://savanna-multilingual-assistant.onrender.com/api/v1/career/alerts/broadcast?job_id=job_01` (or local `http://localhost:8000/...`) dispatches alerts to Telegram and SMS subscribers.
 
 ---
 
 ### Test 5: Anonymized Educator Intelligence Dashboard (Bonus Feature)
-1. Open **`http://localhost:8086/html_course_files/teacher-dashboard.html`** (or click **`👩‍🏫 Instructor Analytics`** in the course header).
+1. Open the live dashboard at **[https://savanna-multilingual-assistant.onrender.com/html_course_files/teacher-dashboard.html](https://savanna-multilingual-assistant.onrender.com/html_course_files/teacher-dashboard.html)** (or local `http://localhost:8086/html_course_files/teacher-dashboard.html`, or click **`👩‍🏫 Instructor Analytics`** in the course header).
 2. **Live Dynamic Data:** Fetches telemetry from `GET /api/v1/teacher/insights`.
 3. **Multilingual Capabilities:** Click **`አማርኛ`** or **`Afaan Oromoo`** in the top-right header to watch the entire dashboard, questions, and pedagogical recommendations translate instantly into local languages.
 4. **Curriculum Confusion Heatmap:** Displays topic difficulty meters (e.g. *AI vs Human VA: 43%*, *Timezone Math: 24%*).
