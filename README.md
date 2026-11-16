@@ -1,115 +1,185 @@
 # 🌐 Universal Multilingual Assistant & Live Help Platform
-> **An inclusive, multi-channel educational assistant and career gateway designed for learners who think in Amharic, Afaan Oromo, Tigrinya, Somali, or Arabic, or who are new to computers.**
+> **An inclusive educational assistant, career gateway, and educator intelligence engine built for learners who think in Amharic, Afaan Oromo, Tigrinya, Somali, or Arabic, or who are new to computers.**
 
 ---
 
-## 🎯 The Purpose & Real-World Mission
+## 🎯 The Real-World Mission
 
-In modern digital training programs across Africa (such as ALX, Savanna, and partner institutions), students face critical barriers that lead to high dropout rates:
+In modern digital skills programs across Africa (such as ALX, Savanna, and regional training institutes), students face critical barriers leading to unnecessary dropouts:
 
-1. **The Language & Cognitive Barrier:** Course content is authored 100% in English. When learners who think in regional languages (**Amharic, Afaan Oromo, Tigrinya, Somali, or Arabic**) encounter complex technical terms or instructions, translating their thoughts into English causes cognitive overload and frustration.
-2. **The "New to Computers" Isolation:** Beginners often lack the technical vocabulary to describe their errors in English (e.g., *"My container port mapping failed"*). They can't explain what is broken, and there is no mentor in the room to look over their shoulder.
-3. **The Infrastructure Reality:** Learners don't always have unlimited fiber broadband. They rely on mobile phones, Telegram, or even 2G SMS when mobile data packages run out.
-4. **The Career & Disability Gap:** Finishing a course is only half the battle. Disabled or neurodivergent learners often fear asking employers for interview accommodations (e.g., screen-reader compatible tests, extra time) due to fear of stigma or bias.
+1. **The Language & Cognitive Barrier:** Course content is authored 100% in English. When learners who think in regional languages (**Amharic, Afaan Oromo, Tigrinya, Somali, or Arabic**) encounter complex technical terms, translating back and forth into English causes severe cognitive fatigue.
+2. **The "New to Computers" Isolation:** Beginners often lack the technical English vocabulary to explain what is broken (e.g. *"My container port mapping failed"*). They feel stuck, and there is no mentor physically present to look over their shoulder.
+3. **The Low-Bandwidth Reality:** Students often study under erratic internet or running on 2G feature phones after mobile data expires.
+4. **The Career & Accommodation Gap:** Completing a course is only half the battle. Disabled or neurodivergent learners frequently hesitate to ask international employers for interview accommodations (e.g., live captions, extra prep time) due to fear of stigma or bias.
+5. **The Teacher's Blind Spot:** Instructors have zero visibility into what students are silently struggling with across multiple languages until students fail or abandon the course.
 
-### Our Solution
-A **unified, accessible learning companion** that:
-* Tutors learners in their native language through voice and text.
-* Proves every answer with verifiable course citations.
-* Follows them across **Web, Telegram, and low-bandwidth SMS**.
-* Lets them request human help and share their screen with one click.
-* Connects them to jobs and provides a dignified, standardized way to request interview accommodations.
-
----
-
-## 🚀 Key System Features
-
-```
-                                SYSTEM CAPABILITIES
-  ┌─────────────────────────────────┬─────────────────────────────────┐
-  │ 1. Grounded Multilingual Tutor  │ 2. Omnichannel Availability     │
-  │ • Voice & Text in Local Tongues │ • Web Embed inside Savanna LMS  │
-  │ • Strictly course-based answers │ • Full-featured Telegram Bot    │
-  │ • Verifiable source citations   │ • Low-bandwidth 2G SMS route    │
-  ├─────────────────────────────────┼─────────────────────────────────┤
-  │ 3. Human Help & Screen Sharing  │ 4. Pluggable AI Engine          │
-  │ • 1-click mentor escalation     │ • Cloud: High-reasoning LLM     │
-  │ • Learner-controlled WebRTC feed│ • Local: Zero-cost Ollama model │
-  │ • Complete context hand-off     │ • Offline: Instant FAQ cache    │
-  ├─────────────────────────────────┼─────────────────────────────────┤
-  │ 5. Career Gateway (Level 3)     │ 6. Cognitive & Teacher Bonuses  │
-  │ • Proactive job alerts (TG/SMS) │ • Plain-Language "Simple Mode"  │
-  │ • Standardized accommodation req│ • Anonymized Teacher Heatmap    │
-  │ • schema.org/JobPosting schema  │ • 1-click live A11y Gate audit  │
-  └─────────────────────────────────┴─────────────────────────────────┘
-```
-
-### 1. Grounded Multilingual AI Tutor (Voice & Text)
-* **Voice-First Input:** Learners on standard English QWERTY laptops can struggle to type Ge'ez script. The Web Speech API lets learners speak questions naturally in **Amharic (`am-ET`)**, **English**, or **Arabic (`ar-SA`)**.
-* **Zero Hallucination Guarantee:** The AI answers **only** from verified course materials (e.g. Savanna's *VA-1: Virtual Assistant* and *WR 100* curricula).
-* **Clickable Source Citations:** Every answer cites the exact module and section (e.g., `📌 Source: Module 2 · An Important Distinction`). Clicking the citation scrolls the parent learning page directly to the referenced paragraph.
-
-### 2. Multi-Channel Access: Web + Telegram + SMS
-* **Savanna Web Embed:** An accessible floating widget running inside course pages. Supports Right-to-Left (`dir="rtl"`) layout for Arabic.
-* **Telegram Bot (`@SavannaTutorBot`):** Voice notes and text chat on the app learners use daily. Allows continuing study sessions away from the computer.
-* **Low-Bandwidth SMS Route:** Lightweight text fallback for rural areas or when mobile data packages run out.
-
-### 3. One-Click Human Escalation with Learner-Controlled Screen Sharing
-* When AI is not enough, a single tap on **"Talk to a Person"** alerts a human mentor.
-* **Contextual Handoff:** The mentor receives the student's current course page, language preference, and recent questions automatically.
-* **Privacy-First Screen Sharing:** Uses the browser's native `navigator.mediaDevices.getDisplayMedia` API. The learner maintains complete control to start and stop the visual feed at any time.
-
-### 4. Pluggable AI Architecture (Strategy Pattern)
-The backend does not break if external APIs fail or internet drops. It dynamically cascades through 3 tiers:
-1. **Tier 1 (Cloud):** Google Gemini Flash for high-speed, nuanced multilingual reasoning.
-2. **Tier 2 (Local Open Model):** Ollama running local models (Llama 3 / Mistral) for private, zero-cost campus deployments.
-3. **Tier 3 (Offline FAQ Cache):** In-memory JSON database answering common course questions in under 5ms with **zero internet connection**.
-
-### 5. Career Gateway & Interview Accommodations
-* **Grounded Job Q&A:** Answers questions about proposal pricing, international client communications, and remote work contracts.
-* **Push Job Alerts:** Notifies learners via Telegram and SMS when verified entry-level roles are posted.
-* **Standardized Accommodation Requests:** A respectful flow generating formal accommodation request documentation (e.g., NVDA screen reader compatibility, 50% extra test time) per international inclusion standards.
-
-### 6. Cognitive & Teacher Bonus Features
-* **Plain-Language "Simple Mode" (WCAG 3.1.5):** One-click toggle that simplifies explanations into short, high-contrast, jargon-free sentences for learners with cognitive challenges or low English literacy.
-* **Anonymized Teacher Insights:** A privacy-compliant dashboard showing instructors which topics confuse learners most across the cohort, allowing schools to iteratively improve curriculum content.
+### Our Solution: "One Core, Three Doors"
+A unified system delivering:
+* **Grounded Multilingual Tutoring:** Strictly curriculum-based answers with clickable paragraph citations in Amharic and English.
+* **Omnichannel Access:** Available on **Web**, **Telegram**, and **2G Low-Bandwidth SMS** (guaranteed $\le 160$ chars).
+* **One-Click Human Escalation:** Learner-controlled screen sharing (`getDisplayMedia`) with complete context hand-off.
+* **Inclusive Career Gateway (Level 3):** Job alerts, `schema.org/JobPosting` compliance, and standardized accommodation tracking letters (`ACC-XXXXXX`).
+* **Educator Intelligence (Official Bonus):** Dynamic, multilingual Teacher Dashboard with curriculum confusion heatmaps and zero-PII privacy compliance.
 
 ---
 
-## 🏛️ "One Core, Three Doors" Architecture
-
-The system is built to serve **any partner** (Savanna, Canvas, Moodle, custom web/mobile apps) through three standard integration tiers:
+## 🏛️ System Architecture: One Core, Three Doors
 
 ```
-                            OUR CORE SYSTEM
-               (Course Knowledge · Multilingual AI · Jobs)
-                                   │
-        ┌──────────────────────────┼──────────────────────────┐
-        │                          │                          │
-     LEVEL 1                    LEVEL 2                    LEVEL 3
-  Web Component                REST API              Semantic Standards
- ("Paste a Tag")         ("Data for Developers")      ("Open Interop")
-        │                          │                          │
- • <multilingual-assistant> • OpenAPI 3.0 (/docs)      • schema.org/JobPosting
- • Shadow DOM encapsulation • Powers Web + Telegram    • LTI 1.3 for Canvas
- • Full WCAG 2.2 AA a11y    • Pluggable backend        • Open Badges 3.0
+                                OUR CORE SYSTEM
+             (pgvector RAG · AI LLM Router · Career Service · Telemetry)
+                                       │
+        ┌──────────────────────────────┼──────────────────────────────┐
+        │                              │                              │
+     DOOR 1                         DOOR 2                         DOOR 3
+  Web Component                    REST API                  Semantic Standards
+  (Level 1: Minutes)          (Level 2: Developers)          (Level 3: Universal)
+        │                              │                              │
+ • <multilingual-assistant>     • FastAPI OpenAPI 3.1 (/docs)  • schema.org/JobPosting
+ • Shadow DOM Encapsulated      • Powers Web, TG & 2G SMS      • LTI 1.3 LMS External Tool
+ • WCAG 2.2 AA Accessible       • Pluggable AI Router          • Zero-PII Telemetry
 ```
+
+---
+
+## ⚡ Quickstart Guide (Run with Docker)
+
+The entire platform runs in Docker with multi-container orchestration (FastAPI, pgvector, and Nginx).
+
+### 1. Launch All Services
+```bash
+git clone https://github.com/wubshet-kebede/savanna-multilingual-assistant.git
+cd savanna-multilingual-assistant
+docker compose up -d
+```
+
+### 2. Live Application URLs
+| Application / Door | URL | Description |
+| :--- | :--- | :--- |
+| **Student Web Experience** | `http://localhost:8086/html_course_files/concept-with-navigation.html` | Course page with embedded floating `<multilingual-assistant>` widget |
+| **Educator Intelligence Portal** | `http://localhost:8086/html_course_files/teacher-dashboard.html` | Multilingual Teacher View with confusion heatmap & CSV export |
+| **Interactive OpenAPI Docs** | `http://localhost:8000/docs` | Swagger UI for all REST endpoints & schemas |
+| **Alternative ReDoc Specs** | `http://localhost:8000/redoc` | Clean API reference documentation |
+| **Widget Standalone Sandbox** | `http://localhost:8086/widget/test.html` | Isolated partner web component testbed |
+
+---
+
+## 🧪 Comprehensive Evaluation & Testing Guide
+
+### Test 1: Grounded Multilingual Web Tutor (Voice & Text)
+1. Open **`http://localhost:8086/html_course_files/concept-with-navigation.html`**.
+2. Click the floating AI Assistant button at the bottom right.
+3. Ask a question in English or Amharic:
+   * English: *"What is the main distinction between an AI assistant and a human Virtual Assistant?"*
+   * Amharic: *"በ AI እና በሰው Virtual Assistant መካከል ያለው ልዩነት ምንድን ነው?"*
+4. **Click the Citation Pill:** Clicking `📌 Source: Module 2 · An Important Distinction` smoothly scrolls the parent lesson page to the exact cited paragraph.
+
+### Test 2: Cognitive Accessibility — Plain-Language "Simple Mode" (WCAG 3.1.5)
+1. In the Web Assistant header, click **`[ 🧠 Simple Mode ]`**.
+2. Ask a complex question. Notice how the AI reduces technical jargon, uses shorter sentences, and formats the output for low cognitive overload.
+3. **On Telegram:** Send `/simple` to toggle Plain-Language mode.
+4. **On SMS:** Send the text keyword `SIMPLE` to switch your phone number's profile.
+
+### Test 3: Production 2G Low-Bandwidth SMS Channel (`POST /sms/inbound`)
+Built for feature phones across Africa. Strictly limits responses to $\le 160$ characters and returns `text/plain`:
+
+* **Command Menu:**
+  ```bash
+  curl -s -X POST http://localhost:8000/sms/inbound \
+    -H "Content-Type: application/json" \
+    -d '{"from_number": "+251911223344", "body": "JOBS"}'
+  ```
+  *Output ($\le 160$ chars):*  
+  `Savanna Jobs: 1) Junior VA ($500-$700) 2) Customer Support ($450). Text ACC for accommodations or ask about any role.`
+
+* **Career RAG Query with Citation:**
+  ```bash
+  curl -s -X POST http://localhost:8000/sms/inbound \
+    -H "Content-Type: application/json" \
+    -d '{"from_number": "+251911223344", "body": "What jobs after VA-1?"}'
+  ```
+
+* **Offline 2G Keywords:**
+  * `HELP` or `MENTOR` $\rightarrow$ Immediate 2G navigation commands.
+  * `ACC` $\rightarrow$ Interview accommodation guide.
+  * `LANG am` $\rightarrow$ Switches SMS profile to Amharic.
+  * `SIMPLE` $\rightarrow$ Toggles plain-language mode.
+  * Supports standard `application/x-www-form-urlencoded` payloads from **Africa's Talking** and **Twilio** (`From` and `Body`).
+
+### Test 4: Inclusive Career Gateway (Level 3 & schema.org)
+1. **Explore Jobs:**  
+   `GET http://localhost:8000/api/v1/career/jobs?partner_id=savanna`  
+   Returns structured jobs with `schema.org/JobPosting` JSON-LD metadata and certified accessibility features.
+2. **Request Interview Accommodations:**  
+   Ask the tutor on Web or Telegram: *"How can I request interview accommodations?"*  
+   Or submit an accommodation request:
+   ```bash
+   curl -s -X POST http://localhost:8000/api/v1/career/accommodations \
+     -H "Content-Type: application/json" \
+     -d '{"job_id": "job_01", "applicant_name": "Abebe B.", "accommodations": ["Screen reader compatible test", "Extended time"]}'
+   ```
+   *Returns a certified tracking letter with code `ACC-XXXXXX`.*
+3. **Broadcast Job Alerts:**  
+   `POST http://localhost:8000/api/v1/career/alerts/broadcast?job_id=job_01` dispatches alerts to Telegram and SMS subscribers.
+
+### Test 5: Anonymized Educator Intelligence Dashboard (Bonus Feature)
+1. Open **`http://localhost:8086/html_course_files/teacher-dashboard.html`** (or click **`👩‍🏫 Instructor Analytics`** in the course header).
+2. **Live Dynamic Data:** Fetches telemetry from `GET /api/v1/teacher/insights`.
+3. **Multilingual Capabilities:** Click **`አማርኛ`** or **`Afaan Oromoo`** in the top-right header to watch the entire dashboard, questions, and pedagogical recommendations translate instantly into local languages.
+4. **Curriculum Confusion Heatmap:** Displays topic difficulty meters (e.g. *AI vs Human VA: 43%*, *Timezone Math: 24%*).
+5. **Pedagogical Action Center:** AI recommendations that advise instructors on exact curriculum fixes (e.g. *"Embed an interactive 24-hr slider in Lesson 2.4"*).
+6. **Live Human Escalation Link:** When a student requests human help (`POST /api/v1/escalate`), the escalation counter on the dashboard increments live.
+7. **1-Click CSV Export:** Click **`📥 Export RFC-4180 CSV`** to download a spreadsheet report.
+
+### Test 6: Automated Vitest Test Suite (16/16 Passing)
+Run the automated test suite locally:
+```bash
+npm install
+npm test
+```
+* **Test Suite Coverage:**
+  * `tests/sms-endpoint.test.js`: 8 tests verifying 160-character limits, JSON & URL-encoded parsing, keywords, and rate-limiting.
+  * `tests/markdown-renderer.test.js`: 5 tests verifying XSS sanitization, Ge'ez script preservation, and accessible HTML tags.
+  * `tests/offline-search.test.js`: 3 tests verifying client-side TF-IDF offline RAG search indexing.
+
+---
+
+## 🔌 Three Levels of Integration (Partner Guide)
+
+### Level 1: Web Component (Drop-in Tag)
+* **Who sets it up:** Website Editor / Content Manager (2 minutes).
+* **How it works:** Any external partner (WordPress, Webflow, custom website) pastes one script tag:
+  ```html
+  <script src="https://our-cdn.org/widget/assistant.js" defer></script>
+  <multilingual-assistant partner-id="partner_code" course-id="VA-1"></multilingual-assistant>
+  ```
+* Built using the standard W3C Web Component API (`customElements.define`) with Shadow DOM encapsulation so host styles never break the assistant.
+
+### Level 2: Modular REST API
+* **Who sets it up:** Software Developers building mobile or custom web apps.
+* **How it works:** Partners consume our versioned endpoints (`/api/v1/tutor/chat`, `/api/v1/career/jobs`) with standard JSON payloads, building their own custom user interfaces.
+* Complete interactive documentation and schemas available at `/docs`.
+
+### Level 3: Semantic Standards & LMS Interoperability
+* **schema.org/JobPosting:** Job postings include structured semantic data for Google Jobs, LinkedIn, and university crawlers.
+* **LTI 1.3 LMS External Tool:** Architected to support 1EdTech LTI 1.3 standards, allowing Canvas, Moodle, and Blackboard administrators to install the assistant with OpenID Connect single sign-on.
 
 ---
 
 ## ♿ Accessibility Compliance (WCAG 2.2 Level AA)
 
-Built to pass the **Accessibility Gate** with zero critical or serious issues:
+Built to pass the **Accessibility Gate** with zero critical or serious violations:
 
 | Success Criterion | How Our System Complies |
 | :--- | :--- |
-| **SC 4.1.3 Status Messages** | Incoming chat replies live inside `<div role="log" aria-live="polite">`, ensuring NVDA and TalkBack announce answers automatically. |
-| **SC 3.1.1 / 3.1.2 Language** | Amharic text is tagged with `lang="am"` so screen readers switch to an Amharic synthesizer rather than mispronouncing words in English. |
-| **SC 1.3.2 Meaningful Sequence** | Arabic responses and UI dynamically render with `dir="rtl"` using CSS logical properties. |
+| **SC 4.1.3 Status Messages** | Incoming replies live inside `<div role="log" aria-live="polite">`, ensuring NVDA, JAWS, and TalkBack announce answers automatically. |
+| **SC 3.1.1 / 3.1.2 Language** | Amharic text is tagged with `lang="am"` so screen readers switch to a Ge'ez speech synthesizer without mispronouncing words in English. |
+| **SC 1.3.2 Meaningful Sequence** | Arabic responses render with `dir="rtl"` using CSS logical properties (`margin-inline-start`). |
 | **SC 2.1.1 Keyboard Navigation** | Every control is keyboard operable; pressing `Escape` immediately closes drawers without keyboard traps. |
-| **SC 2.4.7 Visible Focus** | Interactive buttons feature a distinct 3px high-contrast gold focus outline. |
-| **SC 2.5.8 Target Size** | All touch and click targets exceed the 24×24px requirement (sized at 44×44px). |
+| **SC 2.4.7 Visible Focus** | High-contrast focus rings (`:focus-visible`) ensure keyboard users easily track navigation. |
+| **SC 2.5.8 Target Size** | All interactive touch and click targets exceed 44×44px. |
 | **SC 1.4.10 Reflow** | Content fluidly reflows at **400% zoom** without breaking the viewport or requiring horizontal scrolling. |
+| **SC 3.1.5 Reading Level** | One-click **Simple Mode** reduces cognitive overload and simplifies text to lower secondary reading levels. |
 
 ---
 
@@ -117,52 +187,40 @@ Built to pass the **Accessibility Gate** with zero critical or serious issues:
 
 ```text
 savanna-multilingual-assistant/
-├── backend/                             # Level 2 REST API (Python 3.12 + FastAPI)
+├── backend/                             # Level 2 REST API (Python 3.11 + FastAPI)
 │   ├── app/
-│   │   ├── main.py                      # Central FastAPI application & OpenAPI metadata
-│   │   ├── core/                        # Configs & Shared Multilingual Registry
-│   │   │   ├── config.py                # Environment variables & AI settings
-│   │   │   └── languages.py             # Locale registry (am, om, ti, so, ar, en)
-│   │   └── modules/                     # Feature-Based / Domain-Driven Modules
-│   │       ├── tutor/                   # AI Tutor, Course RAG & Offline FAQ
-│   │       ├── career/                  # Career Gateway & Accommodation Requests
-│   │       ├── escalate/                # Human Mentor Queue & Screen Share Signaling
-│   │       ├── channels/                # Telegram Bot & Low-Bandwidth SMS Routes
-│   │       └── teacher/                 # Anonymized Cohort Curriculum Analytics
+│   │   ├── main.py                      # Root FastAPI application & route bridges
+│   │   ├── core/                        # Configs, DB Session, i18n & Pluggable Registry
+│   │   │   ├── config.py                # App configuration & environment variables
+│   │   │   ├── database.py              # PostgreSQL + pgvector engine
+│   │   │   └── i18n.py                  # Internationalization translation helper
+│   │   └── modules/                     # Modular Vertical Slices
+│   │       ├── tutor/                   # AI Tutor RAG, vector embeddings & LLM router
+│   │       ├── career/                  # Career Gateway, schema.org & accommodations
+│   │       ├── escalate/                # Human mentor escalation & WebRTC signaling
+│   │       ├── channels/                # Telegram Bot & 2G Low-Bandwidth SMS handler
+│   │       └── teacher/                 # Anonymized Educator Intelligence Dashboard
+│   ├── Dockerfile                       # Production Python container specification
 │   └── requirements.txt                 # Backend dependencies
 │
 ├── widget/                              # Level 1 Drop-in Web Component
-│   ├── assistant.js                     # <multilingual-assistant> Custom Element (Shadow DOM)
-│   └── test.html                        # Standalone partner simulation page
+│   ├── assistant.js                     # <multilingual-assistant> Custom Element
+│   └── test.html                        # Standalone partner simulation testbed
 │
-├── standards/                           # Level 3 Educational Standards
-│   ├── lti_config.json                  # LTI 1.3 Tool Configuration for LMSs
-│   └── schema_job_posting.json          # schema.org/JobPosting JSON-LD Specification
+├── html_course_files/                   # Static Course Platform (Savanna LMS)
+│   ├── concept-with-navigation.html     # Course page with embedded assistant & nav pill
+│   └── teacher-dashboard.html           # Full dynamic multilingual Teacher Dashboard
 │
+├── tests/                               # Automated Test Suite (Vitest)
+│   ├── sms-endpoint.test.js             # SMS 160-char limits, RAG & keyword tests
+│   ├── markdown-renderer.test.js        # HTML sanitization & Ge'ez script tests
+│   └── offline-search.test.js           # Client-side offline RAG tests
+│
+├── docker-compose.yml                   # Multi-service orchestration (api, db, web)
 └── README.md                            # Comprehensive System Documentation
 ```
 
 ---
 
-## ⚡ Quickstart Guide
-
-### 1. Run the Backend API (Level 2)
-```bash
-cd backend
-pip install -r requirements.txt
-uvicorn app.main:app --reload --port 8000
-```
-* **Interactive OpenAPI Documentation:** Open `http://localhost:8000/docs` in your browser.
-
-### 2. Run the Web Embed (Level 1)
-* Open `widget/test.html` in any web browser to test the assistant in standalone mode.
-* **To embed into Savanna**, add one script tag to `Savanna-static-pages/pages/concept-with-navigation.html`:
-  ```html
-  <script src="../../savanna-multilingual-assistant/widget/assistant.js" defer></script>
-  <multilingual-assistant partner="savanna" course="VA-1"></multilingual-assistant>
-  ```
-
----
-
-### 👥 Team & Acknowledgments
-Built for the **Accessibility Hackathon 2026** adhering to international accessibility technical standards (WCAG 2.2 AA / ISO/IEC 40500:2025).
+## 👥 Authors & Acknowledgments
+Built for the **Accessibility Hackathon 2026** adhering to international accessibility standards (WCAG 2.2 AA / ISO/IEC 40500).
