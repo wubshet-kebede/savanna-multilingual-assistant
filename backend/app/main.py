@@ -20,6 +20,7 @@ from app.modules.channels.sms_handler import router as sms_router, process_inbou
 from app.modules.channels.telegram_router import router as telegram_router
 from app.modules.teacher.router import router as teacher_router
 from app.modules.teacher.service import TeacherService
+from app.modules.lti.router import router as lti_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -75,6 +76,7 @@ app.include_router(escalate_router, prefix=settings.API_PREFIX)
 app.include_router(sms_router, prefix=settings.API_PREFIX)
 app.include_router(telegram_router, prefix=settings.API_PREFIX)
 app.include_router(teacher_router, prefix=settings.API_PREFIX)
+app.include_router(lti_router, prefix=settings.API_PREFIX)
 
 # 2. Root-Level Direct Bridges for Widget, SMS, & Legacy Client Compatibility
 @app.post("/tutor/chat", tags=["Widget Compatibility"])
@@ -120,6 +122,23 @@ async def root_teacher_questions(topic: str = None, language: str = None, search
 async def root_escalate(req: escalate_schemas.EscalateRequest):
     return EscalateService.dispatch_human_mentor(req.learner_id, req.partner_id, req.course_id, req.language)
 
+@app.get("/lti/jwks", tags=["Module 6: LTI 1.3 LMS Integration"])
+async def root_lti_jwks():
+    from app.modules.lti.router import PUBLIC_JWKS
+    return PUBLIC_JWKS
+
+@app.get("/lti/login", tags=["Module 6: LTI 1.3 LMS Integration"])
+@app.post("/lti/login", tags=["Module 6: LTI 1.3 LMS Integration"])
+async def root_lti_login(request: Request):
+    from app.modules.lti.router import oidc_login_initiation
+    return await oidc_login_initiation(request)
+
+@app.post("/lti/launch", tags=["Module 6: LTI 1.3 LMS Integration"])
+@app.get("/lti/launch", tags=["Module 6: LTI 1.3 LMS Integration"])
+async def root_lti_launch(request: Request):
+    from app.modules.lti.router import lti_launch
+    return await lti_launch(request)
+
 @app.get("/")
 def root():
     return {
@@ -127,6 +146,6 @@ def root():
         "version": settings.VERSION,
         "architecture": "Modular Monolith",
         "docs": "/docs",
-        "modules": ["tutor", "career", "escalate", "channels", "teacher"],
+        "modules": ["tutor", "career", "escalate", "channels", "teacher", "lti"],
         "status": "healthy"
     }

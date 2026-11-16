@@ -2970,7 +2970,11 @@ class MultilingualAssistant extends HTMLElement {
 
   applyTheme() {
     if (this.shadowRoot && this.shadowRoot.host) {
-      this.shadowRoot.host.style.setProperty('--assistant-primary', this.themeColor);
+      let color = this.themeColor;
+      if (color && color.toLowerCase() === '#059669') {
+        color = '#047857';
+      }
+      this.shadowRoot.host.style.setProperty('--assistant-primary', color || '#047857');
     }
   }
 
@@ -3234,7 +3238,7 @@ class MultilingualAssistant extends HTMLElement {
         --radius-sm: 8px;
         --radius-md: 12px;
         --radius-lg: 18px;
-        --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans", sans-serif;
+        --font: "Noto Sans Ethiopic", "Nyala", "Abyssinica SIL", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans", sans-serif;
         --line-height: 1.55;
         --font-size: 14px;
         position: fixed;
@@ -5122,7 +5126,7 @@ class MultilingualAssistant extends HTMLElement {
             aria-live="off" 
             aria-label="Conversation with AI Tutor"
           >
-            <div class="msg tutor" lang="${this.currentLang}" dir="${t.direction}" role="article" tabindex="0">
+            <div class="msg tutor" lang="${this.currentLang}" dir="${t.direction}" role="article">
               <div class="msg-header">
                 <span class="msg-author"><span aria-hidden="true">🎓</span> Savanna AI Tutor</span>
                 <button type="button" class="btn-msg-listen" id="welcome-listen-btn" aria-label="${t.soundToggle}: Read greeting">
@@ -5659,7 +5663,12 @@ class MultilingualAssistant extends HTMLElement {
     openBtn.style.display = 'none';
 
     const closeBtn = this.shadowRoot.getElementById('close-btn');
-    if (closeBtn) closeBtn.focus();
+    const activeTab = this.shadowRoot.getElementById('tab-tutor');
+    if (activeTab) {
+      activeTab.focus();
+    } else if (closeBtn) {
+      closeBtn.focus();
+    }
 
     const t = LOCALIZED_UI[this.currentLang] || LOCALIZED_UI['en'];
     const openMsg = this.currentLang === 'am' ? `${t.dialogTitle} ተከፍቷል። ገጽ፦ ${t.tutorTab}።` : (this.currentLang === 'om' ? `${t.dialogTitle} banameera. Fuula፦ ${t.tutorTab}.` : `${t.dialogTitle} opened. Current tab: ${t.tutorTab}.`);
@@ -6198,7 +6207,6 @@ class MultilingualAssistant extends HTMLElement {
     const div = document.createElement('div');
     div.className = `msg ${role}`;
     div.setAttribute('role', 'article');
-    div.setAttribute('tabindex', '0');
     div.setAttribute('lang', lang);
     div.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
 
@@ -6466,12 +6474,12 @@ class MultilingualAssistant extends HTMLElement {
         if (event.error === 'not-allowed' || event.error === 'permission-denied') {
           this.announce(t.micPermissionDenied);
           this.appendMessage('tutor', `⚠️ ${t.micPermissionDenied}`, this.currentLang);
-        } else if (event.error === 'language-not-supported' && this.recognition.lang !== 'en-US') {
-          // Acoustic model fallback
-          const fallbackMsg = this.currentLang === 'am' ? 'የድምጽ አገልግሎት ወደ ሁለንተናዊ ሁነታ ተቀይሯል።' : 'Acoustic model fallback to universal speech recognition.';
+        } else if (event.error === 'language-not-supported') {
+          const fallbackMsg = this.currentLang === 'am' 
+            ? 'የድምጽ ማወቂያ በዚህ አሳሽ አይደገፍም። እባክዎ በጽሑፍ ይጠይቁ።' 
+            : (this.currentLang === 'om' ? 'Sagalee beekuun biraawzarii kanaan hin deggeramu. Maaloo barreessaa.' : 'Voice recognition is not supported in this browser for this language. Please type your message.');
           this.announce(fallbackMsg);
-          this.currentLang = 'en';
-          this.toggleSpeechInput(btn);
+          this.appendMessage('tutor', `ℹ️ ${fallbackMsg}`, this.currentLang);
         } else {
           this.announce(t.micStopped);
         }
