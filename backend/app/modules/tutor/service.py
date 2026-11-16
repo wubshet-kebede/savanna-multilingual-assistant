@@ -1,85 +1,122 @@
-import json
+import re
 import os
-import httpx
+from sqlalchemy.orm import Session
+from sentence_transformers import SentenceTransformer
 from app.core.config import settings
-from app.core.languages import get_language_metadata
+from app.modules.tutor import models, schemas, llm_router
 
-DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
+# Initialize the embedding model
+model = SentenceTransformer(settings.EMBEDDING_MODEL)
+
+STOPWORDS = {
+    "what", "is", "the", "of", "in", "and", "to", "for", "a", "an", "are", 
+    "on", "how", "do", "does", "why", "can", "with", "about", "this", "that",
+    "these", "those", "or", "by", "from", "at", "as", "be", "so", "it", "its"
+}
+
+def extract_keywords(text: str) -> set[str]:
+    words = re.findall(r"\b[a-zA-Z]{2,}\b", (text or "").lower())
+    keywords = set()
+    for w in words:
+        if w not in STOPWORDS:
+            keywords.add(w)
+            if w == "ai":
+                keywords.add("artificial")
+                keywords.add("intelligence")
+    return keywords
 
 class TutorService:
     @staticmethod
-    def get_course_data(partner_id: str = "savanna", course_id: str = "VA-1") -> dict:
-        filename = f"{partner_id}_{course_id.lower().replace('-', '')}.json"
-        path = os.path.join(DATA_DIR, filename)
-        if not os.path.exists(path):
-            path = os.path.join(DATA_DIR, "savanna_va1.json")
-        with open(path, "r", encoding="utf-8") as f:
-            return json.load(f)
+    def ingest_content(db: Session, payload: schemas.ContentIngestRequest) -> dict:
+        inserted = 0
+        if payload.chunks:
+            for chunk in payload.chunks:
+                embedding = model.encode(chunk.content).tolist()
+                db_chunk = models.LessonChunk(
+                    url_id=chunk.url_id or "lesson",
+                    title=chunk.title or "Savanna Course Material",
+                    content=chunk.content,
+                    embedding=embedding
+                )
+                db.add(db_chunk)
+                inserted += 1
+        elif payload.text:
+            embedding = model.encode(payload.text).tolist()
+            db_chunk = models.LessonChunk(
+                url_id=payload.url_id or "lesson",
+                title=payload.title or "Savanna Course Material",
+                content=payload.text,
+                embedding=embedding
+            )
+            db.add(db_chunk)
+            inserted += 1
+
+        db.commit()
+        return {"message": f"Successfully vectorized and ingested {inserted} chunks."}
 
     @staticmethod
-    def find_relevant_section(query: str, partner_id: str = "savanna", course_id: str = "VA-1") -> dict:
-        data = TutorService.get_course_data(partner_id, course_id)
-        q_lower = query.lower()
-        for module in data.get("modules", []):
-            for sec in module.get("sections", []):
-                words = sec["heading"].lower().split()
-                if any(w in q_lower for w in words if len(w) > 3):
-                    return sec
-        return data["modules"][0]["sections"][0]
+    def ask_question(db: Session, payload: schemas.AskRequest) -> dict:
+        query_vector = model.encode(payload.query).tolist()
+        dist_expr = models.LessonChunk.embedding.cosine_distance(query_vector)
 
-    @classmethod
-    async def get_answer(cls, question: str, lang: str, partner_id: str, course_id: str, simple_mode: bool) -> dict:
-        # 1. Offline FAQ Check (Instant fallback)
-        faq_path = os.path.join(DATA_DIR, "faq_offline.json")
-        if os.path.exists(faq_path):
-            with open(faq_path, "r", encoding="utf-8") as f:
-                faqs = json.load(f).get(partner_id, [])
-            q_lower = question.lower()
-            for item in faqs:
-                if any(k in q_lower for k in item["keywords"]):
-                    ans = item["answers"].get(lang, item["answers"].get("en", ""))
-                    if simple_mode:
-                        ans = f"[Simple Mode] {ans}"
-                    return {
-                        "reply": ans,
-                        "citation": item["citation"],
-                        "provider": "offline_faq",
-                        "language": lang
-                    }
+        # Retrieve top candidates below the 0.78 threshold
+        results_with_dist = db.query(
+            models.LessonChunk,
+            dist_expr.label("distance")
+        ).filter(dist_expr < 0.78).order_by("distance").limit(5).all()
 
-        # 2. Local Ollama Check (if active)
-        if settings.AI_PROVIDER == "local":
-            try:
-                async with httpx.AsyncClient(timeout=3.0) as client:
-                    resp = await client.post(
-                        f"{settings.OLLAMA_BASE_URL}/api/generate",
-                        json={"model": "llama3.2", "prompt": question, "stream": False}
-                    )
-                    if resp.status_code == 200:
-                        sec = cls.find_relevant_section(question, partner_id, course_id)
-                        return {
-                            "reply": resp.json().get("response", ""),
-                            "citation": sec["citation"],
-                            "provider": "ollama_local",
-                            "language": lang
-                        }
-            except Exception:
-                pass
+        if not results_with_dist:
+            return {
+                "answer": "I couldn't find any relevant information about that in the course material.",
+                "sources": [],
+                "engine": "none"
+            }
 
-        # 3. Grounded fallback directly from course text
-        sec = cls.find_relevant_section(question, partner_id, course_id)
-        replies = {
-            "am": f"በኮርሱ መሰረት፡ {sec['text'][:200]}...",
-            "en": f"According to the course: {sec['text'][:200]}...",
-            "om": f"Akka koorsichaatti: {sec['text'][:200]}...",
-            "ar": f"وفقاً للدورة التدريبية: {sec['text'][:200]}..."
-        }
-        ans = replies.get(lang, replies["en"])
-        if simple_mode:
-            ans = f"[Simple Mode] {ans}"
+        # Hybrid re-ranking: prioritize sections whose titles match query keywords
+        query_kw = extract_keywords(payload.query)
+
+        def hybrid_rank_key(item):
+            chunk, dist = item
+            title_kw = extract_keywords(chunk.title)
+            overlap = len(query_kw & title_kw)
+            return float(dist) - (0.12 * overlap)
+
+        reranked = sorted(results_with_dist, key=hybrid_rank_key)
+        top_results = reranked[:3]
+
+        results = [r[0] for r in top_results]
+        context_texts = [f"{r.title}: {r.content}" for r in results]
+        sources = [{"title": r.title, "url": r.url_id} for r in results]
+
+        final_answer, engine_used = llm_router.get_answer_with_engine(payload.query, context_texts)
+
         return {
-            "reply": ans,
-            "citation": sec["citation"],
-            "provider": "course_grounded_fallback",
-            "language": lang
+            "answer": final_answer,
+            "sources": sources,
+            "engine": engine_used
+        }
+
+    @staticmethod
+    def chat(db: Session, payload: schemas.TutorChatRequest) -> dict:
+        query = payload.message or payload.query or ""
+        ask_req = schemas.AskRequest(query=query)
+        resp = TutorService.ask_question(db, ask_req)
+        sources = resp.get("sources", [])
+        engine = resp.get("engine", "offline-rag")
+        citation = None
+
+        if sources:
+            engine_label = "Gemini AI" if "gemini" in engine else "Curriculum Vector Store"
+            citation = {
+                "title": sources[0]["title"],
+                "targetId": sources[0]["url"],
+                "module": engine_label,
+                "excerpt": resp.get("answer", "")[:160]
+            }
+
+        return {
+            "reply": resp.get("answer", ""),
+            "citation": citation,
+            "language": payload.language or "en",
+            "engine": engine
         }

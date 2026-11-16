@@ -1,24 +1,35 @@
-from fastapi import APIRouter
-from app.modules.tutor.schemas import TutorChatRequest, TutorChatResponse
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from app.core.database import get_db
+from app.modules.tutor import schemas
 from app.modules.tutor.service import TutorService
-from app.core.languages import get_language_metadata
 
-router = APIRouter(prefix="/tutor", tags=["Module 1: Multilingual AI Tutor"])
+router = APIRouter(tags=["Module 1: Multilingual AI Tutor"])
 
-@router.post("/chat", response_model=TutorChatResponse)
-async def chat(req: TutorChatRequest):
-    result = await TutorService.get_answer(
-        question=req.message,
-        lang=req.language,
-        partner_id=req.partner_id,
-        course_id=req.course_id,
-        simple_mode=req.simple_mode
-    )
-    meta = get_language_metadata(req.language)
-    return TutorChatResponse(
-        reply=result["reply"],
-        citation=result["citation"],
-        provider=result["provider"],
-        language=req.language,
-        direction=meta["direction"]
-    )
+@router.post("/content", tags=["Ingestion"])
+def ingest_content(payload: schemas.ContentIngestRequest, db: Session = Depends(get_db)):
+    """
+    Receives JSON lesson chunks, generates embeddings, and saves to PostgreSQL.
+    Supports both batch chunks and single text payloads from seed.py crawler.
+    """
+    try:
+        return TutorService.ingest_content(db, payload)
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/ask", response_model=schemas.AskResponse, tags=["RAG"])
+def ask_question(payload: schemas.AskRequest, db: Session = Depends(get_db)):
+    """
+    Embeds the user query, performs vector similarity search in pgvector,
+    and returns the LLM response with sources. Enforces a 0.78 distance threshold
+    to prevent false positives for out-of-domain queries.
+    """
+    return TutorService.ask_question(db, payload)
+
+@router.post("/tutor/chat", response_model=schemas.TutorChatResponse, tags=["Widget Compatibility"])
+def tutor_chat(payload: schemas.TutorChatRequest, db: Session = Depends(get_db)):
+    """
+    Direct bridge for multilingual-assistant web component.
+    """
+    return TutorService.chat(db, payload)
