@@ -6556,6 +6556,7 @@ class MultilingualAssistant extends HTMLElement {
         partner: this.partnerId,
         displaySurface: settings.displaySurface || 'window'
       });
+      this.sendEscalationTelemetry('screenshare');
 
       // Browser native "Stop Sharing" bar integration
       track.onended = () => {
@@ -6590,6 +6591,25 @@ class MultilingualAssistant extends HTMLElement {
     this.emitEvent('assistant:screenshare-stopped', { partner: this.partnerId });
   }
 
+  sendEscalationTelemetry(type = 'screenshare') {
+    try {
+      const escEndpoint = this.apiUrl.endsWith('/api/v1')
+        ? `${this.apiUrl}/escalate`
+        : `${this.apiUrl}/api/v1/escalate`;
+      fetch(escEndpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          learner_id: 'student_' + Math.floor(1000 + Math.random() * 9000),
+          partner_id: this.partnerId || 'savanna',
+          course_id: this.courseId || 'VA-1',
+          language: this.currentLang || 'am',
+          page_context: type
+        })
+      }).catch(() => {});
+    } catch {}
+  }
+
   requestChatHelp() {
     const t = LOCALIZED_UI[this.currentLang] || LOCALIZED_UI['en'];
     const ticketId = 'MNT-' + Math.floor(1000 + Math.random() * 9000);
@@ -6602,6 +6622,7 @@ class MultilingualAssistant extends HTMLElement {
       course: this.courseId,
       language: this.currentLang
     });
+    this.sendEscalationTelemetry('chat');
   }
 
   /**

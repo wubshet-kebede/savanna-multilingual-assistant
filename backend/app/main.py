@@ -14,6 +14,8 @@ from app.modules.career.router import router as career_router
 from app.modules.career.service import CareerService
 from app.modules.career import schemas as career_schemas
 from app.modules.escalate.router import router as escalate_router
+from app.modules.escalate.service import EscalateService
+from app.modules.escalate import schemas as escalate_schemas
 from app.modules.channels.sms_handler import router as sms_router, process_inbound_sms
 from app.modules.channels.telegram_router import router as telegram_router
 from app.modules.teacher.router import router as teacher_router
@@ -113,6 +115,10 @@ async def root_teacher_insights(partner_id: str = "savanna", course_id: str = "V
 @app.get("/teacher/questions", tags=["Module 5: Anonymized Teacher Intelligence"])
 async def root_teacher_questions(topic: str = None, language: str = None, search: str = None):
     return TeacherService.get_questions(topic, language, search)
+
+@app.post("/escalate", tags=["Module 3: Human Help & Co-Browsing"])
+async def root_escalate(req: escalate_schemas.EscalateRequest):
+    return EscalateService.dispatch_human_mentor(req.learner_id, req.partner_id, req.course_id, req.language)
 
 @app.get("/")
 def root():
