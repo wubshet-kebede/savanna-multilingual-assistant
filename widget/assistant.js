@@ -2886,7 +2886,7 @@ const COMPANY_THEMES = {
 
 class MultilingualAssistant extends HTMLElement {
   static get observedAttributes() {
-    return ['partner', 'course', 'theme-color', 'default-lang', 'position', 'api-url'];
+    return ['partner', 'partner-id', 'course', 'course-id', 'theme-color', 'default-lang', 'position', 'api-url'];
   }
 
   constructor() {
@@ -2950,9 +2950,9 @@ class MultilingualAssistant extends HTMLElement {
     } else if (name === 'theme-color' && newValue) {
       this.themeColor = newValue;
       this.applyTheme();
-    } else if (name === 'partner') {
+    } else if (name === 'partner' || name === 'partner-id') {
       this.partnerId = newValue;
-    } else if (name === 'course') {
+    } else if (name === 'course' || name === 'course-id') {
       this.courseId = newValue;
     } else if (name === 'api-url') {
       this.apiUrl = newValue;
@@ -2960,8 +2960,8 @@ class MultilingualAssistant extends HTMLElement {
   }
 
   readAttributes() {
-    if (this.hasAttribute('partner')) this.partnerId = this.getAttribute('partner');
-    if (this.hasAttribute('course')) this.courseId = this.getAttribute('course');
+    this.partnerId = this.getAttribute('partner') || this.getAttribute('partner-id') || this.partnerId;
+    this.courseId = this.getAttribute('course') || this.getAttribute('course-id') || this.courseId;
     if (this.hasAttribute('theme-color')) this.themeColor = this.getAttribute('theme-color');
     if (this.hasAttribute('default-lang')) this.currentLang = this.getAttribute('default-lang');
     if (this.hasAttribute('position')) this.position = this.getAttribute('position');
