@@ -6,9 +6,28 @@
     "company": "AfriRemote Solutions",
     "location": "Remote (East Africa Timezone)",
     "employment_type": "FULL_TIME",
+    "workType": "Full-time",
     "salary": "$500 - $700 / month",
     "course_alignment": "VA-1: VA Foundations",
     "description": "Looking for entry-level Virtual Assistants skilled in professional communication, calendar management, and remote correspondence.",
+    "tags": ["Remote", "Screen Reader Friendly", "Flexible Hours"],
+    "categories": ["remote", "screen-reader", "flexible"],
+    "titles": {
+      "en": "Junior Virtual Assistant (Inbox & Client Support)",
+      "am": "ጀማሪ ቨርቹዋል ረዳት (የኢሜይል እና ደንበኞች ድጋፍ)",
+      "om": "Gargaaraa Virtual Sadarkaa Jalqabaa (I-meelii fi Deeggarsa Maamilaa)",
+      "ti": "ጀማሪ ቨርቹዋል ረዳት (ኢሜይልን ድጋፍ ዓማዊልን)",
+      "so": "Kaaliyaha Virtual-ka ee Heerka Hoose (Iimaylka & Taageerada Macmiilka)",
+      "ar": "مساعد افتراضي مبتدئ (إدارة البريد ودعم العملاء)"
+    },
+    "descriptions": {
+      "en": "Looking for entry-level Virtual Assistants skilled in professional communication, calendar management, and remote correspondence. Full accommodations provided.",
+      "am": "በሙያዊ የጽሁፍ ግንኙነት፣ የቀን መቁጠሪያ ማቀናጀት እና የርቀት ስራ ቅንጅት የተካኑ ጀማሪ ቨርቹዋል ረዳቶችን እንፈልጋለን። ሙሉ የፈተና ማመቻቸት ይደረጋል።",
+      "om": "Gargaartota Virtual sadarkaa jalqabaa qunnamtii ogummaa, qindoomina kaalaandarii fi hojii fageenyaa irratti dandeettii qaban barbaanna. Deeggarsi guutuun ni kennama.",
+      "ti": "ብሞያዊ ናይ ጽሑፍ ርክብ፣ ምምሕዳር ካላንደርን ናይ ርሕቐት ስራሕን ክእለት ዘለዎም ጀመርቲ ረዳትቲ ንደሊ ኣለና። ምሉእ ናይ ፈተና ምቹእነት ይግበር።",
+      "so": "Waxaan raadineynaa kaaliyeyaal xirfad u leh xiriirka shaqada, maareynta jadwalka, iyo shaqada fog. Fursado buuxa oo la xaqiijiyay.",
+      "ar": "مطلوب مساعدون افتراضيون مبتدئون يتمتعون بمهارات التواصل المهني، إدارة الجداول الزمنية، والمراسلات عن بُعد. كافة التسهيلات متوفرة."
+    },
     "accommodations": {
       "screen_reader_certified": true,
       "extended_test_time": true,
@@ -29,11 +48,30 @@
     "partner_id": "savanna",
     "title": "Customer Support Communication Associate",
     "company": "Kazi Connect",
-    "location": "Remote",
+    "location": "Remote / Hybrid (Ethiopia)",
     "employment_type": "PART_TIME",
+    "workType": "Part-time",
     "salary": "$450 / month",
     "course_alignment": "WR 100: Fundamentals of Effective Communication",
     "description": "Seeking communicators with strong English and regional language fluency to handle written customer inquiries.",
+    "tags": ["Remote", "Amharic/Oromo/English", "Screen Reader Friendly"],
+    "categories": ["remote", "screen-reader"],
+    "titles": {
+      "en": "Customer Support Communication Associate",
+      "am": "የደንበኞች አገልግሎት እና ግንኙነት ባለሙያ",
+      "om": "Ogeessa Qunnamtii fi Tajaajila Maamilaa",
+      "ti": "ክኢላ ርክብን ኣገልግሎት ዓማዊልን",
+      "so": "Khabiirka Xiriirka & Daryeelka Macmiilka",
+      "ar": "مسؤول تواصل وخدمة العملاء"
+    },
+    "descriptions": {
+      "en": "Seeking communicators with strong English and regional language fluency to handle written customer inquiries. Screen reader certified testing.",
+      "am": "የደንበኞችን የጽሁፍ ጥያቄዎች በእንግሊዝኛ እና በአካባቢ ቋንቋዎች ለመመለስ ብቁ የሆኑ ተግባቢዎችን እንፈልጋለን። የስክሪን አንባቢ ድጋፍ ሙሉ በሙሉ የተረጋገጠ ነው።",
+      "om": "Gaaffilee maamiltootaa barreeffamaa fi e-meeliin deebisuuf ogeessota afaan hedduu dandeettii qaban barbaanna. Deeggarsa Screen Reader guutuu qaba.",
+      "ti": "ሕቶታት ዓማዊል ብጽሑፍ ንምምላስ ብቑዓት ዝኾኑ ርክብ ፈጠርቲ ንደሊ ኣለና። ናይ ስክሪን ኣንባቢ ፈተና ተረጋጊጹ እዩ።",
+      "so": "Waxaan raadineynaa shaqsiyaad ku hadla luqado badan si ay uga jawaabaan su'aalaha qoraalka ah ee macaamiisha. Nidaamku wuxuu taageeraa Screen Reader.",
+      "ar": "البحث عن متخصصين في التواصل لإدارة استفسارات العملاء المكتوبة بعدة لغات. التقييم الوظيفي متوافق تماماً مع قارئات الشاشة."
+    },
     "accommodations": {
       "screen_reader_certified": true,
       "written_questions_in_advance": true,
@@ -44,6 +82,49 @@
       "@type": "JobPosting",
       "title": "Customer Support Communication Associate",
       "jobLocationType": "TELECOMMUTE"
+    }
+  },
+  {
+    "id": "job_03",
+    "partner_id": "savanna",
+    "title": "AI Data Annotation & Accessibility Reviewer",
+    "company": "Bana AI Labs",
+    "location": "Fully Remote (East Africa)",
+    "employment_type": "FLEXIBLE",
+    "workType": "Flexible / Part-time",
+    "salary": "$600 - $950 / month",
+    "course_alignment": "VA-1: VA Foundations",
+    "description": "Evaluate artificial intelligence outputs for East African languages and digital accessibility standards.",
+    "tags": ["No Voice Call Required", "Screen Reader Friendly", "Flexible Hours"],
+    "categories": ["remote", "flexible", "screen-reader"],
+    "titles": {
+      "en": "AI Data Annotation & Accessibility Reviewer",
+      "am": "የ AI ዳታ መረጃ ገምጋሚ እና የተደራሽነት ተንታኝ",
+      "om": "Qorataa Daataa AI fi Qulqullina Mijaawummaa",
+      "ti": "ገምጋሚ ሓበሬታ AIን ተበጻሕነትን",
+      "so": "Falanqeeyaha Xogta AI iyo Helitaanka",
+      "ar": "مقيّم بيانات الذكاء الاصطناعي ومعايير النفاذية الرقمية"
+    },
+    "descriptions": {
+      "en": "Evaluate artificial intelligence outputs for East African languages and digital accessibility standards. Screen reader users prioritized.",
+      "am": "የአርቲፊሻል ኢንተሊጀንስ ምላሾችን ለምስራቅ አፍሪካ ቋንቋዎች ተደራሽነት እና ጥራት ይገምግሙ። የስክሪን አንባቢ ተጠቃሚዎች ቅድሚያ ይሰጣቸዋል።",
+      "om": "Deebiiwwan AI afaanota Baha Afrikaatiif qulqullina isaanii gamaaggamaa. Fayyadamtoonni Screen Reader dursa argatu.",
+      "ti": "ምላሻት AI ንቋንቋታት ምብራቕ ኣፍሪቃን ዲጂታል ተበጻሕነትን ገምግሙ። ተጠቀምቲ ስክሪን ኣንባቢ ቀዳምነት ይወሃቦም።",
+      "so": "Qiimee jawaabaha sirdoonka macmalka ah ee luqadaha Bariga Afrika iyo helitaanka dhijitaalka ah.",
+      "ar": "تقييم مخرجات نماذج الذكاء الاصطناعي للغات شرق إفريقيا ومعايير النفاذية الرقمية. الأولوية لمستخدمي قارئات الشاشة."
+    },
+    "accommodations": {
+      "screen_reader_certified": true,
+      "async_work": true,
+      "extended_test_time": true,
+      "contact": "accessibility@bana-ai.example.com"
+    },
+    "schema_org": {
+      "@context": "https://schema.org/",
+      "@type": "JobPosting",
+      "title": "AI Data Annotation & Accessibility Reviewer",
+      "jobLocationType": "TELECOMMUTE",
+      "jobBenefits": "Screen reader compatible evaluation; asynchronous interview."
     }
   }
 ]

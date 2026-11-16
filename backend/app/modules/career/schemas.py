@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 class JobItem(BaseModel):
     id: str
@@ -12,6 +12,12 @@ class JobItem(BaseModel):
     description: str
     accommodations: dict
     schema_org: dict
+    employment_type: Optional[str] = None
+    workType: Optional[str] = None
+    tags: Optional[List[str]] = None
+    categories: Optional[List[str]] = None
+    titles: Optional[Dict[str, str]] = None
+    descriptions: Optional[Dict[str, str]] = None
 
 class AccommodationRequest(BaseModel):
     job_id: str = Field(..., example="job_01")
