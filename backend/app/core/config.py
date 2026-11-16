@@ -6,10 +6,11 @@ class Settings(BaseModel):
     VERSION: str = "1.0.0"
     API_PREFIX: str = "/api/v1"
 
-    # Database (Auto-normalizes postgres:// to postgresql+psycopg2:// for cloud hosts)
+    # Database (Auto-normalizes postgres:// & postgresql:// for cloud compatibility)
     DATABASE_URL: str = (
         os.getenv("DATABASE_URL", "postgresql+psycopg2://admin:password@localhost:5432/savanna_db")
         .replace("postgres://", "postgresql+psycopg2://", 1)
+        .replace("postgresql://", "postgresql+psycopg2://", 1)
     )
 
     # Embedding model for vector semantic search
