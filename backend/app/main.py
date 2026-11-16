@@ -11,6 +11,8 @@ from app.modules.tutor.router import router as tutor_router
 from app.modules.tutor.service import TutorService
 from app.modules.tutor import schemas as tutor_schemas
 from app.modules.career.router import router as career_router
+from app.modules.career.service import CareerService
+from app.modules.career import schemas as career_schemas
 from app.modules.escalate.router import router as escalate_router
 from app.modules.channels.sms_handler import router as sms_router, process_inbound_sms
 from app.modules.channels.telegram_router import router as telegram_router
@@ -75,6 +77,14 @@ app.include_router(teacher_router, prefix=settings.API_PREFIX)
 @app.post("/tutor/chat", tags=["Widget Compatibility"])
 def root_tutor_chat(payload: tutor_schemas.TutorChatRequest, db: Session = Depends(get_db)):
     return TutorService.chat(db, payload)
+
+@app.get("/career/jobs", tags=["Module 2: Career Gateway (Level 3)"])
+async def root_career_jobs(partner_id: str = "savanna"):
+    return CareerService.get_jobs(partner_id)
+
+@app.post("/career/accommodations", tags=["Module 2: Career Gateway (Level 3)"])
+async def root_career_accommodations(req: career_schemas.AccommodationRequest):
+    return CareerService.create_accommodation_request(req.job_id, req.applicant_name, req.accommodations)
 
 @app.post("/sms/inbound", tags=["Module 4: Low-Bandwidth SMS Route"])
 async def root_sms_inbound_post(request: Request, db: Session = Depends(get_db)):
