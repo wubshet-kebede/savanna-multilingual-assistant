@@ -4813,6 +4813,10 @@ class MultilingualAssistant extends HTMLElement {
           animation: none !important;
           transition: none !important;
         }
+        .status-dot,
+        .btn-mic.recording {
+          animation: none !important;
+        }
       }
     `;
   }
