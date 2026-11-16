@@ -2943,9 +2943,15 @@ class MultilingualAssistant extends HTMLElement {
   attributeChangedCallback(name, oldValue, newValue) {
     if (oldValue === newValue) return;
     if (name === 'default-lang' && newValue && LOCALIZED_UI[newValue]) {
-      this.currentLang = newValue;
-      if (this.shadowRoot && this.shadowRoot.getElementById('drawer')) {
-        this.updateLanguageUI(newValue);
+      let savedLang = null;
+      try {
+        savedLang = localStorage.getItem('savanna_preferred_lang');
+      } catch {}
+      if (!savedLang) {
+        this.currentLang = newValue;
+        if (this.shadowRoot && this.shadowRoot.getElementById('drawer')) {
+          this.updateLanguageUI(newValue);
+        }
       }
     } else if (name === 'theme-color' && newValue) {
       this.themeColor = newValue;
@@ -2963,7 +2969,19 @@ class MultilingualAssistant extends HTMLElement {
     this.partnerId = this.getAttribute('partner') || this.getAttribute('partner-id') || this.partnerId;
     this.courseId = this.getAttribute('course') || this.getAttribute('course-id') || this.courseId;
     if (this.hasAttribute('theme-color')) this.themeColor = this.getAttribute('theme-color');
-    if (this.hasAttribute('default-lang')) this.currentLang = this.getAttribute('default-lang');
+
+    // Language Preference Persistence (LocalStorage)
+    let savedLang = null;
+    try {
+      savedLang = localStorage.getItem('savanna_preferred_lang');
+    } catch {}
+
+    if (savedLang && LOCALIZED_UI[savedLang]) {
+      this.currentLang = savedLang;
+    } else if (this.hasAttribute('default-lang') && LOCALIZED_UI[this.getAttribute('default-lang')]) {
+      this.currentLang = this.getAttribute('default-lang');
+    }
+
     if (this.hasAttribute('position')) this.position = this.getAttribute('position');
     if (this.hasAttribute('api-url')) this.apiUrl = this.getAttribute('api-url');
   }
@@ -5820,6 +5838,9 @@ class MultilingualAssistant extends HTMLElement {
   handleLanguageSwitch(lang) {
     if (!LOCALIZED_UI[lang]) return;
     this.currentLang = lang;
+    try {
+      localStorage.setItem('savanna_preferred_lang', lang);
+    } catch {}
     this.updateLanguageUI(lang);
     const t = LOCALIZED_UI[lang];
     const announcement = t.langChangedAnnouncement || t.welcome;
