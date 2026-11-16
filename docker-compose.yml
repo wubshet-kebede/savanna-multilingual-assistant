@@ -28,9 +28,8 @@ services:
     ports:
       - "8086:80"
     volumes:
-      - ./savanna:/usr/share/nginx/html:ro
-      - ./module:/usr/share/nginx/html/module:ro
-      - ./demo:/usr/share/nginx/html/demo:ro
+      - ./widget:/usr/share/nginx/html/widget:ro
+      - ./html_course_files:/usr/share/nginx/html/html_course_files:ro
 
 # This missing block caused the error
 volumes:
