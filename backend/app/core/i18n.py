@@ -13,6 +13,9 @@ STRINGS = {
         "acc_btn": "♿ Accommodations",
         "a11y_btn": "♿ Accessibility Guide",
         "simple_toggle_btn": "🧠 Toggle Simple Mode",
+        "voice_toggle_btn": "🔊 Toggle Auto-Voice",
+        "voice_on": "🔊 <b>Auto-Voice Mode (Hands-Free):</b> ON All future answers will automatically include spoken audio voice notes!",
+        "voice_off": "🔊 <b>Auto-Voice Mode:</b> OFF Audio is now on-demand using the [🔊 Listen] button.",
         
         "citation_header": "📚 Verified Course Citation:",
         "course_source": "📌 Course Source:",
@@ -91,6 +94,9 @@ STRINGS = {
         "acc_btn": "♿ የተስማሚነት ድጋፎች",
         "a11y_btn": "♿ የተደራሽነት መመሪያ",
         "simple_toggle_btn": "🧠 ቀላል ሁነታን ቀይር",
+        "voice_toggle_btn": "🔊 ራስ-ሰር ድምፅን ቀይር",
+        "voice_on": "🔊 <b>ራስ-ሰር የድምፅ ሁነታ:</b> በርቷል ከእንግዲህ ሁሉም መልሶች በድምፅ ተነበው በቀጥታ ይላካሉ!",
+        "voice_off": "🔊 <b>ራስ-ሰር የድምፅ ሁነታ:</b> ጠፍቷል መልሶች በጽሑፍ እና በ[🔊 መልሱን ያዳምጡ] አዝራር ይቀርባሉ።",
         
         "citation_header": "📚 የተረጋገጠ የትምህርት ጥቅስ፡",
         "course_source": "📌 የትምህርት ምንጭ፡",
@@ -167,6 +173,9 @@ STRINGS = {
         "acc_btn": "♿ Qophiilee Tajaajilaa",
         "a11y_btn": "♿ Qajeelfama Tajaajilaa",
         "simple_toggle_btn": "🧠 Haala Salphaa",
+        "voice_toggle_btn": "🔊 Haala Sagalee",
+        "voice_on": "🔊 <b>Haala Sagalee Ofiin:</b> BANI Fuulduratti deebiiwwan hundi ofiin sagaleen dubbifamanii ergamu!",
+        "voice_off": "🔊 <b>Haala Sagalee Ofiin:</b> DHAAMSI Deebiiwwan barreeffamaafi qabduu sagaleetiin dhiyaatu.",
         
         "citation_header": "📚 Ragaa Barnootaa Mirkanaa'e:",
         "course_source": "📌 Madda Barnootaa:",
@@ -243,6 +252,9 @@ STRINGS = {
         "acc_btn": "♿ ናይ ተስማዕማዕነት ደገፍ",
         "a11y_btn": "♿ መምርሒ ተበጻሕነት",
         "simple_toggle_btn": "🧠 ቀሊል ኣገባብ",
+        "voice_toggle_btn": "🔊 ናይ ድምጺ ኣገባብ",
+        "voice_on": "🔊 <b>ናይ ድምጺ ኣገባብ:</b> በርዩ ኣሎ ዝቕጽሉ መልስታት ብድምጺ ክልኣኹ እዮም!",
+        "voice_off": "🔊 <b>ናይ ድምጺ ኣገባብ:</b> ጠፊኡ ኣሎ",
         
         "citation_header": "📚 ዝተረጋገጸ ናይ ትምህርቲ ጥቕሲ፡",
         "course_source": "📌 ናይ ትምህርቲ ምንጪ፡",
@@ -280,6 +292,9 @@ STRINGS = {
         "acc_btn": "♿ Fududeynta",
         "a11y_btn": "♿ Hagaha Helitaanka",
         "simple_toggle_btn": "🧠 Hab Fudud",
+        "voice_toggle_btn": "🔊 Habka Codka",
+        "voice_on": "🔊 <b>Habka Codka Tooska ah:</b> SHIDAN Dhammaan jawaabaha toos ayaa cod ahaan loogu soo diri doonaa!",
+        "voice_off": "🔊 <b>Habka Codka Tooska ah:</b> DAMISAN",
         
         "citation_header": "📚 Xigasho Manhajka La Xaqiijiyey:",
         "course_source": "📌 Isha Manhajka:",
@@ -317,6 +332,9 @@ STRINGS = {
         "acc_btn": "♿ التسهيلات والتيسيرات",
         "a11y_btn": "♿ دليل إمكانية الوصول",
         "simple_toggle_btn": "🧠 تبديل الوضع البسيط",
+        "voice_toggle_btn": "🔊 وضع الصوت التلقائي",
+        "voice_on": "🔊 <b>وضع الصوت التلقائي:</b> مفعّل ستتم قراءة جميع الإجابات المستقبلية وإرسالها كمقاطع صوتية تلقائيًا!",
+        "voice_off": "🔊 <b>وضع الصوت التلقائي:</b> معطّل ستصلك الإجابات كنصوص مع زر الاستماع عند الطلب.",
         
         "citation_header": "📚 مرجع الدورة المعتمد:",
         "course_source": "📌 مصدر الدرس:",

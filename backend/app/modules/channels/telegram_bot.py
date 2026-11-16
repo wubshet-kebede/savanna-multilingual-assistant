@@ -197,6 +197,7 @@ except ImportError:
 if TELEGRAM_LIB_AVAILABLE:
     BOT_COMMANDS = [
         BotCommand("start", "👋 Start tutoring & curriculum overview"),
+        BotCommand("voice", "🔊 Toggle automatic speech read-aloud"),
         BotCommand("lang", "🌐 Switch language (Amharic, Oromo, Tigrinya, Arabic...)"),
         BotCommand("a11y", "♿ Accessibility features & screen reader guide"),
         BotCommand("simple", "🧠 Toggle WCAG 3.1.5 plain-language mode"),
@@ -317,11 +318,14 @@ async def accessibility_handler(update: Update, context: ContextTypes.DEFAULT_TY
     msg = t("a11y_info", lang)
     buttons = [
         [
-            {"text": t("simple_toggle_btn", lang), "callback_data": "action_simple_toggle"},
-            {"text": t("jobs_btn", lang), "callback_data": "action_jobs"}
+            {"text": t("voice_toggle_btn", lang), "callback_data": "action_voice_toggle"},
+            {"text": t("simple_toggle_btn", lang), "callback_data": "action_simple_toggle"}
         ],
         [
-            {"text": t("mentor_btn", lang), "callback_data": "action_mentor"},
+            {"text": t("jobs_btn", lang), "callback_data": "action_jobs"},
+            {"text": t("mentor_btn", lang), "callback_data": "action_mentor"}
+        ],
+        [
             {"text": t("lang_btn", lang), "callback_data": "action_lang"}
         ]
     ]
@@ -425,6 +429,16 @@ async def simple_mode_handler(update: Update, context: ContextTypes.DEFAULT_TYPE
     msg = t("simple_on", lang) if new_simple else t("simple_off", lang)
     await safe_reply(update.effective_message or update, msg)
 
+async def voice_mode_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id if update.effective_user else 0
+    pref = get_user_settings(user_id)
+    new_voice = not pref.get("auto_voice", False)
+    update_user_settings(user_id, auto_voice=new_voice)
+    lang = pref["lang"]
+
+    msg = t("voice_on", lang) if new_voice else t("voice_off", lang)
+    await safe_reply(update.effective_message or update, msg)
+
 
 async def accommodations_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id if update.effective_user else 0
@@ -465,6 +479,20 @@ async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         formatted_text,
         reply_markup=create_inline_keyboard(buttons)
     )
+
+    # If user enabled Auto-Voice Mode, automatically generate and send voice note!
+    if pref.get("auto_voice", False):
+        audio_reply = await asyncio.to_thread(generate_speech_audio, rag_result.get("reply", ""), lang)
+        if audio_reply:
+            import io
+            try:
+                await context.bot.send_voice(
+                    chat_id=update.effective_chat.id,
+                    voice=io.BytesIO(audio_reply),
+                    caption=t("audio_caption", lang)
+                )
+            except Exception as e:
+                print(f"[Telegram Bot] auto_voice error: {e}", flush=True)
 
 
 async def voice_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -516,6 +544,17 @@ async def voice_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             print(f"[Telegram Bot] send_voice error: {e}", flush=True)
 
 
+async def safe_answer_query(query, text=None, show_alert=False):
+    if not query:
+        return
+    try:
+        if text:
+            await query.answer(text=text, show_alert=show_alert)
+        else:
+            await safe_answer_query(query)
+    except Exception:
+        pass
+
 async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     data = query.data
@@ -524,7 +563,7 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     lang = pref["lang"]
 
     if data == "action_listen":
-        await query.answer(t("audio_generating", lang), show_alert=False)
+        await safe_answer_query(query, t("audio_generating", lang), show_alert=False)
         msg_text = query.message.text or query.message.caption or ""
         audio_bytes = await asyncio.to_thread(generate_speech_audio, msg_text, lang)
         if audio_bytes:
@@ -538,7 +577,7 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await query.message.reply_text(t("audio_unavailable", lang))
 
     elif data == "prompt_ai":
-        await query.answer()
+        await safe_answer_query(query)
         try:
             await context.bot.send_chat_action(chat_id=update.effective_chat.id, action=ChatAction.TYPING)
         except Exception:
@@ -548,7 +587,7 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await safe_reply(query, text, reply_markup=create_inline_keyboard(btns))
 
     elif data == "prompt_future":
-        await query.answer()
+        await safe_answer_query(query)
         try:
             await context.bot.send_chat_action(chat_id=update.effective_chat.id, action=ChatAction.TYPING)
         except Exception:
@@ -558,15 +597,15 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await safe_reply(query, text, reply_markup=create_inline_keyboard(btns))
 
     elif data == "action_jobs":
-        await query.answer()
+        await safe_answer_query(query)
         await jobs_handler(update, context)
 
     elif data == "action_mentor":
-        await query.answer()
+        await safe_answer_query(query)
         await mentor_handler(update, context)
 
     elif data == "action_lang":
-        await query.answer()
+        await safe_answer_query(query)
         await lang_handler(update, context)
 
     elif data.startswith("setlang_"):
@@ -577,22 +616,29 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "ti": "ትግርኛ", "so": "Soomaali", "ar": "العربية"
         }
         target_name = lang_names.get(new_lang, new_lang)
-        await query.answer(f"Language set to {target_name}")
+        await safe_answer_query(query, f"Language set to {target_name}")
         await safe_reply(query, t("lang_updated", new_lang, name=target_name))
 
     elif data == "action_acc":
-        await query.answer()
+        await safe_answer_query(query)
         await accommodations_handler(update, context)
 
     elif data == "action_a11y":
-        await query.answer()
+        await safe_answer_query(query)
         await accessibility_handler(update, context)
 
     elif data == "action_simple_toggle":
         new_val = not pref["simple_mode"]
         update_user_settings(user_id, simple_mode=new_val)
         status_msg = t("simple_on", lang) if new_val else t("simple_off", lang)
-        await query.answer("Cognitive Mode Updated")
+        await safe_answer_query(query, "Cognitive Mode Updated")
+        await safe_reply(query, status_msg)
+
+    elif data == "action_voice_toggle":
+        new_val = not pref.get("auto_voice", False)
+        update_user_settings(user_id, auto_voice=new_val)
+        status_msg = t("voice_on", lang) if new_val else t("voice_off", lang)
+        await safe_answer_query(query, "Auto-Voice Mode Updated")
         await safe_reply(query, status_msg)
 
 
@@ -644,6 +690,7 @@ def build_telegram_application(token: str) -> Optional["Application"]:
     app = Application.builder().token(token).request(req).build()
 
     app.add_handler(CommandHandler(["start", "restart"], start_handler))
+    app.add_handler(CommandHandler(["voice", "audio", "speech", "sound"], voice_mode_handler))
     app.add_handler(CommandHandler(["a11y", "accessibility", "access"], accessibility_handler))
     app.add_handler(CommandHandler(["simple", "easy", "plain"], simple_mode_handler))
     app.add_handler(CommandHandler(["acc", "accommodations", "accommodation"], accommodations_handler))

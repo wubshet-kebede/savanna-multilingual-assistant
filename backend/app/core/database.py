@@ -16,5 +16,6 @@ def get_db():
 def init_db():
     with engine.connect() as conn:
         conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
+        conn.execute(text("ALTER TABLE IF EXISTS user_profiles ADD COLUMN IF NOT EXISTS auto_voice BOOLEAN DEFAULT FALSE"))
         conn.commit()
     Base.metadata.create_all(bind=engine)
