@@ -1,5 +1,7 @@
 import os
 import sys
+import re
+import html
 import asyncio
 from typing import Optional
 from app.core.config import settings
@@ -19,6 +21,37 @@ def get_user_pref(user_id: int) -> dict:
             "simple_mode": False
         }
     return USER_PREFERENCES[user_id]
+
+def render_telegram_html(text: str) -> str:
+    """
+    Sanitizes markdown and converts it to Telegram-compliant HTML tags.
+    Escapes HTML entities so the parser never throws BadRequest errors.
+    """
+    if not text:
+        return ""
+    # 1. Escape HTML special characters first to avoid entity parse errors
+    escaped = html.escape(text)
+
+    # 2. Convert markdown bold/italic combinations: ***text*** -> <b><i>text</i></b>
+    escaped = re.sub(r'\*\*\*(.+?)\*\*\*', r'<b><i>\1</i></b>', escaped)
+
+    # 3. Convert markdown bold: **text** -> <b>text</b>
+    escaped = re.sub(r'\*\*(.+?)\*\*', r'<b>\1</b>', escaped)
+
+    # 4. Convert markdown italic: *text* or _text_ -> <i>text</i>
+    escaped = re.sub(r'(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)', r'<i>\1</i>', escaped)
+    escaped = re.sub(r'(?<!_)\_(?!_)(.+?)(?<!_)\_(?!_)', r'<i>\1</i>', escaped)
+
+    # 5. Convert inline code: `code` -> <code>code</code>
+    escaped = re.sub(r'`(.+?)`', r'<code>\1</code>', escaped)
+
+    # 6. Convert bullet lists at line starts: * or - -> •
+    escaped = re.sub(r'(?m)^[\s]*[\*\-]\s+', '• ', escaped)
+
+    # 7. Convert markdown headings: ### Header -> <b>Header</b>
+    escaped = re.sub(r'(?m)^#{1,6}\s*(.+?)$', r'<b>\1</b>', escaped)
+
+    return escaped
 
 def process_student_query(text: str, lang: str = "en", simple_mode: bool = False) -> dict:
     """
@@ -43,20 +76,21 @@ def format_telegram_response(rag_result: dict, lang: str = "en") -> tuple[str, l
     Formats the RAG answer with clean Telegram typography, verifiable course citations,
     and interactive quick-action buttons.
     """
-    reply = rag_result.get("reply", "")
+    raw_reply = rag_result.get("reply", "")
+    safe_reply_content = render_telegram_html(raw_reply)
     citation = rag_result.get("citation")
     engine = rag_result.get("engine", "offline-rag")
     engine_label = "Gemini 3.8 AI" if "gemini" in engine else "Savanna Vector Store"
 
     text_parts = [
         "🎓 <b>Savanna AI Tutor</b>\n",
-        reply,
+        safe_reply_content,
         ""
     ]
 
     if citation:
-        title = citation.get("title", "Course Material")
-        target_id = citation.get("targetId", "")
+        title = html.escape(str(citation.get("title", "Course Material")))
+        target_id = html.escape(str(citation.get("targetId", "")))
         text_parts.append("━━━━━━━━━━━━━━━━━━━━━━")
         text_parts.append(f"📌 <b>Course Source:</b> {title}")
         if target_id:
@@ -110,9 +144,45 @@ def create_inline_keyboard(buttons_spec: list[list[dict]]) -> Optional["InlineKe
     return InlineKeyboardMarkup(keyboard)
 
 
+async def safe_reply(message_or_query, text: str, reply_markup=None):
+    """
+    Safely delivers the response using HTML mode, falling back to plain text
+    if any entity parser issue occurs.
+    """
+    try:
+        if hasattr(message_or_query, "reply_text"):
+            return await message_or_query.reply_text(
+                text,
+                parse_mode=ParseMode.HTML,
+                reply_markup=reply_markup,
+                disable_web_page_preview=True
+            )
+        elif hasattr(message_or_query, "message") and hasattr(message_or_query.message, "reply_text"):
+            return await message_or_query.message.reply_text(
+                text,
+                parse_mode=ParseMode.HTML,
+                reply_markup=reply_markup,
+                disable_web_page_preview=True
+            )
+    except Exception as e:
+        plain_text = re.sub(r'<[^>]+>', '', text)
+        if hasattr(message_or_query, "reply_text"):
+            return await message_or_query.reply_text(
+                plain_text,
+                reply_markup=reply_markup,
+                disable_web_page_preview=True
+            )
+        elif hasattr(message_or_query, "message") and hasattr(message_or_query.message, "reply_text"):
+            return await message_or_query.message.reply_text(
+                plain_text,
+                reply_markup=reply_markup,
+                disable_web_page_preview=True
+            )
+
+
 async def start_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
-    first_name = user.first_name if user else "Student"
+    first_name = html.escape(user.first_name) if user and user.first_name else "Student"
 
     welcome_text = (
         f"👋 <b>Welcome, {first_name}!</b>\n\n"
@@ -142,9 +212,9 @@ async def start_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ]
     ]
 
-    await update.message.reply_text(
+    await safe_reply(
+        update.message,
         welcome_text,
-        parse_mode=ParseMode.HTML,
         reply_markup=create_inline_keyboard(quick_prompts)
     )
 
@@ -163,13 +233,13 @@ async def help_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "• /simple - Toggle cognitive plain-language mode\n\n"
         "Simply type your question to begin!"
     )
-    await update.message.reply_text(help_text, parse_mode=ParseMode.HTML)
+    await safe_reply(update.message, help_text)
 
 
 async def jobs_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     jobs = CareerService.get_jobs("savanna")
     if not jobs:
-        await update.message.reply_text("No jobs currently available for this cohort.")
+        await safe_reply(update.message, "No jobs currently available for this cohort.")
         return
 
     job_lines = ["💼 <b>Verified Inclusive Job Opportunities:</b>\n"]
@@ -186,13 +256,13 @@ async def jobs_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         acc_str = " | ".join(acc_tags) if acc_tags else "Accommodations upon request"
 
         job_lines.append(
-            f"<b>{j['title']}</b> at <i>{j['company']}</i>\n"
-            f"📍 {j['location']} · 💵 {j.get('salary', 'Competitive')}\n"
+            f"<b>{html.escape(j['title'])}</b> at <i>{html.escape(j['company'])}</i>\n"
+            f"📍 {html.escape(j['location'])} · 💵 {html.escape(j.get('salary', 'Competitive'))}\n"
             f"♿ <b>Certified Accommodations:</b> {acc_str}\n"
-            f"🎯 <b>Curriculum Alignment:</b> {j.get('course_alignment', 'VA Foundations')}\n"
+            f"🎯 <b>Curriculum Alignment:</b> {html.escape(j.get('course_alignment', 'VA Foundations'))}\n"
         )
 
-    await update.message.reply_text("\n".join(job_lines), parse_mode=ParseMode.HTML)
+    await safe_reply(update.message, "\n".join(job_lines))
 
 
 async def mentor_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -202,12 +272,12 @@ async def mentor_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     msg = (
         f"🆘 <b>Human Mentor Alerted!</b>\n\n"
-        f"<b>Assigned Mentor:</b> {res['mentor_assigned']}\n"
-        f"<b>Session ID:</b> <code>{res['session_id']}</code>\n"
-        f"<b>Status:</b> {res['status'].title()}\n\n"
+        f"<b>Assigned Mentor:</b> {html.escape(res['mentor_assigned'])}\n"
+        f"<b>Session ID:</b> <code>{html.escape(res['session_id'])}</code>\n"
+        f"<b>Status:</b> {html.escape(res['status'].title())}\n\n"
         "Your mentor has received your recent question context and will contact you directly."
     )
-    await update.message.reply_text(msg, parse_mode=ParseMode.HTML)
+    await safe_reply(update.message, msg)
 
 
 async def lang_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -225,9 +295,9 @@ async def lang_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             {"text": "🇸🇦 العربية (Arabic)", "callback_data": "setlang_ar"}
         ]
     ]
-    await update.message.reply_text(
+    await safe_reply(
+        update.message,
         "🌐 <b>Select your preferred learning language:</b>",
-        parse_mode=ParseMode.HTML,
         reply_markup=create_inline_keyboard(keyboard)
     )
 
@@ -236,9 +306,9 @@ async def simple_mode_handler(update: Update, context: ContextTypes.DEFAULT_TYPE
     pref = get_user_pref(update.effective_user.id)
     pref["simple_mode"] = not pref["simple_mode"]
     status = "ON (Plain language explanations enabled)" if pref["simple_mode"] else "OFF (Standard technical detail)"
-    await update.message.reply_text(
-        f"♿ <b>Cognitive Simple Mode (WCAG 3.1.5):</b> {status}",
-        parse_mode=ParseMode.HTML
+    await safe_reply(
+        update.message,
+        f"♿ <b>Cognitive Simple Mode (WCAG 3.1.5):</b> {status}"
     )
 
 
@@ -251,20 +321,24 @@ async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     pref = get_user_pref(user_id)
 
     # Indicate typing state while RAG generates answer
-    await context.bot.send_chat_action(chat_id=update.effective_chat.id, action=ChatAction.TYPING)
+    try:
+        await context.bot.send_chat_action(chat_id=update.effective_chat.id, action=ChatAction.TYPING)
+    except Exception:
+        pass
 
-    # Query the RAG system
-    rag_result = process_student_query(
-        text=user_text,
-        lang=pref["lang"],
-        simple_mode=pref["simple_mode"]
+    # Query the RAG system asynchronously in worker thread
+    rag_result = await asyncio.to_thread(
+        process_student_query,
+        user_text,
+        pref["lang"],
+        pref["simple_mode"]
     )
 
     formatted_text, buttons = format_telegram_response(rag_result, pref["lang"])
 
-    await update.message.reply_text(
+    await safe_reply(
+        update.message,
         formatted_text,
-        parse_mode=ParseMode.HTML,
         reply_markup=create_inline_keyboard(buttons)
     )
 
@@ -277,25 +351,77 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     pref = get_user_pref(user_id)
 
     if data == "prompt_ai":
-        await context.bot.send_chat_action(chat_id=update.effective_chat.id, action=ChatAction.TYPING)
-        res = process_student_query("What is the use of Artificial Intelligence in virtual assistance?", pref["lang"])
+        try:
+            await context.bot.send_chat_action(chat_id=update.effective_chat.id, action=ChatAction.TYPING)
+        except Exception:
+            pass
+        res = await asyncio.to_thread(process_student_query, "What is the use of Artificial Intelligence in virtual assistance?", pref["lang"])
         text, btns = format_telegram_response(res, pref["lang"])
-        await query.message.reply_text(text, parse_mode=ParseMode.HTML, reply_markup=create_inline_keyboard(btns))
+        await safe_reply(query, text, reply_markup=create_inline_keyboard(btns))
 
     elif data == "prompt_future":
-        await context.bot.send_chat_action(chat_id=update.effective_chat.id, action=ChatAction.TYPING)
-        res = process_student_query("What is shaping the future of VA work?", pref["lang"])
+        try:
+            await context.bot.send_chat_action(chat_id=update.effective_chat.id, action=ChatAction.TYPING)
+        except Exception:
+            pass
+        res = await asyncio.to_thread(process_student_query, "What is shaping the future of VA work?", pref["lang"])
         text, btns = format_telegram_response(res, pref["lang"])
-        await query.message.reply_text(text, parse_mode=ParseMode.HTML, reply_markup=create_inline_keyboard(btns))
+        await safe_reply(query, text, reply_markup=create_inline_keyboard(btns))
 
     elif data == "action_jobs":
-        await jobs_handler(update, context)
+        jobs = CareerService.get_jobs("savanna")
+        job_lines = ["💼 <b>Verified Inclusive Job Opportunities:</b>\n"]
+        for j in jobs[:3]:
+            acc = j.get("accommodations", {})
+            acc_tags = []
+            if acc.get("screen_reader_certified"):
+                acc_tags.append("🖥️ Screen Reader Certified")
+            if acc.get("extended_test_time"):
+                acc_tags.append("⏱️ Extended Test Time")
+            if acc.get("camera_optional_interview"):
+                acc_tags.append("📹 Camera Optional")
+            acc_str = " | ".join(acc_tags) if acc_tags else "Accommodations upon request"
+
+            job_lines.append(
+                f"<b>{html.escape(j['title'])}</b> at <i>{html.escape(j['company'])}</i>\n"
+                f"📍 {html.escape(j['location'])} · 💵 {html.escape(j.get('salary', 'Competitive'))}\n"
+                f"♿ <b>Certified Accommodations:</b> {acc_str}\n"
+                f"🎯 <b>Curriculum Alignment:</b> {html.escape(j.get('course_alignment', 'VA Foundations'))}\n"
+            )
+        await safe_reply(query, "\n".join(job_lines))
 
     elif data == "action_mentor":
-        await mentor_handler(update, context)
+        learner_id = f"tg_{user_id}"
+        res = EscalateService.dispatch_human_mentor(learner_id, "savanna", "VA-1", "en")
+        msg = (
+            f"🆘 <b>Human Mentor Alerted!</b>\n\n"
+            f"<b>Assigned Mentor:</b> {html.escape(res['mentor_assigned'])}\n"
+            f"<b>Session ID:</b> <code>{html.escape(res['session_id'])}</code>\n"
+            f"<b>Status:</b> {html.escape(res['status'].title())}\n\n"
+            "Your mentor has received your recent question context and will contact you directly."
+        )
+        await safe_reply(query, msg)
 
     elif data == "action_lang":
-        await lang_handler(update, context)
+        keyboard = [
+            [
+                {"text": "🇬🇧 English", "callback_data": "setlang_en"},
+                {"text": "🇪🇹 አማርኛ (Amharic)", "callback_data": "setlang_am"}
+            ],
+            [
+                {"text": "🟢 Afaan Oromoo", "callback_data": "setlang_om"},
+                {"text": "🔵 ትግርኛ (Tigrinya)", "callback_data": "setlang_ti"}
+            ],
+            [
+                {"text": "🇸🇴 Soomaali", "callback_data": "setlang_so"},
+                {"text": "🇸🇦 العربية (Arabic)", "callback_data": "setlang_ar"}
+            ]
+        ]
+        await safe_reply(
+            query,
+            "🌐 <b>Select your preferred learning language:</b>",
+            reply_markup=create_inline_keyboard(keyboard)
+        )
 
     elif data.startswith("setlang_"):
         new_lang = data.replace("setlang_", "")
@@ -304,26 +430,26 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "en": "English", "am": "አማርኛ", "om": "Afaan Oromoo",
             "ti": "ትግርኛ", "so": "Soomaali", "ar": "العربية"
         }
-        await query.message.reply_text(
-            f"✅ Language updated to <b>{lang_names.get(new_lang, new_lang)}</b>. Future answers will be provided in this language.",
-            parse_mode=ParseMode.HTML
+        await safe_reply(
+            query,
+            f"✅ Language updated to <b>{lang_names.get(new_lang, new_lang)}</b>. Future answers will be provided in this language."
         )
 
     elif data == "action_acc":
-        await query.message.reply_text(
+        await safe_reply(
+            query,
             "♿ <b>Standardized Interview Accommodations:</b>\n\n"
             "Savanna partners guarantee non-discriminatory interviews. Available certified accommodations include:\n"
             "• Screen Reader Compatible Testing (NVDA / TalkBack)\n"
             "• 25% - 50% Extended Evaluation Time\n"
             "• Camera-Optional or Written Q&A Format\n\n"
-            "You can request these with one click in the web Career tab or through /jobs.",
-            parse_mode=ParseMode.HTML
+            "You can request these with one click in the web Career tab or through /jobs."
         )
 
 
 def build_telegram_application(token: str) -> Optional["Application"]:
     if not TELEGRAM_LIB_AVAILABLE:
-        print("[Telegram Bot] python-telegram-bot is not installed.")
+        print("[Telegram Bot] python-telegram-bot is not installed.", flush=True)
         return None
 
     app = Application.builder().token(token).build()
@@ -395,18 +521,25 @@ def run_cli_simulation():
 
 async def run_telegram_bot_service():
     token = settings.TELEGRAM_BOT_TOKEN or os.getenv("TELEGRAM_BOT_TOKEN", "")
-    if not token or token.strip() == "YOUR_TELEGRAM_BOT_TOKEN_HERE":
-        print("[Telegram Bot] No TELEGRAM_BOT_TOKEN set in .env. Bot polling idle.")
-        print("[Telegram Bot] Webhook / simulation endpoints are active at /api/v1/channels/telegram/simulate.")
+    if not token or token.strip() in ["", "YOUR_TELEGRAM_BOT_TOKEN_HERE"]:
+        print("[Telegram Bot] No TELEGRAM_BOT_TOKEN set in .env. Bot polling idle.", flush=True)
         return
 
-    print(f"[Telegram Bot] Starting live Telegram polling on token {token[:6]}...")
+    print(f"[Telegram Bot] Starting live Telegram polling on token {token[:6]}...", flush=True)
     app = build_telegram_application(token)
     if app:
         await app.initialize()
         await app.start()
-        await app.updater.start_polling()
-        print("[Telegram Bot] Polling started successfully.")
+        await app.updater.start_polling(drop_pending_updates=True)
+        print(f"[Telegram Bot] Polling started successfully for @Savanna_AI_Tutor_Bot!", flush=True)
+        try:
+            while True:
+                await asyncio.sleep(3600)
+        except asyncio.CancelledError:
+            print("[Telegram Bot] Polling task cancelled, shutting down...", flush=True)
+            await app.updater.stop()
+            await app.stop()
+            await app.shutdown()
 
 
 if __name__ == "__main__":
@@ -414,7 +547,10 @@ if __name__ == "__main__":
         run_cli_simulation()
     else:
         token = settings.TELEGRAM_BOT_TOKEN or os.getenv("TELEGRAM_BOT_TOKEN", "")
-        if token and token.strip() != "YOUR_TELEGRAM_BOT_TOKEN_HERE":
-            asyncio.run(run_telegram_bot_service())
+        if token and token.strip() not in ["", "YOUR_TELEGRAM_BOT_TOKEN_HERE"]:
+            app = build_telegram_application(token)
+            if app:
+                print(f"[Telegram Bot] Launching standalone polling on token {token[:6]}...", flush=True)
+                app.run_polling(drop_pending_updates=True)
         else:
             run_cli_simulation()

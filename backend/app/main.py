@@ -32,6 +32,10 @@ async def lifespan(app: FastAPI):
 
     if bot_task:
         bot_task.cancel()
+        try:
+            await bot_task
+        except (asyncio.CancelledError, Exception):
+            pass
 
 app = FastAPI(
     title="Universal Multilingual Assistant & Live Help API",

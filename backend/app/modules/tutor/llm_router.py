@@ -4,13 +4,14 @@ import urllib.request
 import urllib.error
 from abc import ABC, abstractmethod
 from app.core.config import settings
+from app.core.languages import SUPPORTED_LANGUAGES
 
 # ==========================================
 # 1. The Interface
 # ==========================================
 class LLMEngine(ABC):
     @abstractmethod
-    def generate(self, query: str, context: list[str]) -> str:
+    def generate(self, query: str, context: list[str], language: str = "en", simple_mode: bool = False) -> str:
         """Takes the user's query and the RAG context, returns the AI's answer."""
         pass
 
@@ -18,15 +19,30 @@ class LLMEngine(ABC):
 # 2. The Cloud Engine (Gemini)
 # ==========================================
 class CloudLLM(LLMEngine):
-    def generate(self, query: str, context: list[str]) -> str:
+    def generate(self, query: str, context: list[str], language: str = "en", simple_mode: bool = False) -> str:
         api_key = settings.GEMINI_API_KEY or os.getenv("GEMINI_API_KEY", "")
         nl = chr(10)
         context_str = nl.join(context)
+        
+        lang_meta = SUPPORTED_LANGUAGES.get(language, SUPPORTED_LANGUAGES.get("en", {}))
+        lang_name = lang_meta.get("name", "English")
+        lang_native = lang_meta.get("native", "")
+
+        lang_instruction = ""
+        if language != "en":
+            lang_instruction = f"IMPORTANT: Translate and deliver your entire response in {lang_name} ({lang_native}).{nl}"
+        
+        simplicity_instruction = ""
+        if simple_mode:
+            simplicity_instruction = f"WCAG 3.1.5 Plain Language Mode: Use clear and simple words, short sentences, and explain technical terms simply.{nl}"
+
         prompt = (
             f"You are a helpful Savanna teaching assistant.{nl}"
             f"Answer the user's question accurately using ONLY the following course material.{nl}"
             f"Format your response clearly with concise paragraphs and clean bullet points for lists.{nl}"
-            f"Use **bold** for key terms and concepts.{nl}{nl}"
+            f"Use **bold** for key terms and concepts.{nl}"
+            f"{lang_instruction}"
+            f"{simplicity_instruction}{nl}"
             f"Course Material:{nl}{context_str}{nl}{nl}"
             f"Question: {query}"
         )
@@ -60,7 +76,7 @@ class CloudLLM(LLMEngine):
 # 3. The Local Engine (Ollama / Qwen)
 # ==========================================
 class LocalLLM(LLMEngine):
-    def generate(self, query: str, context: list[str]) -> str:
+    def generate(self, query: str, context: list[str], language: str = "en", simple_mode: bool = False) -> str:
         nl = chr(10)
         context_str = nl.join(context)
         prompt = f"You are a helpful Savanna teaching assistant.{nl}Answer the user's question using ONLY the following course material.{nl}If the answer is not in the material, say you don't know.{nl}{nl}Course Material:{nl}{context_str}{nl}{nl}Question: {query}{nl}Answer:"
@@ -109,27 +125,27 @@ class LLMRouter:
         except Exception:
             return False
 
-    def route_query(self, query: str, context: list[str]) -> tuple[str, str]:
+    def route_query(self, query: str, context: list[str], language: str = "en", simple_mode: bool = False) -> tuple[str, str]:
         is_online = self.check_connection()
         gemini_key = settings.GEMINI_API_KEY or os.getenv("GEMINI_API_KEY", "")
 
         if is_online and gemini_key and gemini_key.strip() and gemini_key != "YOUR_GEMINI_API_KEY_HERE":
             print("[Router] Network detected and GEMINI_API_KEY set. Routing to Cloud (Gemini)...")
-            ans = self.cloud_engine.generate(query, context)
+            ans = self.cloud_engine.generate(query, context, language, simple_mode)
             if not ans.startswith("Cloud API Error:"):
                 return ans, "gemini-3.8-flash"
             print(f"[Router] Cloud engine error ({ans}). Falling back to local/offline engine...")
 
         print("[Router] Routing to Local / Offline engine...")
-        ans = self.local_engine.generate(query, context)
+        ans = self.local_engine.generate(query, context, language, simple_mode)
         engine = "ollama" if not ans.startswith("Based on the course materials:") else "offline-rag"
         return ans, engine
 
 _router = LLMRouter()
 
-def get_answer_with_engine(query: str, context: list[str]) -> tuple[str, str]:
-    return _router.route_query(query, context)
+def get_answer_with_engine(query: str, context: list[str], language: str = "en", simple_mode: bool = False) -> tuple[str, str]:
+    return _router.route_query(query, context, language, simple_mode)
 
-def get_answer(query: str, context: list[str]) -> str:
-    ans, _ = _router.route_query(query, context)
+def get_answer(query: str, context: list[str], language: str = "en", simple_mode: bool = False) -> str:
+    ans, _ = _router.route_query(query, context, language, simple_mode)
     return ans

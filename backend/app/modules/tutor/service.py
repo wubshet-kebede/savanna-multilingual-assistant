@@ -1,29 +1,54 @@
 import re
 import os
+import json
+import urllib.request
 from sqlalchemy.orm import Session
 from sentence_transformers import SentenceTransformer
-from app.core.config import settings
 from app.modules.tutor import models, schemas, llm_router
+from app.core.config import settings
 
-# Initialize the embedding model
-model = SentenceTransformer(settings.EMBEDDING_MODEL)
-
-STOPWORDS = {
-    "what", "is", "the", "of", "in", "and", "to", "for", "a", "an", "are", 
-    "on", "how", "do", "does", "why", "can", "with", "about", "this", "that",
-    "these", "those", "or", "by", "from", "at", "as", "be", "so", "it", "its"
-}
+# Load local embedding model
+model = SentenceTransformer("all-MiniLM-L6-v2")
 
 def extract_keywords(text: str) -> set[str]:
-    words = re.findall(r"\b[a-zA-Z]{2,}\b", (text or "").lower())
-    keywords = set()
-    for w in words:
-        if w not in STOPWORDS:
-            keywords.add(w)
-            if w == "ai":
-                keywords.add("artificial")
-                keywords.add("intelligence")
-    return keywords
+    """Extracts alphanumeric keywords (len >= 3) for lexical overlap re-ranking."""
+    if not text:
+        return set()
+    return set(re.findall(r'[a-zA-Z0-9]{3,}', text.lower()))
+
+def translate_query_for_search(query: str, language: str = "en") -> str:
+    """
+    If the query contains non-Latin scripts (e.g., Amharic, Tigrinya, Arabic),
+    translates it quickly into concise English search keywords to query the English curriculum chunks.
+    """
+    if not query:
+        return query
+
+    # If mostly ASCII, keep original query
+    ascii_chars = sum(1 for c in query if ord(c) < 128)
+    if ascii_chars / max(len(query), 1) > 0.8:
+        return query
+
+    api_key = settings.GEMINI_API_KEY or os.getenv("GEMINI_API_KEY", "")
+    if not api_key:
+        return query
+
+    try:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-preview:generateContent?key={api_key}"
+        prompt = (
+            "Translate the following student question into a concise English search phrase (3-6 words) "
+            f"for a curriculum database. Output ONLY the English keywords, nothing else:\n{query}"
+        )
+        data = json.dumps({"contents": [{"parts": [{"text": prompt}]}]}).encode("utf-8")
+        req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req, timeout=4) as response:
+            res = json.loads(response.read().decode("utf-8"))
+            translated = res["candidates"][0]["content"]["parts"][0]["text"].strip()
+            print(f"[TutorService] Translated non-English query '{query[:30]}' -> '{translated}'")
+            return translated
+    except Exception as e:
+        print(f"[TutorService] Search query translation error ({e}), using raw query.")
+        return query
 
 class TutorService:
     @staticmethod
@@ -55,8 +80,11 @@ class TutorService:
         return {"message": f"Successfully vectorized and ingested {inserted} chunks."}
 
     @staticmethod
-    def ask_question(db: Session, payload: schemas.AskRequest) -> dict:
-        query_vector = model.encode(payload.query).tolist()
+    def ask_question(db: Session, payload: schemas.AskRequest, language: str = "en", simple_mode: bool = False) -> dict:
+        raw_query = payload.query
+        search_query = translate_query_for_search(raw_query, language)
+
+        query_vector = model.encode(search_query).tolist()
         dist_expr = models.LessonChunk.embedding.cosine_distance(query_vector)
 
         # Retrieve top candidates below the 0.78 threshold
@@ -66,14 +94,22 @@ class TutorService:
         ).filter(dist_expr < 0.78).order_by("distance").limit(5).all()
 
         if not results_with_dist:
+            out_of_scope_msgs = {
+                "am": "በትምህርቱ ውስጥ ስለዚህ ጉዳይ ምንም ተዛማጅ መረጃ ማግኘት አልቻልኩም።",
+                "om": "Qabiyyee barnootaa keessatti odeeffannoo waa'ee kanaa hin arganne.",
+                "ti": "ኣብቲ ትምህርቲ ብዛዕባዚ ዝምልከት ሓበሬታ ክረክብ ኣይከኣልኩን።",
+                "so": "Ma aanan helin wax macluumaad ah oo ku saabsan mawduucan manhajka.",
+                "ar": "لم أتمكن من العثور على أي معلومات ذات صلة في المواد الدراسية.",
+                "en": "I couldn't find any relevant information about that in the course material."
+            }
             return {
-                "answer": "I couldn't find any relevant information about that in the course material.",
+                "answer": out_of_scope_msgs.get(language, out_of_scope_msgs["en"]),
                 "sources": [],
                 "engine": "none"
             }
 
         # Hybrid re-ranking: prioritize sections whose titles match query keywords
-        query_kw = extract_keywords(payload.query)
+        query_kw = extract_keywords(search_query)
 
         def hybrid_rank_key(item):
             chunk, dist = item
@@ -88,7 +124,12 @@ class TutorService:
         context_texts = [f"{r.title}: {r.content}" for r in results]
         sources = [{"title": r.title, "url": r.url_id} for r in results]
 
-        final_answer, engine_used = llm_router.get_answer_with_engine(payload.query, context_texts)
+        final_answer, engine_used = llm_router.get_answer_with_engine(
+            raw_query,
+            context_texts,
+            language=language,
+            simple_mode=simple_mode
+        )
 
         return {
             "answer": final_answer,
@@ -99,8 +140,11 @@ class TutorService:
     @staticmethod
     def chat(db: Session, payload: schemas.TutorChatRequest) -> dict:
         query = payload.message or payload.query or ""
+        lang = payload.language or "en"
+        simple_mode = getattr(payload, "simple_mode", False)
+
         ask_req = schemas.AskRequest(query=query)
-        resp = TutorService.ask_question(db, ask_req)
+        resp = TutorService.ask_question(db, ask_req, language=lang, simple_mode=simple_mode)
         sources = resp.get("sources", [])
         engine = resp.get("engine", "offline-rag")
         citation = None
@@ -117,6 +161,6 @@ class TutorService:
         return {
             "reply": resp.get("answer", ""),
             "citation": citation,
-            "language": payload.language or "en",
+            "language": lang,
             "engine": engine
         }
