@@ -6,7 +6,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
       POSTGRES_DB: savanna_db
     ports:
-      - "5432:5432"
+      - "${SAVANNA_DB_PORT:-5435}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
 
