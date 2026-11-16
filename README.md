@@ -1,8 +1,8 @@
 # 🌐 Universal Multilingual Assistant & Live Help Platform
 > **An inclusive educational assistant, career gateway, and educator intelligence engine built for learners who think in Amharic, Afaan Oromo, Tigrinya, Somali, or Arabic, or who are new to computers.**
 
-> ### 🏆 Live Hackathon Evaluation Links (Zero-Setup Cloud Demo)
-> The entire platform is deployed live in production on Render! Judges and reviewers can test all student, educator, and developer features immediately in their browser without installing Docker or local dependencies:
+> ### Demo Links (
+> The entire platform is deployed live in production on Render! Judges and reviewers can test all student, educator, and developer features immediately in your browser without installing Docker or local dependencies:
 >
 > * 🎓 **Student Interactive Course & Multilingual AI Tutor (Client-Side Experience):**  
 >   [https://savanna-multilingual-assistant.onrender.com/html_course_files/concept-with-navigation.html](https://savanna-multilingual-assistant.onrender.com/html_course_files/concept-with-navigation.html)  
