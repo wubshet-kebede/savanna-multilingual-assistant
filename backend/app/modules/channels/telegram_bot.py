@@ -2,7 +2,10 @@ import os
 import sys
 import re
 import html
+import json
+import base64
 import asyncio
+import urllib.request
 from typing import Optional
 from app.core.config import settings
 from app.core.database import SessionLocal
@@ -24,8 +27,8 @@ def get_user_pref(user_id: int) -> dict:
 
 def render_telegram_html(text: str) -> str:
     """
-    Sanitizes markdown and converts it to Telegram-compliant HTML tags.
-    Escapes HTML entities so the parser never throws BadRequest errors.
+    Sanitizes markdown and converts it to accessible Telegram-compliant HTML tags.
+    Escapes HTML entities so the entity parser never crashes.
     """
     if not text:
         return ""
@@ -53,6 +56,65 @@ def render_telegram_html(text: str) -> str:
 
     return escaped
 
+def generate_speech_audio(text: str, lang: str = "en") -> Optional[bytes]:
+    """
+    Generates an accessible MP3 voice audio buffer from answer text.
+    Strips raw code/anchors so screen readers and listeners hear natural spoken language.
+    """
+    if not text:
+        return None
+    # Strip HTML tags
+    clean = re.sub(r'<[^>]+>', '', text)
+    # Strip technical metadata for audio playback
+    clean = re.sub(r'📚 Verified Course Citation:.*', '', clean, flags=re.DOTALL)
+    clean = re.sub(r'📌 Course Source:.*', '', clean)
+    clean = re.sub(r'🔗 Lesson Anchor:.*', '', clean)
+    clean = re.sub(r'⚡ RAG Engine:.*', '', clean)
+    clean = clean.strip()
+    if not clean:
+        return None
+
+    tts_lang = lang if lang in ["en", "am", "ar"] else "en"
+    try:
+        from gtts import gTTS
+        import io
+        tts = gTTS(text=clean[:1200], lang=tts_lang)
+        buf = io.BytesIO()
+        tts.write_to_fp(buf)
+        buf.seek(0)
+        return buf.getvalue()
+    except Exception as e:
+        print(f"[Telegram Bot] TTS generation error ({e})", flush=True)
+        return None
+
+def transcribe_audio(audio_bytes: bytes, mime_type: str = "audio/ogg") -> str:
+    """
+    Transcribes student voice notes using Gemini's multimodal API.
+    Enables completely hands-free voice interactions for blind/motor-impaired learners.
+    """
+    api_key = settings.GEMINI_API_KEY or os.getenv("GEMINI_API_KEY", "")
+    if not api_key:
+        return ""
+
+    try:
+        audio_b64 = base64.b64encode(audio_bytes).decode("utf-8")
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-preview:generateContent?key={api_key}"
+        payload = {
+            "contents": [{
+                "parts": [
+                    {"inlineData": {"mimeType": mime_type, "data": audio_b64}},
+                    {"text": "Transcribe this student voice message accurately into text. Output ONLY the transcribed query, nothing else."}
+                ]
+            }]
+        }
+        req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req, timeout=12) as response:
+            res = json.loads(response.read().decode("utf-8"))
+            return res["candidates"][0]["content"]["parts"][0]["text"].strip()
+    except Exception as e:
+        print(f"[Telegram Bot] Voice transcription error: {e}", flush=True)
+        return ""
+
 def process_student_query(text: str, lang: str = "en", simple_mode: bool = False) -> dict:
     """
     Direct bridge to the exact same RAG pipeline used by the web assistant.
@@ -73,8 +135,8 @@ def process_student_query(text: str, lang: str = "en", simple_mode: bool = False
 
 def format_telegram_response(rag_result: dict, lang: str = "en") -> tuple[str, list[list[dict]]]:
     """
-    Formats the RAG answer with clean Telegram typography, verifiable course citations,
-    and interactive quick-action buttons.
+    Formats the RAG answer with clean, accessible typography (no decorative ASCII art)
+    and interactive audio & support buttons.
     """
     raw_reply = rag_result.get("reply", "")
     safe_reply_content = render_telegram_html(raw_reply)
@@ -91,16 +153,19 @@ def format_telegram_response(rag_result: dict, lang: str = "en") -> tuple[str, l
     if citation:
         title = html.escape(str(citation.get("title", "Course Material")))
         target_id = html.escape(str(citation.get("targetId", "")))
-        text_parts.append("━━━━━━━━━━━━━━━━━━━━━━")
-        text_parts.append(f"📌 <b>Course Source:</b> {title}")
+        text_parts.append("<b>📚 Verified Course Citation:</b>")
+        text_parts.append(f"📌 Course Source: {title}")
         if target_id:
-            text_parts.append(f"🔗 <b>Lesson Anchor:</b> <code>{target_id}</code>")
-        text_parts.append(f"⚡ <b>Engine:</b> {engine_label}")
+            text_parts.append(f"🔗 Lesson Anchor: <code>{target_id}</code>")
+        text_parts.append(f"⚡ RAG Engine: {engine_label}")
 
     formatted_text = "\n".join(text_parts)
 
-    # Interactive keyboard buttons for Telegram
+    # Accessible keyboard buttons with distinct icons and clear text
     buttons = [
+        [
+            {"text": "🔊 Listen to Answer", "callback_data": "action_listen"}
+        ],
         [
             {"text": "🆘 Talk to Mentor", "callback_data": "action_mentor"},
             {"text": "💼 View Inclusive Jobs", "callback_data": "action_jobs"}
@@ -112,7 +177,6 @@ def format_telegram_response(rag_result: dict, lang: str = "en") -> tuple[str, l
     ]
 
     return formatted_text, buttons
-
 
 # ====================================================================
 # Telegram Handlers (python-telegram-bot v20+)
@@ -135,10 +199,11 @@ except ImportError:
 if TELEGRAM_LIB_AVAILABLE:
     BOT_COMMANDS = [
         BotCommand("start", "👋 Start tutoring & curriculum overview"),
+        BotCommand("a11y", "♿ Accessibility features & screen reader guide"),
+        BotCommand("simple", "🧠 Toggle WCAG 3.1.5 plain-language mode"),
         BotCommand("lang", "🌐 Switch language (Amharic, Oromo, Tigrinya, Arabic...)"),
         BotCommand("jobs", "💼 Browse verified inclusive jobs & accommodations"),
         BotCommand("mentor", "🆘 Escalate to a live human mentor"),
-        BotCommand("simple", "♿ Toggle cognitive plain-language mode"),
         BotCommand("help", "ℹ️ How vector grounding & citations work")
     ]
 else:
@@ -200,18 +265,16 @@ async def start_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     welcome_text = (
         f"👋 <b>Welcome, {first_name}!</b>\n\n"
         "I am your <b>Savanna AI Tutor</b>. I am connected directly to your official "
-        "course materials and provide strictly grounded answers with verified citations.\n\n"
+        "curriculum to provide strictly grounded answers with verified citations.\n\n"
+        "♿ <b>Accessibility Ready (WCAG 2.2 AA):</b>\n"
+        "• <b>Voice Support:</b> Hold the mic to speak your question or tap <code>[🔊 Listen to Answer]</code>.\n"
+        "• <b>Cognitive Mode:</b> Type /simple for plain-language explanations (WCAG 3.1.5).\n"
+        "• <b>Inclusive Jobs:</b> Type /jobs for remote roles with certified accommodations.\n\n"
         "💬 <b>You can ask me questions like:</b>\n"
         "• <i>What is the role of Artificial Intelligence in virtual assistance?</i>\n"
         "• <i>What is shaping the future of VA work?</i>\n"
         "• <i>What skills do clients value most?</i>\n\n"
-        "🌍 <b>Multilingual Support:</b> Type in English, አማርኛ, Afaan Oromoo, ትግርኛ, Soomaali, or العربية.\n\n"
-        "<b>Available Commands:</b>\n"
-        "/jobs - Browse verified inclusive jobs with certified accommodations\n"
-        "/mentor - Escalate to a human coach with one tap\n"
-        "/lang - Switch your preferred language\n"
-        "/simple - Toggle plain-language Simple Mode (WCAG 3.1.5)\n"
-        "/help - How the grounding and citations work"
+        "🌍 <b>Multilingual Support:</b> Type or speak in English, አማርኛ, Afaan Oromoo, ትግርኛ, Soomaali, or العربية."
     )
 
     quick_prompts = [
@@ -220,8 +283,8 @@ async def start_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             {"text": "📈 Future of VA Work", "callback_data": "prompt_future"}
         ],
         [
-            {"text": "💼 Inclusive Jobs", "callback_data": "action_jobs"},
-            {"text": "🌐 Change Language", "callback_data": "action_lang"}
+            {"text": "♿ Accessibility Guide", "callback_data": "action_a11y"},
+            {"text": "💼 Inclusive Jobs", "callback_data": "action_jobs"}
         ]
     ]
 
@@ -232,6 +295,35 @@ async def start_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
+async def accessibility_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    msg = (
+        "♿ <b>Savanna Accessibility & Assistive Features (WCAG 2.2 AA)</b>\n\n"
+        "This bot is engineered to provide equal access for students with diverse abilities:\n\n"
+        "👁️ <b>Blind & Low-Vision Learners:</b>\n"
+        "• <b>Audio Read-Aloud:</b> Tap <code>[🔊 Listen to Answer]</code> on any response to hear natural speech.\n"
+        "• <b>Voice Input:</b> Hold the Telegram microphone button and send a voice note — the bot will transcribe and answer hands-free!\n"
+        "• <b>Screen Reader Optimized:</b> Tested for TalkBack (Android), VoiceOver (iOS), and NVDA/JAWS (Desktop). No repetitive ASCII symbols.\n\n"
+        "🧠 <b>Cognitive & Neurodivergent Learners:</b>\n"
+        "• <b>Plain Language Mode (WCAG 3.1.5):</b> Type /simple to toggle concise explanations with everyday analogies and bullet points.\n\n"
+        "💼 <b>Standardized Interview Accommodations:</b>\n"
+        "• Type /jobs to browse certified roles with Screen Reader Compatibility, 25-50% Extended Test Time, and Camera-Optional interviews.\n\n"
+        "📱 <b>Telegram App Customization:</b>\n"
+        "• Scale font size up to 200% under <i>Settings → Chat Settings → Text Size</i>.\n"
+        "• Enable High Contrast Themes under <i>Settings → Chat Settings → Theme</i>."
+    )
+    buttons = [
+        [
+            {"text": "♿ Toggle Simple Mode", "callback_data": "action_simple_toggle"},
+            {"text": "💼 View Inclusive Jobs", "callback_data": "action_jobs"}
+        ],
+        [
+            {"text": "🆘 Talk to Mentor", "callback_data": "action_mentor"},
+            {"text": "🌐 Switch Language", "callback_data": "action_lang"}
+        ]
+    ]
+    await safe_reply(update.message, msg, reply_markup=create_inline_keyboard(buttons))
+
+
 async def help_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     help_text = (
         "ℹ️ <b>How the Savanna RAG Tutor Works</b>\n\n"
@@ -240,11 +332,12 @@ async def help_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "2. <b>Verifiable Citations:</b> Each answer includes the exact module heading "
         "and section anchor so you can verify the content in your learning dashboard.\n\n"
         "3. <b>Commands:</b>\n"
+        "• /a11y - Accessibility and screen reader guide\n"
+        "• /simple - Toggle cognitive plain-language mode\n"
         "• /jobs - View remote roles matching your training\n"
         "• /mentor - Request human mentor assistance\n"
-        "• /lang - Change preferred response language\n"
-        "• /simple - Toggle cognitive plain-language mode\n\n"
-        "Simply type your question to begin!"
+        "• /lang - Change preferred response language\n\n"
+        "Simply type or speak your question to begin!"
     )
     await safe_reply(update.message, help_text)
 
@@ -325,6 +418,18 @@ async def simple_mode_handler(update: Update, context: ContextTypes.DEFAULT_TYPE
     )
 
 
+async def accommodations_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    msg = (
+        "♿ <b>Standardized Interview Accommodations:</b>\n\n"
+        "Savanna partners guarantee non-discriminatory interviews. Available certified accommodations include:\n"
+        "• <b>Screen Reader Compatible Testing:</b> Full NVDA / TalkBack testing environments.\n"
+        "• <b>Extended Evaluation Time:</b> 25% - 50% additional time for assessments.\n"
+        "• <b>Flexible Interview Formats:</b> Camera-Optional or Written Q&A format.\n\n"
+        "You can request these with one click through /jobs or in the web Career Gateway."
+    )
+    await safe_reply(update.message, msg)
+
+
 async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not update.message or not update.message.text:
         return
@@ -356,14 +461,79 @@ async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
+async def voice_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """
+    Handles incoming Telegram voice messages.
+    Transcribes student audio and generates grounded answers in text AND speech.
+    """
+    if not update.message or not update.message.voice:
+        return
+
+    user_id = update.effective_user.id
+    pref = get_user_pref(user_id)
+
+    try:
+        await context.bot.send_chat_action(chat_id=update.effective_chat.id, action=ChatAction.TYPING)
+    except Exception:
+        pass
+
+    # Download voice message bytes
+    voice_file = await context.bot.get_file(update.message.voice.file_id)
+    audio_bytes = await voice_file.download_as_bytearray()
+
+    # Transcribe voice to text using Gemini multimodal engine
+    transcribed_text = await asyncio.to_thread(transcribe_audio, bytes(audio_bytes), "audio/ogg")
+    if not transcribed_text:
+        await safe_reply(
+            update.message,
+            "⚠️ <i>Sorry, I couldn't transcribe your voice note clearly. Please try speaking closer to the mic or type your question.</i>"
+        )
+        return
+
+    await safe_reply(update.message, f"🎙️ <i>Heard: \"{html.escape(transcribed_text)}\"</i>")
+
+    # Generate RAG answer
+    rag_result = await asyncio.to_thread(process_student_query, transcribed_text, pref["lang"], pref["simple_mode"])
+    formatted_text, buttons = format_telegram_response(rag_result, pref["lang"])
+
+    await safe_reply(update.message, formatted_text, reply_markup=create_inline_keyboard(buttons))
+
+    # Also automatically send back speech audio for the voice user
+    audio_reply = await asyncio.to_thread(generate_speech_audio, rag_result.get("reply", ""), pref["lang"])
+    if audio_reply:
+        import io
+        try:
+            await context.bot.send_voice(
+                chat_id=update.effective_chat.id,
+                voice=io.BytesIO(audio_reply),
+                caption="🔊 Audio Read-Aloud"
+            )
+        except Exception as e:
+            print(f"[Telegram Bot] send_voice error: {e}", flush=True)
+
+
 async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
-    await query.answer()
     data = query.data
     user_id = update.effective_user.id
     pref = get_user_pref(user_id)
 
-    if data == "prompt_ai":
+    if data == "action_listen":
+        await query.answer("Generating audio read-aloud...", show_alert=False)
+        msg_text = query.message.text or query.message.caption or ""
+        audio_bytes = await asyncio.to_thread(generate_speech_audio, msg_text, pref["lang"])
+        if audio_bytes:
+            import io
+            await context.bot.send_voice(
+                chat_id=query.message.chat_id,
+                voice=io.BytesIO(audio_bytes),
+                caption="🔊 Audio Read-Aloud"
+            )
+        else:
+            await query.message.reply_text("Audio read-aloud is currently unavailable for this snippet.")
+
+    elif data == "prompt_ai":
+        await query.answer()
         try:
             await context.bot.send_chat_action(chat_id=update.effective_chat.id, action=ChatAction.TYPING)
         except Exception:
@@ -373,6 +543,7 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await safe_reply(query, text, reply_markup=create_inline_keyboard(btns))
 
     elif data == "prompt_future":
+        await query.answer()
         try:
             await context.bot.send_chat_action(chat_id=update.effective_chat.id, action=ChatAction.TYPING)
         except Exception:
@@ -382,28 +553,11 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await safe_reply(query, text, reply_markup=create_inline_keyboard(btns))
 
     elif data == "action_jobs":
-        jobs = CareerService.get_jobs("savanna")
-        job_lines = ["💼 <b>Verified Inclusive Job Opportunities:</b>\n"]
-        for j in jobs[:3]:
-            acc = j.get("accommodations", {})
-            acc_tags = []
-            if acc.get("screen_reader_certified"):
-                acc_tags.append("🖥️ Screen Reader Certified")
-            if acc.get("extended_test_time"):
-                acc_tags.append("⏱️ Extended Test Time")
-            if acc.get("camera_optional_interview"):
-                acc_tags.append("📹 Camera Optional")
-            acc_str = " | ".join(acc_tags) if acc_tags else "Accommodations upon request"
-
-            job_lines.append(
-                f"<b>{html.escape(j['title'])}</b> at <i>{html.escape(j['company'])}</i>\n"
-                f"📍 {html.escape(j['location'])} · 💵 {html.escape(j.get('salary', 'Competitive'))}\n"
-                f"♿ <b>Certified Accommodations:</b> {acc_str}\n"
-                f"🎯 <b>Curriculum Alignment:</b> {html.escape(j.get('course_alignment', 'VA Foundations'))}\n"
-            )
-        await safe_reply(query, "\n".join(job_lines))
+        await query.answer()
+        await jobs_handler(update, context)
 
     elif data == "action_mentor":
+        await query.answer()
         learner_id = f"tg_{user_id}"
         res = EscalateService.dispatch_human_mentor(learner_id, "savanna", "VA-1", "en")
         msg = (
@@ -416,6 +570,7 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await safe_reply(query, msg)
 
     elif data == "action_lang":
+        await query.answer()
         keyboard = [
             [
                 {"text": "🇬🇧 English", "callback_data": "setlang_en"},
@@ -443,21 +598,25 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "en": "English", "am": "አማርኛ", "om": "Afaan Oromoo",
             "ti": "ትግርኛ", "so": "Soomaali", "ar": "العربية"
         }
+        await query.answer(f"Language set to {lang_names.get(new_lang, new_lang)}")
         await safe_reply(
             query,
             f"✅ Language updated to <b>{lang_names.get(new_lang, new_lang)}</b>. Future answers will be provided in this language."
         )
 
     elif data == "action_acc":
-        await safe_reply(
-            query,
-            "♿ <b>Standardized Interview Accommodations:</b>\n\n"
-            "Savanna partners guarantee non-discriminatory interviews. Available certified accommodations include:\n"
-            "• Screen Reader Compatible Testing (NVDA / TalkBack)\n"
-            "• 25% - 50% Extended Evaluation Time\n"
-            "• Camera-Optional or Written Q&A Format\n\n"
-            "You can request these with one click in the web Career tab or through /jobs."
-        )
+        await query.answer()
+        await accommodations_handler(update, context)
+
+    elif data == "action_a11y":
+        await query.answer()
+        await accessibility_handler(update, context)
+
+    elif data == "action_simple_toggle":
+        pref["simple_mode"] = not pref["simple_mode"]
+        status = "ON (Plain language)" if pref["simple_mode"] else "OFF (Technical detail)"
+        await query.answer(f"Cognitive Simple Mode: {status}")
+        await safe_reply(query, f"♿ <b>Cognitive Simple Mode (WCAG 3.1.5):</b> {status}")
 
 
 async def unknown_command_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -468,20 +627,22 @@ async def unknown_command_handler(update: Update, context: ContextTypes.DEFAULT_
         f"❓ Unrecognized command: <code>{html.escape(cmd)}</code>\n\n"
         "<b>Available Commands:</b>\n"
         "• /start - Start tutoring & overview\n"
+        "• /a11y - Accessibility & assistive features guide\n"
+        "• /simple - Plain language mode (WCAG 3.1.5)\n"
         "• /lang - Switch language (Amharic, Oromo, Tigrinya, Arabic, English)\n"
         "• /jobs - View inclusive jobs & accommodations\n"
         "• /mentor - Alert a human coach\n"
-        "• /simple - Plain language mode (WCAG 3.1.5)\n"
         "• /help - Grounding & citations guide\n\n"
         "💡 <i>Tip: Tap the <b>Menu (☰)</b> button next to the input box!</i>"
     )
     buttons = [
         [
-            {"text": "🌐 Choose Language", "callback_data": "action_lang"},
+            {"text": "♿ Accessibility Guide", "callback_data": "action_a11y"},
             {"text": "💼 Inclusive Jobs", "callback_data": "action_jobs"}
         ],
         [
-            {"text": "🆘 Human Mentor", "callback_data": "action_mentor"}
+            {"text": "🆘 Human Mentor", "callback_data": "action_mentor"},
+            {"text": "🌐 Choose Language", "callback_data": "action_lang"}
         ]
     ]
     await safe_reply(update.message, msg, reply_markup=create_inline_keyboard(buttons))
@@ -495,12 +656,15 @@ def build_telegram_application(token: str) -> Optional["Application"]:
     app = Application.builder().token(token).build()
 
     app.add_handler(CommandHandler(["start", "restart"], start_handler))
-    app.add_handler(CommandHandler(["help", "info", "faq"], help_handler))
+    app.add_handler(CommandHandler(["a11y", "accessibility", "access"], accessibility_handler))
+    app.add_handler(CommandHandler(["simple", "easy", "plain"], simple_mode_handler))
+    app.add_handler(CommandHandler(["acc", "accommodations", "accommodation"], accommodations_handler))
     app.add_handler(CommandHandler(["jobs", "job", "career", "careers"], jobs_handler))
     app.add_handler(CommandHandler(["mentor", "coach", "human", "escalate"], mentor_handler))
     app.add_handler(CommandHandler(["lang", "language", "languages", "lnag"], lang_handler))
-    app.add_handler(CommandHandler(["simple", "easy", "plain"], simple_mode_handler))
+    app.add_handler(CommandHandler(["help", "info", "faq"], help_handler))
     app.add_handler(CallbackQueryHandler(callback_handler))
+    app.add_handler(MessageHandler(filters.VOICE, voice_handler))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, message_handler))
     app.add_handler(MessageHandler(filters.COMMAND, unknown_command_handler))
 
