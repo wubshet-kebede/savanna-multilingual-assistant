@@ -59,20 +59,20 @@ Open `.env` in any text editor and paste your keys:
 # 1. Google Gemini AI API Key (Recommended for Cloud RAG & Voice Transcription)
 # Get a free key in 30 seconds at: https://aistudio.google.com/app/apikey
 # ==============================================================================
-GEMINI_API_KEY=AIzaSyYourGeminiApiKeyHere
+GEMINI_API_KEY=put_your_gemini_api_key_here
 
 # ==============================================================================
 # 2. Telegram Bot Token (Optional - to test live chat on @Savanna_AI_Tutor_Bot)
 # Create a bot via @BotFather on Telegram to get your token:
 # ==============================================================================
-TELEGRAM_BOT_TOKEN=123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ
+TELEGRAM_BOT_TOKEN=put_your_telegram_bot_token_here
 
 # ==============================================================================
 # 3. Africa's Talking Telecom API (Optional - to test live outbound SMS broadcasts)
 # Register a free sandbox account at: https://account.africastalking.com/
 # ==============================================================================
 AT_USERNAME=sandbox
-AT_API_KEY=atsk_your_africastalking_key_here
+AT_API_KEY=put_your_africastalking_api_key_here
 
 # ==============================================================================
 # 4. Database Configuration (Defaults already work out-of-the-box in Docker)
