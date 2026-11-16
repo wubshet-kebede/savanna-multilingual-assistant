@@ -9,7 +9,7 @@ In modern digital skills programs across Africa (such as ALX, Savanna, and regio
 
 1. **The Language & Cognitive Barrier:** Course content is authored 100% in English. When learners who think in regional languages (**Amharic, Afaan Oromo, Tigrinya, Somali, or Arabic**) encounter complex technical terms, translating back and forth into English causes severe cognitive fatigue.
 2. **The "New to Computers" Isolation:** Beginners often lack the technical English vocabulary to explain what is broken (e.g. *"My container port mapping failed"*). They feel stuck, and there is no mentor physically present to look over their shoulder.
-3. **The Low-Bandwidth Reality:** Students often study under erratic internet or running on 2G feature phones after mobile data expires.
+3. **The Low-Bandwidth Reality:** Students often study under erratic internet or running on 2G feature phones after mobile data packages expire.
 4. **The Career & Accommodation Gap:** Completing a course is only half the battle. Disabled or neurodivergent learners frequently hesitate to ask international employers for interview accommodations (e.g., live captions, extra prep time) due to fear of stigma or bias.
 5. **The Teacher's Blind Spot:** Instructors have zero visibility into what students are silently struggling with across multiple languages until students fail or abandon the course.
 
@@ -42,43 +42,140 @@ A unified system delivering:
 
 ---
 
-## ⚡ Quickstart Guide (Run with Docker)
+## 🔑 Environment Keys & Setup Guide (Test With Your Own Keys)
 
-The entire platform runs in Docker with multi-container orchestration (FastAPI, pgvector, and Nginx).
+The project includes a pre-configured [`.env.example`](file:///.env.example) template. Follow these simple steps to configure your environment:
 
-### 1. Launch All Services
+### Step 1: Create your local `.env` file
 ```bash
-git clone https://github.com/wubshet-kebede/savanna-multilingual-assistant.git
-cd savanna-multilingual-assistant
-docker compose up -d
+cp .env.example .env
 ```
 
-### 2. Live Application URLs
-| Application / Door | URL | Description |
-| :--- | :--- | :--- |
-| **Student Web Experience** | `http://localhost:8086/html_course_files/concept-with-navigation.html` | Course page with embedded floating `<multilingual-assistant>` widget |
-| **Educator Intelligence Portal** | `http://localhost:8086/html_course_files/teacher-dashboard.html` | Multilingual Teacher View with confusion heatmap & CSV export |
-| **Interactive OpenAPI Docs** | `http://localhost:8000/docs` | Swagger UI for all REST endpoints & schemas |
-| **Alternative ReDoc Specs** | `http://localhost:8000/redoc` | Clean API reference documentation |
-| **Widget Standalone Sandbox** | `http://localhost:8086/widget/test.html` | Isolated partner web component testbed |
+### Step 2: Add your credentials to `.env`
+Open `.env` in any text editor and paste your keys:
+
+```ini
+# ==============================================================================
+# 1. Google Gemini AI API Key (Recommended for Cloud RAG & Voice Transcription)
+# Get a free key in 30 seconds at: https://aistudio.google.com/app/apikey
+# ==============================================================================
+GEMINI_API_KEY=AIzaSyYourGeminiApiKeyHere
+
+# ==============================================================================
+# 2. Telegram Bot Token (Optional - to test live chat on @Savanna_AI_Tutor_Bot)
+# Create a bot via @BotFather on Telegram to get your token:
+# ==============================================================================
+TELEGRAM_BOT_TOKEN=123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ
+
+# ==============================================================================
+# 3. Africa's Talking Telecom API (Optional - to test live outbound SMS broadcasts)
+# Register a free sandbox account at: https://account.africastalking.com/
+# ==============================================================================
+AT_USERNAME=sandbox
+AT_API_KEY=atsk_your_africastalking_key_here
+
+# ==============================================================================
+# 4. Database Configuration (Defaults already work out-of-the-box in Docker)
+# ==============================================================================
+POSTGRES_USER=admin
+POSTGRES_PASSWORD=password
+SAVANNA_DB_PORT=5435
+```
+
+> [!NOTE]
+> **Graceful Zero-Key Fallback Mode:**
+> What if you don't have an API key? **No problem!** The system includes an intelligent **Pluggable AI Router**. If `GEMINI_API_KEY` is not provided, the platform automatically falls back to local semantic vector search and offline cached responses. 100% of course questions, SMS keywords (`JOBS`, `ACC`, `HELP`), and the Teacher Dashboard work cleanly out of the box!
 
 ---
 
-## 🧪 Comprehensive Evaluation & Testing Guide
+## ⚡ Quickstart: How to Run in Your Local Machine
+
+### Method A: One-Command Docker Setup (Recommended for Judges)
+
+This launches the FastAPI API, pgvector PostgreSQL database, and Nginx web server in isolated containers.
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/wubshet-kebede/savanna-multilingual-assistant.git
+cd savanna-multilingual-assistant
+
+# 2. Set up environment file
+cp .env.example .env
+
+# 3. Launch all containers
+docker compose up -d --build
+```
+
+#### Verify Containers Are Running:
+```bash
+docker compose ps
+```
+You should see 3 healthy services running:
+* `savanna-multilingual-assistant-api-1` (Port 8000)
+* `savanna-multilingual-assistant-db-1` (Port 5435 $\rightarrow$ internal 5432)
+* `savanna-multilingual-assistant-web-1` (Port 8086)
+
+To view live backend logs:
+```bash
+docker compose logs -f api
+```
+
+---
+
+### Method B: Native Local Setup (Without Docker)
+
+If you prefer running services directly on your host machine:
+
+#### 1. Backend Setup:
+```bash
+cd backend
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload --port 8000
+```
+
+#### 2. Web Frontend Setup:
+In a separate terminal, serve the static web files:
+```bash
+npx serve -l 8086 .
+```
+
+---
+
+## 🌐 Application URL Directory
+
+Once running, access each portal in your web browser:
+
+| Portal | Local URL | What to Test |
+| :--- | :--- | :--- |
+| **Student Web Experience** | **`http://localhost:8086/html_course_files/concept-with-navigation.html`** | Floating AI Assistant, voice input, click-to-highlight citations, Simple Mode toggle |
+| **Educator Intelligence Portal** | **`http://localhost:8086/html_course_files/teacher-dashboard.html`** | Real-time confusion heatmap, Amharic/Oromo UI language toggle, CSV report export |
+| **Interactive OpenAPI Documentation** | **`http://localhost:8000/docs`** | Live Swagger UI to execute and inspect every REST endpoint |
+| **Alternative ReDoc Specification** | **`http://localhost:8000/redoc`** | Clean API schemas and payload models |
+| **Web Component Isolated Sandbox** | **`http://localhost:8086/widget/test.html`** | Standalone testbed verifying `<multilingual-assistant>` drop-in tag |
+
+---
+
+## 🧪 Step-by-Step Testing & Verification Guide
 
 ### Test 1: Grounded Multilingual Web Tutor (Voice & Text)
 1. Open **`http://localhost:8086/html_course_files/concept-with-navigation.html`**.
 2. Click the floating AI Assistant button at the bottom right.
 3. Ask a question in English or Amharic:
-   * English: *"What is the main distinction between an AI assistant and a human Virtual Assistant?"*
-   * Amharic: *"በ AI እና በሰው Virtual Assistant መካከል ያለው ልዩነት ምንድን ነው?"*
+   * **English:** *"What is the main distinction between an AI assistant and a human Virtual Assistant?"*
+   * **Amharic:** *"በ AI እና በሰው Virtual Assistant መካከል ያለው ልዩነት ምንድን ነው?"*
 4. **Click the Citation Pill:** Clicking `📌 Source: Module 2 · An Important Distinction` smoothly scrolls the parent lesson page to the exact cited paragraph.
+
+---
 
 ### Test 2: Cognitive Accessibility — Plain-Language "Simple Mode" (WCAG 3.1.5)
 1. In the Web Assistant header, click **`[ 🧠 Simple Mode ]`**.
 2. Ask a complex question. Notice how the AI reduces technical jargon, uses shorter sentences, and formats the output for low cognitive overload.
 3. **On Telegram:** Send `/simple` to toggle Plain-Language mode.
 4. **On SMS:** Send the text keyword `SIMPLE` to switch your phone number's profile.
+
+---
 
 ### Test 3: Production 2G Low-Bandwidth SMS Channel (`POST /sms/inbound`)
 Built for feature phones across Africa. Strictly limits responses to $\le 160$ characters and returns `text/plain`:
@@ -106,13 +203,15 @@ Built for feature phones across Africa. Strictly limits responses to $\le 160$ c
   * `SIMPLE` $\rightarrow$ Toggles plain-language mode.
   * Supports standard `application/x-www-form-urlencoded` payloads from **Africa's Talking** and **Twilio** (`From` and `Body`).
 
+---
+
 ### Test 4: Inclusive Career Gateway (Level 3 & schema.org)
 1. **Explore Jobs:**  
    `GET http://localhost:8000/api/v1/career/jobs?partner_id=savanna`  
    Returns structured jobs with `schema.org/JobPosting` JSON-LD metadata and certified accessibility features.
 2. **Request Interview Accommodations:**  
    Ask the tutor on Web or Telegram: *"How can I request interview accommodations?"*  
-   Or submit an accommodation request:
+   Or submit an accommodation request directly:
    ```bash
    curl -s -X POST http://localhost:8000/api/v1/career/accommodations \
      -H "Content-Type: application/json" \
@@ -122,6 +221,8 @@ Built for feature phones across Africa. Strictly limits responses to $\le 160$ c
 3. **Broadcast Job Alerts:**  
    `POST http://localhost:8000/api/v1/career/alerts/broadcast?job_id=job_01` dispatches alerts to Telegram and SMS subscribers.
 
+---
+
 ### Test 5: Anonymized Educator Intelligence Dashboard (Bonus Feature)
 1. Open **`http://localhost:8086/html_course_files/teacher-dashboard.html`** (or click **`👩‍🏫 Instructor Analytics`** in the course header).
 2. **Live Dynamic Data:** Fetches telemetry from `GET /api/v1/teacher/insights`.
@@ -130,6 +231,8 @@ Built for feature phones across Africa. Strictly limits responses to $\le 160$ c
 5. **Pedagogical Action Center:** AI recommendations that advise instructors on exact curriculum fixes (e.g. *"Embed an interactive 24-hr slider in Lesson 2.4"*).
 6. **Live Human Escalation Link:** When a student requests human help (`POST /api/v1/escalate`), the escalation counter on the dashboard increments live.
 7. **1-Click CSV Export:** Click **`📥 Export RFC-4180 CSV`** to download a spreadsheet report.
+
+---
 
 ### Test 6: Automated Vitest Test Suite (16/16 Passing)
 Run the automated test suite locally:
@@ -216,6 +319,7 @@ savanna-multilingual-assistant/
 │   ├── markdown-renderer.test.js        # HTML sanitization & Ge'ez script tests
 │   └── offline-search.test.js           # Client-side offline RAG tests
 │
+├── .env.example                         # Environment configuration template
 ├── docker-compose.yml                   # Multi-service orchestration (api, db, web)
 └── README.md                            # Comprehensive System Documentation
 ```
