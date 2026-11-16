@@ -78,6 +78,13 @@ const LOCALIZED_UI = {
     noJobsFound: "የሚዛመድ ስራ አልተገኘም",
     noJobsFoundDesc: "የመረጡትን ቃል ወይም ፊልተር በመቀየር በድጋሚ ይሞክሩ።",
     resetFiltersBtn: "ሁሉንም ስራዎች አሳይ",
+    inclusionFeatures: "የተደራሽነት እና የአካታችነት መለያዎች",
+    suggestedPrompts: "የተጠቆሙ የመነሻ ጥያቄዎች",
+    quickPrompts: [
+      { text: "🤖 AI የሰውን ረዳት ይተካል ወይ?", prompt: "በ AI መሳሪያ እና በሰው Virtual Assistant መካከል ያለው ልዩነት ምንድን ነው?" },
+      { text: "🎯 ደንበኞች የሚፈልጓቸው ክህሎቶች?", prompt: "ደንበኞች በጣም የሚፈልጓቸው ክህሎቶች ምንድን ናቸው?" },
+      { text: "♿ የስራ ፈተና ማመቻቸት መጠየቂያ?", prompt: "የስራ ፈተና ማመቻቸት (accommodations) እንዴት መጠየቅ እችላለሁ?" }
+    ],
   },
   om: {
     launcher: "Gargaaraa Gaafadhaa",
@@ -151,6 +158,13 @@ const LOCALIZED_UI = {
     noJobsFound: "Hojiin walsimu hin argamne",
     noJobsFoundDesc: "Jechoota barbaacha jijjiiruun irra deebi'aa yaalaa.",
     resetFiltersBtn: "Hojiiwwan Hunda Agarsiisi",
+    inclusionFeatures: "Amaloota Hawaasummaa fi Deeggarsaa",
+    suggestedPrompts: "Gaaffilee Jalqabaa Filataman",
+    quickPrompts: [
+      { text: "🤖 AI gargaaraa namaa ni bakka bu'aa?", prompt: "Garaagarummaan meeshaa AI fi gargaaraa Virtual Assistant namaa maali?" },
+      { text: "🎯 Dandeettiiwwan barbaadaman?", prompt: "Dandeettiiwwan maamiltoonni baay'ee barbaadan maalfa'i?" },
+      { text: "♿ Deeggarsa addaa gaafachuu?", prompt: "Qormaata hojiitiif deeggarsa addaa akkamiin gaafadha?" }
+    ],
   },
   ti: {
     launcher: "ሓጋዚ ሕተቱ",
@@ -224,6 +238,13 @@ const LOCALIZED_UI = {
     noJobsFound: "ተመሳሳሊ ስራሕ ኣይተረኽበን",
     noJobsFoundDesc: "ቃላት ምድላይ ብምቕያር ደጊምኩም ፈትኑ።",
     resetFiltersBtn: "ኩሉ ስራሕቲ ኣርእይ",
+    inclusionFeatures: "ናይ ተበጻሕነትን ምቹእነትን መለለዪታት",
+    suggestedPrompts: "ዝተሓረዩ ናይ መበገሲ ሕቶታት",
+    quickPrompts: [
+      { text: "🤖 AI ንሰብኣዊ ረዳት ክትክኦ ድዩ?", prompt: "ኣብ መንጎ AIን ሰብኣዊ ረዳትን ዘሎ ፍልልይ እንታይ እዩ?" },
+      { text: "🎯 ዓማዊል ዝደልይዎም ክእለታት?", prompt: "ዓማዊል ዝያዳ ዝደልይዎም ክእለታት እንታይ እዮም?" },
+      { text: "♿ ናይ ፈተና ምቹእነት ከመይ ይሕተት?", prompt: "ናይ ስራሕ ፈተና ምቹእነት ከመይ ገይረ ይሓትት?" }
+    ],
   },
   so: {
     launcher: "Weydii Caawiyaha",
@@ -297,6 +318,13 @@ const LOCALIZED_UI = {
     noJobsFound: "Shaqo u dhiganta lama helin",
     noJobsFoundDesc: "Isku day adoo beddelaya erayada baadhista.",
     resetFiltersBtn: "Muuji Dhammaan Shaqooyinka",
+    inclusionFeatures: "Astaamaha Fududaynta iyo Helitaanka",
+    suggestedPrompts: "Su'aalaha La Soo Jeediyay",
+    quickPrompts: [
+      { text: "🤖 AI ma beddeli doonaa aadanaha?", prompt: "Waa maxay farqiga u dhexeeya AI iyo kaaliyaha aadanaha?" },
+      { text: "🎯 Xirfadaha ugu muhiimsan?", prompt: "Waa kuwee xirfadaha ugu muhiimsan ee macaamiishu rabaan?" },
+      { text: "♿ Fududaynta imtixaanka?", prompt: "Sideen u codsan karaa fududaynta imtixaanka shaqada?" }
+    ],
   },
   ar: {
     launcher: "اسأل المساعد التعليمي",
@@ -370,6 +398,13 @@ const LOCALIZED_UI = {
     noJobsFound: "لم يتم العثور على وظائف مطابقة",
     noJobsFoundDesc: "يرجى تغيير كلمات البحث أو إعادة ضبط خيارات التصفية.",
     resetFiltersBtn: "عرض كافة الوظائف المتاحة",
+    inclusionFeatures: "ميزات التيسيرات وإمكانية الوصول",
+    suggestedPrompts: "الأسئلة المقترحة للبدء",
+    quickPrompts: [
+      { text: "🤖 هل يستبدل الذكاء الاصطناعي المساعد البشري؟", prompt: "ما هو الفرق بين أداة الذكاء الاصطناعي والمساعد الافتراضي البشري؟" },
+      { text: "🎯 ما هي المهارات الأكثر طلباً؟", prompt: "ما هي المهارات الأكثر طلباً لدى العملاء؟" },
+      { text: "♿ كيف أطلب تسهيلات للمقابلة؟", prompt: "كيف يمكنني طلب تسهيلات للمقابلة الشخصية؟" }
+    ],
   },
   en: {
     launcher: "Ask AI Tutor (Help)",
@@ -443,6 +478,13 @@ const LOCALIZED_UI = {
     noJobsFound: "No matching opportunities found",
     noJobsFoundDesc: "Try adjusting your search terms or clearing category filters.",
     resetFiltersBtn: "Show All Opportunities",
+    inclusionFeatures: "Inclusion & Accessibility Features",
+    suggestedPrompts: "Suggested Starter Prompts",
+    quickPrompts: [
+      { text: "🤖 Will AI replace virtual assistants?", prompt: "Will AI replace virtual assistants?" },
+      { text: "🎯 What skills do clients value most?", prompt: "What skills do clients value most?" },
+      { text: "♿ How to request accommodations?", prompt: "How do I request interview accommodations?" }
+    ],
   }
 };
 
@@ -3053,8 +3095,17 @@ class MultilingualAssistant extends HTMLElement {
     const announcer = this.shadowRoot.getElementById('sr-announcer');
     if (!announcer) return;
     const clean = this.cleanSpeechText(text);
-    announcer.setAttribute('lang', lang);
-    announcer.setAttribute('dir', (LOCALIZED_UI[lang] || {}).direction || 'ltr');
+
+    // WCAG 3.1.2: Language of Parts enforcement
+    // If text to announce consists purely of ASCII Latin characters while in non-English mode,
+    // dynamically enforce lang="en" and dir="ltr" so non-English screen reader synthesizers
+    // (such as Amharic Ge'ez or Arabic voices) do not mangle English pronunciation.
+    const isPureEnglish = /^[ -\s\d\p{P}]+$/u.test(clean);
+    const targetLang = (lang !== 'en' && isPureEnglish) ? 'en' : lang;
+    const targetDir = (LOCALIZED_UI[targetLang] || {}).direction || 'ltr';
+
+    announcer.setAttribute('lang', targetLang);
+    announcer.setAttribute('dir', targetDir);
     announcer.textContent = '';
     setTimeout(() => {
       announcer.textContent = clean;
@@ -5552,16 +5603,8 @@ class MultilingualAssistant extends HTMLElement {
       });
     }
 
-    // Quick Starter Prompts
-    const promptButtons = this.shadowRoot.querySelectorAll('.quick-prompt-btn');
-    promptButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const query = btn.getAttribute('data-prompt');
-        if (query) {
-          this.askQuestion(query);
-        }
-      });
-    });
+    // Quick Starter Prompts (WCAG 3.1.2 Dynamic Localization)
+    this.updateQuickPrompts(this.currentLang);
 
     // Accommodations Modal Handlers
     const modalAccClose = this.shadowRoot.getElementById('modal-acc-close');
@@ -5614,7 +5657,8 @@ class MultilingualAssistant extends HTMLElement {
     if (closeBtn) closeBtn.focus();
 
     const t = LOCALIZED_UI[this.currentLang] || LOCALIZED_UI['en'];
-    this.announce(`${t.dialogTitle} opened. Current tab: ${t.tutorTab}.`);
+    const openMsg = this.currentLang === 'am' ? `${t.dialogTitle} ተከፍቷል። ገጽ፦ ${t.tutorTab}።` : (this.currentLang === 'om' ? `${t.dialogTitle} banameera. Fuula፦ ${t.tutorTab}.` : `${t.dialogTitle} opened. Current tab: ${t.tutorTab}.`);
+    this.announce(openMsg);
     this.emitEvent('assistant:opened', { partner: this.partnerId, course: this.courseId });
   }
 
@@ -5753,7 +5797,8 @@ class MultilingualAssistant extends HTMLElement {
     panelCareer.style.display = !isTutor ? 'flex' : 'none';
     footerInput.style.display = isTutor ? 'flex' : 'none';
 
-    this.announce(`Switched to ${isTutor ? t.tutorTab : t.careerTab}`);
+    const switchMsg = this.currentLang === 'am' ? `ወደ ${isTutor ? t.tutorTab : t.careerTab} ተቀይሯል` : (this.currentLang === 'om' ? `Gara ${isTutor ? t.tutorTab : t.careerTab} jijjiirameera` : `Switched to ${isTutor ? t.tutorTab : t.careerTab}`);
+    this.announce(switchMsg);
     this.emitEvent('assistant:tab-switch', { tab: tabName });
     if (!isTutor) this.loadJobs();
   }
@@ -5768,10 +5813,46 @@ class MultilingualAssistant extends HTMLElement {
     this.emitEvent('assistant:language-change', { language: lang, direction: t.direction });
   }
 
+  updateQuickPrompts(lang) {
+    const bar = this.shadowRoot.getElementById('quick-prompts');
+    if (!bar) return;
+    const t = LOCALIZED_UI[lang] || LOCALIZED_UI['en'];
+    bar.setAttribute('aria-label', t.suggestedPrompts || 'Suggested Prompts');
+    if (t.direction) bar.setAttribute('dir', t.direction);
+
+    const prompts = t.quickPrompts || [
+      { text: "🤖 Will AI replace virtual assistants?", prompt: "Will AI replace virtual assistants?" },
+      { text: "🎯 What skills do clients value most?", prompt: "What skills do clients value most?" },
+      { text: "♿ How to request accommodations?", prompt: "How do I request interview accommodations?" }
+    ];
+
+    const isNonEn = lang !== 'en';
+    const isAscii = (str) => /^[\x00-\x7F\s\d\p{P}]+$/u.test(str || '');
+
+    bar.innerHTML = prompts.map(p => `
+      <button type="button" class="quick-prompt-btn" data-prompt="${p.prompt}">
+        <span ${isNonEn && isAscii(p.text) ? 'lang="en"' : ''}>${p.text}</span>
+        <span class="quick-prompt-arrow" aria-hidden="true">↗</span>
+      </button>
+    `).join('');
+
+    bar.querySelectorAll('.quick-prompt-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const query = btn.getAttribute('data-prompt');
+        if (query) {
+          this.askQuestion(query);
+        }
+      });
+    });
+  }
+
   updateLanguageUI(lang) {
     const t = LOCALIZED_UI[lang] || LOCALIZED_UI['en'];
     const drawer = this.shadowRoot.getElementById('drawer');
     if (!drawer) return;
+
+    // Dynamically update localized starter prompt buttons
+    this.updateQuickPrompts(lang);
 
     // Dynamically update WCAG 3.1.2 Language of Parts and Direction
     drawer.setAttribute('dir', t.direction);
@@ -6351,7 +6432,8 @@ class MultilingualAssistant extends HTMLElement {
 
         if (event.results[0].isFinal) {
           this.stopSpeechRecognition();
-          this.announce(`Speech captured: ${transcript}`);
+          const speechMsg = this.currentLang === 'am' ? `የተነገረው ድምጽ ተይዟል፦ ${transcript}` : (this.currentLang === 'om' ? `Sagaleen waraabameera: ${transcript}` : `Speech captured: ${transcript}`);
+          this.announce(speechMsg);
           setTimeout(() => this.handleSend(), 400);
         }
       };
@@ -6363,7 +6445,8 @@ class MultilingualAssistant extends HTMLElement {
           this.appendMessage('tutor', `⚠️ ${t.micPermissionDenied}`, this.currentLang);
         } else if (event.error === 'language-not-supported' && this.recognition.lang !== 'en-US') {
           // Acoustic model fallback
-          this.announce('Acoustic model fallback to universal speech recognition.');
+          const fallbackMsg = this.currentLang === 'am' ? 'የድምጽ አገልግሎት ወደ ሁለንተናዊ ሁነታ ተቀይሯል።' : 'Acoustic model fallback to universal speech recognition.';
+          this.announce(fallbackMsg);
           this.currentLang = 'en';
           this.toggleSpeechInput(btn);
         } else {
@@ -6407,7 +6490,8 @@ class MultilingualAssistant extends HTMLElement {
     const modal = this.shadowRoot.getElementById('escalate-modal');
     modal.style.display = 'flex';
     const t = LOCALIZED_UI[this.currentLang] || LOCALIZED_UI['en'];
-    this.announce(`${t.escalateModalTitle}. Select an option.`);
+    const escMsg = this.currentLang === 'am' ? `${t.escalateModalTitle}። አማራጭ ይምረጡ።` : `${t.escalateModalTitle}. Select an option.`;
+    this.announce(escMsg);
     const shareBtn = this.shadowRoot.getElementById('btn-confirm-screenshare');
     if (shareBtn) shareBtn.focus();
     this.emitEvent('assistant:escalate-request', { partner: this.partnerId });
@@ -6657,38 +6741,43 @@ class MultilingualAssistant extends HTMLElement {
         initial: (j.company || 'S').charAt(0).toUpperCase()
       };
 
+      // WCAG 3.1.2: Language of Parts - tag English text in non-English modes
+      const isNonEn = this.currentLang !== 'en';
+      const isAscii = (str) => /^[\x00-\x7F\s\d\p{P}]+$/u.test(str || '');
+      const enAttr = (str) => (isNonEn && isAscii(str)) ? 'lang="en"' : '';
+
       return `
         <article class="job-card" role="article" tabindex="0" aria-labelledby="job-${j.id}-title">
           <div class="job-card-header">
             <div class="job-company-badge" style="background: ${theme.bg};" aria-hidden="true">${theme.initial}</div>
             <div class="job-title-wrap">
               <div class="job-company-row">
-                <span class="job-company-name">🏢 ${j.company}</span>
+                <span class="job-company-name" ${enAttr(j.company)}>🏢 ${j.company}</span>
                 <span class="job-verified-tag" aria-label="${t.verifiedEmployer || 'Verified Employer'}">✓ ${t.verifiedEmployer || 'Verified Employer'}</span>
               </div>
-              <h4 class="job-title" id="job-${j.id}-title">${title}</h4>
+              <h4 class="job-title" id="job-${j.id}-title" ${enAttr(title)}>${title}</h4>
               <span class="job-hiring-pill" aria-hidden="true"><span class="hiring-dot"></span> ${t.activelyHiring || 'Actively Hiring'}</span>
             </div>
           </div>
 
           <div class="job-meta">
-            <span class="job-meta-item">📍 ${j.location}</span>
-            <span class="job-meta-item job-meta-salary">💰 ${j.salary}</span>
-            <span class="job-meta-item">⏱ ${j.workType || 'Full-time'}</span>
+            <span class="job-meta-item" ${enAttr(j.location)}>📍 ${j.location}</span>
+            <span class="job-meta-item job-meta-salary" ${enAttr(j.salary)}>💰 ${j.salary}</span>
+            <span class="job-meta-item" ${enAttr(j.workType || 'Full-time')}>⏱ ${j.workType || 'Full-time'}</span>
           </div>
 
-          <div class="job-badges-wrap" aria-label="Inclusion Features">
+          <div class="job-badges-wrap" aria-label="${t.inclusionFeatures || 'Inclusion Features'}">
             ${tags.map(tag => {
               let badgeClass = 'job-badge';
               const low = tag.toLowerCase();
               if (low.includes('screen reader') || low.includes('assistive')) badgeClass += ' badge-sr';
               else if (low.includes('remote')) badgeClass += ' badge-remote';
               else if (low.includes('flexible') || low.includes('part-time')) badgeClass += ' badge-flexible';
-              return `<span class="${badgeClass}">♿ ${tag}</span>`;
+              return `<span class="${badgeClass}" ${enAttr(tag)}>♿ ${tag}</span>`;
             }).join('')}
           </div>
 
-          <p class="job-desc">${desc}</p>
+          <p class="job-desc" ${enAttr(desc)}>${desc}</p>
 
           <div class="job-actions">
             <button type="button" class="btn-apply" data-job-id="${j.id}" aria-label="${t.applyBtn}: ${title} at ${j.company}">
@@ -6719,7 +6808,8 @@ class MultilingualAssistant extends HTMLElement {
       });
     });
 
-    this.announce(`Showing ${filtered.length} verified inclusive opportunities.`);
+    const oppMsg = this.currentLang === 'am' ? `${filtered.length} የተረጋገጡ አካታች የስራ እድሎች እየታዩ ነው።` : (this.currentLang === 'om' ? `Carraawwan hojii ${filtered.length} mul'isaa jira.` : `Showing ${filtered.length} verified inclusive opportunities.`);
+    this.announce(oppMsg);
   }
 
   handleJobApply(job) {
@@ -6749,7 +6839,8 @@ class MultilingualAssistant extends HTMLElement {
     this.updateAccLetterPreview();
 
     modal.style.display = 'flex';
-    this.announce(`${t.accModalTitle}: ${title}. Choose accommodations.`);
+    const accMsg = this.currentLang === 'am' ? `${t.accModalTitle}፦ ${title}። ማመቻቸቶችን ይምረጡ።` : (this.currentLang === 'om' ? `${t.accModalTitle}: ${title}. Deeggarsa filadhaa.` : `${t.accModalTitle}: ${title}. Choose accommodations.`);
+    this.announce(accMsg);
     const firstCheckbox = this.shadowRoot.getElementById('chk-sr');
     if (firstCheckbox) firstCheckbox.focus();
   }
