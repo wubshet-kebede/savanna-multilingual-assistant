@@ -146,6 +146,25 @@ def root():
         "version": settings.VERSION,
         "architecture": "Modular Monolith",
         "docs": "/docs",
-        "modules": ["tutor", "career", "escalate", "channels", "teacher", "lti"],
+        "demo_page": "/html_course_files/concept-with-navigation.html",
+        "teacher_dashboard": "/html_course_files/teacher-dashboard.html",
+        "widget_testbed": "/widget/test.html",
+        "sms_inbound": "/sms/inbound",
         "status": "healthy"
     }
+
+# 3. Mount Static Files for All-in-One Deployment (Client & Backend on 1 Domain)
+import os
+from fastapi.staticfiles import StaticFiles
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+html_dir = os.path.join(BASE_DIR, "html_course_files")
+widget_dir = os.path.join(BASE_DIR, "widget")
+assets_dir = os.path.join(BASE_DIR, "assets")
+
+if os.path.exists(html_dir):
+    app.mount("/html_course_files", StaticFiles(directory=html_dir, html=True), name="html_course_files")
+if os.path.exists(widget_dir):
+    app.mount("/widget", StaticFiles(directory=widget_dir, html=True), name="widget")
+if os.path.exists(assets_dir):
+    app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
