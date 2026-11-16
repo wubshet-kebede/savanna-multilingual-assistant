@@ -183,6 +183,7 @@ def format_telegram_response(rag_result: dict, lang: str = "en") -> tuple[str, l
 # ====================================================================
 try:
     from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, BotCommand
+    from telegram.request import HTTPXRequest
     from telegram.constants import ParseMode, ChatAction
     from telegram.ext import (
         Application,
@@ -222,40 +223,50 @@ def create_inline_keyboard(buttons_spec: list[list[dict]]) -> Optional["InlineKe
     return InlineKeyboardMarkup(keyboard)
 
 
-async def safe_reply(message_or_query, text: str, reply_markup=None):
+async def safe_reply(target, text: str, reply_markup=None):
     """
-    Safely delivers the response using HTML mode, falling back to plain text
-    if any entity parser issue occurs.
+    Safely delivers the response with automatic retry, HTML parsing fallback,
+    and support for update, message, or callback query objects.
     """
-    try:
-        if hasattr(message_or_query, "reply_text"):
-            return await message_or_query.reply_text(
+    if not target:
+        return None
+
+    msg = None
+    if hasattr(target, "reply_text"):
+        msg = target
+    elif hasattr(target, "effective_message") and target.effective_message:
+        msg = target.effective_message
+    elif hasattr(target, "message") and target.message:
+        msg = target.message
+
+    if not msg:
+        return None
+
+    for attempt in range(3):
+        try:
+            return await msg.reply_text(
                 text,
                 parse_mode=ParseMode.HTML,
                 reply_markup=reply_markup,
                 disable_web_page_preview=True
             )
-        elif hasattr(message_or_query, "message") and hasattr(message_or_query.message, "reply_text"):
-            return await message_or_query.message.reply_text(
-                text,
-                parse_mode=ParseMode.HTML,
-                reply_markup=reply_markup,
-                disable_web_page_preview=True
-            )
-    except Exception as e:
-        plain_text = re.sub(r'<[^>]+>', '', text)
-        if hasattr(message_or_query, "reply_text"):
-            return await message_or_query.reply_text(
-                plain_text,
-                reply_markup=reply_markup,
-                disable_web_page_preview=True
-            )
-        elif hasattr(message_or_query, "message") and hasattr(message_or_query.message, "reply_text"):
-            return await message_or_query.message.reply_text(
-                plain_text,
-                reply_markup=reply_markup,
-                disable_web_page_preview=True
-            )
+        except Exception as err:
+            err_str = str(err).lower()
+            if "can't parse entities" in err_str or "bad request" in err_str:
+                plain_text = re.sub(r'<[^>]+>', '', text)
+                try:
+                    return await msg.reply_text(
+                        plain_text,
+                        reply_markup=reply_markup,
+                        disable_web_page_preview=True
+                    )
+                except Exception:
+                    pass
+            if attempt < 2:
+                await asyncio.sleep(0.5 * (attempt + 1))
+            else:
+                print(f"[Telegram Bot] safe_reply final error: {err}", flush=True)
+                return None
 
 
 async def start_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -653,7 +664,14 @@ def build_telegram_application(token: str) -> Optional["Application"]:
         print("[Telegram Bot] python-telegram-bot is not installed.", flush=True)
         return None
 
-    app = Application.builder().token(token).build()
+    req = HTTPXRequest(
+        connection_pool_size=16,
+        read_timeout=30.0,
+        write_timeout=30.0,
+        connect_timeout=30.0,
+        pool_timeout=30.0
+    )
+    app = Application.builder().token(token).request(req).build()
 
     app.add_handler(CommandHandler(["start", "restart"], start_handler))
     app.add_handler(CommandHandler(["a11y", "accessibility", "access"], accessibility_handler))
@@ -740,7 +758,7 @@ async def run_telegram_bot_service():
             print("[Telegram Bot] Registered interactive commands menu with Telegram.", flush=True)
         except Exception as e:
             print(f"[Telegram Bot] Notice: set_my_commands error: {e}", flush=True)
-        await app.updater.start_polling(drop_pending_updates=True)
+        await app.updater.start_polling()
         print(f"[Telegram Bot] Polling started successfully for @Savanna_AI_Tutor_Bot!", flush=True)
         try:
             while True:
