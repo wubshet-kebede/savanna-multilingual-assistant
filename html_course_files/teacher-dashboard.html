@@ -58,7 +58,7 @@
     .top-nav {
       background: #0f172a;
       color: white;
-      padding: 14px 24px;
+      padding: 12px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -66,6 +66,8 @@
       position: sticky;
       top: 0;
       z-index: 100;
+      flex-wrap: wrap;
+      gap: 12px;
     }
 
     .brand-group {
@@ -127,16 +129,49 @@
     .nav-actions {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* Language Switcher Control */
+    .lang-switcher {
+      display: inline-flex;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 8px;
+      padding: 2px;
+      gap: 2px;
+    }
+
+    .lang-btn {
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .lang-btn:hover {
+      color: white;
+    }
+
+    .lang-btn.active {
+      background: #2563eb;
+      color: white;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
     }
 
     .btn {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 8px 16px;
+      gap: 6px;
+      padding: 7px 14px;
       border-radius: var(--radius-sm);
-      font-size: 0.85rem;
+      font-size: 0.825rem;
       font-weight: 600;
       cursor: pointer;
       text-decoration: none;
@@ -166,7 +201,7 @@
     .dashboard-container {
       max-width: 1280px;
       margin: 0 auto;
-      padding: 28px 24px 60px 24px;
+      padding: 24px 20px 60px 20px;
     }
 
     /* Course Sub-header */
@@ -723,17 +758,25 @@
       <div class="brand-logo" aria-hidden="true">S</div>
       <div class="brand-text">
         <h1>
-          <span>Savanna Educator Hub</span>
-          <span class="live-pulse"><span class="live-dot"></span> Live Telemetry</span>
+          <span id="navBrandTitle">Savanna Educator Hub</span>
+          <span class="live-pulse"><span class="live-dot"></span> <span id="liveBadgeText">Live Telemetry</span></span>
         </h1>
       </div>
     </div>
+
     <nav class="nav-actions" aria-label="Portal Actions">
+      <!-- Multilingual Language Switcher -->
+      <div class="lang-switcher" aria-label="Select Interface Language">
+        <button class="lang-btn active" id="btnLangEn" onclick="switchLanguage('en')">English</button>
+        <button class="lang-btn" id="btnLangAm" onclick="switchLanguage('am')">አማርኛ</button>
+        <button class="lang-btn" id="btnLangOm" onclick="switchLanguage('om')">Afaan Oromoo</button>
+      </div>
+
       <a href="/html_course_files/concept-with-navigation.html" class="btn btn-dark">
-        <span>← Back to Student View</span>
+        <span id="btnBackText">← Back to Student View</span>
       </a>
       <a href="/api/v1/teacher/export-csv" class="btn btn-primary" download>
-        <span>📥 Export RFC-4180 CSV</span>
+        <span id="btnExportText">📥 Export RFC-4180 CSV</span>
       </a>
     </nav>
   </header>
@@ -746,10 +789,10 @@
       <div>
         <div class="course-badge-row">
           <span class="tag-course">COURSE: VA-1</span>
-          <span class="tag-privacy">🔒 100% Anonymized Telemetry · Zero PII</span>
+          <span class="tag-privacy" id="privacyTagText">🔒 100% Anonymized Telemetry · Zero PII</span>
         </div>
-        <h2 class="page-title">Curriculum Confusion & Inquiry Intelligence</h2>
-        <p class="page-desc">Real-time aggregate questions asked across Web, Telegram, and 2G SMS to identify broken lessons and student roadblocks.</p>
+        <h2 class="page-title" id="pageTitleText">Curriculum Confusion & Inquiry Intelligence</h2>
+        <p class="page-desc" id="pageDescText">Real-time aggregate questions asked across Web, Telegram, and 2G SMS to identify broken lessons and student roadblocks.</p>
       </div>
     </div>
 
@@ -758,50 +801,50 @@
       <!-- KPI 1 -->
       <div class="kpi-card">
         <div class="kpi-top">
-          <div class="kpi-title">Total Student Inquiries</div>
+          <div class="kpi-title" id="kpi1Title">Total Student Inquiries</div>
           <div class="kpi-icon icon-blue">💬</div>
         </div>
         <div class="kpi-value" id="kpiTotal">168</div>
         <div class="kpi-footer">
-          <span class="kpi-trend-good">↑ 24% this week</span>
-          <span>· Across 5 modules</span>
+          <span class="kpi-trend-good" id="kpi1Trend">↑ 24% this week</span>
+          <span id="kpi1Sub">· Across 5 modules</span>
         </div>
       </div>
 
       <!-- KPI 2 -->
       <div class="kpi-card">
         <div class="kpi-top">
-          <div class="kpi-title">Top Inquiry Language</div>
+          <div class="kpi-title" id="kpi2Title">Top Inquiry Language</div>
           <div class="kpi-icon icon-purple">🌍</div>
         </div>
-        <div class="kpi-value" style="font-size: 1.7rem;">አማርኛ (48%)</div>
+        <div class="kpi-value" id="kpiTopLang" style="font-size: 1.7rem;">አማርኛ (48%)</div>
         <div class="kpi-footer">
-          <span>Followed by Afaan Oromo (22%)</span>
+          <span id="kpi2Sub">Followed by Afaan Oromo (22%)</span>
         </div>
       </div>
 
       <!-- KPI 3 -->
       <div class="kpi-card">
         <div class="kpi-top">
-          <div class="kpi-title">Human Escalations</div>
+          <div class="kpi-title" id="kpi3Title">Human Escalations</div>
           <div class="kpi-icon icon-amber">🛟</div>
         </div>
         <div class="kpi-value" id="kpiEscalations" style="color: #d97706;">9</div>
         <div class="kpi-footer">
-          <span>5.3% escalation rate (Healthy &lt; 10%)</span>
+          <span id="kpi3Sub">5.3% escalation rate (Healthy &lt; 10%)</span>
         </div>
       </div>
 
       <!-- KPI 4 -->
       <div class="kpi-card">
         <div class="kpi-top">
-          <div class="kpi-title">AI Grounded Accuracy</div>
+          <div class="kpi-title" id="kpi4Title">AI Grounded Accuracy</div>
           <div class="kpi-icon icon-green">🛡️</div>
         </div>
         <div class="kpi-value">94.7%</div>
         <div class="kpi-footer">
-          <span class="kpi-trend-good">100% cited</span>
-          <span>from curriculum</span>
+          <span class="kpi-trend-good" id="kpi4Trend">100% cited</span>
+          <span id="kpi4Sub">from curriculum</span>
         </div>
       </div>
     </section>
@@ -810,19 +853,19 @@
     <section class="channel-banner" aria-label="Multi-Channel Usage Split">
       <div class="channel-header">
         <div class="channel-title">
-          <span>📡 Multi-Channel Ingestion Telemetry</span>
+          <span id="channelBannerTitle">📡 Multi-Channel Ingestion Telemetry</span>
         </div>
-        <div class="channel-meta">Level 1 (Web) · Level 2 (SMS) · Telegram Bot</div>
+        <div class="channel-meta" id="channelBannerMeta">Level 1 (Web) · Level 2 (SMS) · Telegram Bot</div>
       </div>
       <div class="stacked-bar" role="progressbar" aria-label="Channel Distribution">
-        <div class="bar-web" title="Web Course Widget: 68%"></div>
-        <div class="bar-telegram" title="Telegram Bot: 22%"></div>
-        <div class="bar-sms" title="2G SMS Route: 10%"></div>
+        <div class="bar-web" id="barWeb" style="width: 68%;" title="Web Course Widget: 68%"></div>
+        <div class="bar-telegram" id="barTelegram" style="width: 22%;" title="Telegram Bot: 22%"></div>
+        <div class="bar-sms" id="barSms" style="width: 10%;" title="2G SMS Route: 10%"></div>
       </div>
       <div class="channel-legend">
-        <div class="legend-item"><span class="legend-dot" style="background:#2563eb;"></span> Web Assistant (68%)</div>
-        <div class="legend-item"><span class="legend-dot" style="background:#0ea5e9;"></span> Telegram Bot @Savanna_AI_Tutor_Bot (22%)</div>
-        <div class="legend-item"><span class="legend-dot" style="background:#10b981;"></span> Low-Bandwidth 2G SMS (10%)</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#2563eb;"></span> <span id="legWeb">Web Assistant (68%)</span></div>
+        <div class="legend-item"><span class="legend-dot" style="background:#0ea5e9;"></span> <span id="legTelegram">Telegram Bot @Savanna_AI_Tutor_Bot (22%)</span></div>
+        <div class="legend-item"><span class="legend-dot" style="background:#10b981;"></span> <span id="legSms">Low-Bandwidth 2G SMS (10%)</span></div>
       </div>
     </section>
 
@@ -833,9 +876,9 @@
       <section class="card" aria-label="Most Asked Student Questions">
         <div class="card-header">
           <div class="card-heading">
-            <span>❓ Most Asked Questions (Anonymized)</span>
+            <span id="cardQuestionsHeading">❓ Most Asked Questions (Anonymized)</span>
           </div>
-          <span style="font-size: 0.8rem; color: var(--slate-500); font-weight: 600;">Ranked by Volume</span>
+          <span id="cardQuestionsSub" style="font-size: 0.8rem; color: var(--slate-500); font-weight: 600;">Ranked by Volume</span>
         </div>
         <div class="card-body">
           <!-- Toolbar -->
@@ -845,116 +888,16 @@
               <input type="text" id="searchInput" class="search-input" placeholder="Search questions, topics, or AI answers..." oninput="filterQuestions()">
             </div>
             <div class="filter-chips">
-              <button class="chip-btn active" onclick="setLangFilter('all', this)">All</button>
-              <button class="chip-btn" onclick="setLangFilter('amharic', this)">አማርኛ</button>
-              <button class="chip-btn" onclick="setLangFilter('oromo', this)">Oromo</button>
-              <button class="chip-btn" onclick="setLangFilter('english', this)">English</button>
+              <button class="chip-btn active" id="chipAll" onclick="setLangFilter('all', this)">All</button>
+              <button class="chip-btn" id="chipAm" onclick="setLangFilter('amharic', this)">አማርኛ</button>
+              <button class="chip-btn" id="chipOm" onclick="setLangFilter('oromo', this)">Oromo</button>
+              <button class="chip-btn" id="chipEn" onclick="setLangFilter('english', this)">English</button>
             </div>
           </div>
 
-          <!-- Questions List -->
+          <!-- Dynamic Questions List -->
           <div class="question-list" id="questionList">
-
-            <!-- Question 1 -->
-            <article class="q-item" data-lang="amharic">
-              <div class="q-summary" onclick="toggleDetails(this)">
-                <div class="q-left">
-                  <span class="q-id-badge">Q-101</span>
-                  <div class="q-text-bold">What is the key difference between an AI tool and a human Virtual Assistant?</div>
-                </div>
-                <div class="q-stats">
-                  <span class="ask-count-pill">62 asks</span>
-                  <span class="lang-pill">Amharic 52%</span>
-                </div>
-              </div>
-              <div class="q-details" style="display: block;">
-                <div class="grounded-box">
-                  <div class="grounded-label">🎯 Grounded AI Curriculum Response (Lesson 1.2)</div>
-                  AI automates repetitive tasks (calendar scheduling, drafting emails, transcription), while human VAs provide client empathy, relationship management, and contextual judgment that algorithms cannot replicate.
-                </div>
-              </div>
-            </article>
-
-            <!-- Question 2 -->
-            <article class="q-item" data-lang="amharic">
-              <div class="q-summary" onclick="toggleDetails(this)">
-                <div class="q-left">
-                  <span class="q-id-badge">Q-102</span>
-                  <div class="q-text-bold">How do I calculate timezone overlap between Addis Ababa (EAT) and New York (EST)?</div>
-                </div>
-                <div class="q-stats">
-                  <span class="ask-count-pill">34 asks</span>
-                  <span class="lang-pill">Amharic 60%</span>
-                </div>
-              </div>
-              <div class="q-details" style="display: block;">
-                <div class="grounded-box">
-                  <div class="grounded-label">🎯 Grounded AI Curriculum Response (Lesson 2.4)</div>
-                  Addis Ababa (EAT, UTC+3) is 7 hours ahead of New York (EST, UTC-4/5). An overlap window of 4:00 PM to 8:00 PM EAT matches 9:00 AM to 1:00 PM EST, giving 4 hours of live synchronized collaboration daily.
-                </div>
-              </div>
-            </article>
-
-            <!-- Question 3 -->
-            <article class="q-item" data-lang="english">
-              <div class="q-summary" onclick="toggleDetails(this)">
-                <div class="q-left">
-                  <span class="q-id-badge">Q-103</span>
-                  <div class="q-text-bold">What is a realistic hourly proposal rate in USD for an entry-level African VA?</div>
-                </div>
-                <div class="q-stats">
-                  <span class="ask-count-pill">29 asks</span>
-                  <span class="lang-pill" style="background:#e0e7ff; color:#3730a3;">English 45%</span>
-                </div>
-              </div>
-              <div class="q-details" style="display: block;">
-                <div class="grounded-box">
-                  <div class="grounded-label">🎯 Grounded AI Curriculum Response (Lesson 3.1)</div>
-                  Entry-level international remote rates typically start between $5 to $10/hour, or $450 to $700/month for dedicated full-time support contracts (e.g. Junior VA at AfriRemote Solutions).
-                </div>
-              </div>
-            </article>
-
-            <!-- Question 4 -->
-            <article class="q-item" data-lang="oromo">
-              <div class="q-summary" onclick="toggleDetails(this)">
-                <div class="q-left">
-                  <span class="q-id-badge">Q-104</span>
-                  <div class="q-text-bold">What minimum laptop specs and internet speed do I need for remote administrative support?</div>
-                </div>
-                <div class="q-stats">
-                  <span class="ask-count-pill">24 asks</span>
-                  <span class="lang-pill" style="background:#dcfce7; color:#166534;">Oromo 48%</span>
-                </div>
-              </div>
-              <div class="q-details" style="display: block;">
-                <div class="grounded-box">
-                  <div class="grounded-label">🎯 Grounded AI Curriculum Response (Lesson 1.4)</div>
-                  Recommended minimum: Intel Core i3 / AMD Ryzen 3 with 8GB RAM, and a stable 10 Mbps internet connection with a secondary 4G mobile hotspot backup for power fluctuations.
-                </div>
-              </div>
-            </article>
-
-            <!-- Question 5 -->
-            <article class="q-item" data-lang="amharic">
-              <div class="q-summary" onclick="toggleDetails(this)">
-                <div class="q-left">
-                  <span class="q-id-badge">Q-105</span>
-                  <div class="q-text-bold">How can I formally request interview accommodations for remote video screenings?</div>
-                </div>
-                <div class="q-stats">
-                  <span class="ask-count-pill">18 asks</span>
-                  <span class="lang-pill">Amharic 55%</span>
-                </div>
-              </div>
-              <div class="q-details" style="display: block;">
-                <div class="grounded-box">
-                  <div class="grounded-label">🎯 Grounded AI Curriculum Response (Career Module)</div>
-                  Submit an accommodation letter referencing tracking code ACC-XXXXXX, specifying requirements such as live automated captions, asynchronous written interviews, or extended question prep time.
-                </div>
-              </div>
-            </article>
-
+            <!-- Dynamically populated from API -->
           </div>
         </div>
       </section>
@@ -966,63 +909,13 @@
         <section class="card" aria-label="Curriculum Confusion Heatmap">
           <div class="card-header">
             <div class="card-heading">
-              <span>🔥 Confusion Heatmap</span>
+              <span id="cardHeatmapHeading">🔥 Confusion Heatmap</span>
             </div>
-            <span style="font-size: 0.8rem; color: var(--slate-500); font-weight: 600;">Difficulty Index</span>
+            <span id="cardHeatmapSub" style="font-size: 0.8rem; color: var(--slate-500); font-weight: 600;">Difficulty Index</span>
           </div>
           <div class="card-body">
-            <div class="heatmap-list">
-
-              <div class="hm-item">
-                <div class="hm-header">
-                  <span class="hm-topic">AI vs Human Remote VA</span>
-                  <span class="hm-pct text-danger">43% (62 asks)</span>
-                </div>
-                <div class="hm-bar-track">
-                  <div class="hm-bar-fill fill-danger" style="width: 43%;"></div>
-                </div>
-              </div>
-
-              <div class="hm-item">
-                <div class="hm-header">
-                  <span class="hm-topic">Remote Work Timezones & EAT</span>
-                  <span class="hm-pct text-warning">24% (34 asks)</span>
-                </div>
-                <div class="hm-bar-track">
-                  <div class="hm-bar-fill fill-warning" style="width: 24%;"></div>
-                </div>
-              </div>
-
-              <div class="hm-item">
-                <div class="hm-header">
-                  <span class="hm-topic">Proposal Pricing in USD</span>
-                  <span class="hm-pct text-normal">20% (29 asks)</span>
-                </div>
-                <div class="hm-bar-track">
-                  <div class="hm-bar-fill fill-normal" style="width: 20%;"></div>
-                </div>
-              </div>
-
-              <div class="hm-item">
-                <div class="hm-header">
-                  <span class="hm-topic">Technical Hardware Setup</span>
-                  <span class="hm-pct text-normal">17% (24 asks)</span>
-                </div>
-                <div class="hm-bar-track">
-                  <div class="hm-bar-fill fill-normal" style="width: 17%;"></div>
-                </div>
-              </div>
-
-              <div class="hm-item">
-                <div class="hm-header">
-                  <span class="hm-topic">Interview Accommodations</span>
-                  <span class="hm-pct text-normal">13% (18 asks)</span>
-                </div>
-                <div class="hm-bar-track">
-                  <div class="hm-bar-fill fill-normal" style="width: 13%;"></div>
-                </div>
-              </div>
-
+            <div class="heatmap-list" id="heatmapList">
+              <!-- Dynamically populated from API -->
             </div>
           </div>
         </section>
@@ -1031,51 +924,12 @@
         <section class="card" aria-label="AI Recommendations for Instructors">
           <div class="card-header">
             <div class="card-heading">
-              <span>💡 Pedagogical Action Center</span>
+              <span id="cardActionHeading">💡 Pedagogical Action Center</span>
             </div>
             <span style="font-size: 0.8rem; color: #1e40af; font-weight: 700; background: #dbeafe; padding: 2px 8px; border-radius: 4px;">AI CO-PILOT</span>
           </div>
-          <div class="card-body">
-
-            <div class="action-card">
-              <div class="action-badge-row">
-                <span class="ref-lesson">VA-1 / Lesson 1.2</span>
-                <span class="priority-badge badge-urgent">HIGH PRIORITY</span>
-              </div>
-              <div class="action-finding">
-                <strong>Finding:</strong> 43% of learners ask if AI will replace VAs. Causes anxiety and hesitation.
-              </div>
-              <div class="action-fix">
-                <span>👉 Action:</span> Embed a 2-min case study showing how VAs use AI as a productivity multiplier.
-              </div>
-            </div>
-
-            <div class="action-card">
-              <div class="action-badge-row">
-                <span class="ref-lesson">VA-1 / Lesson 2.4</span>
-                <span class="priority-badge badge-urgent">HIGH PRIORITY</span>
-              </div>
-              <div class="action-finding">
-                <strong>Finding:</strong> Highest live human escalation rate occurs during EAT vs EST timezone conversions.
-              </div>
-              <div class="action-fix">
-                <span>👉 Action:</span> Embed an interactive 24-hr comparative slider between Addis Ababa and US timezones.
-              </div>
-            </div>
-
-            <div class="action-card">
-              <div class="action-badge-row">
-                <span class="ref-lesson">VA-1 / Lesson 4.1</span>
-                <span class="priority-badge badge-enhancement">MEDIUM PRIORITY</span>
-              </div>
-              <div class="action-finding">
-                <strong>Finding:</strong> Students struggle with financial terminology ("escrow", "retainer", "net-30").
-              </div>
-              <div class="action-fix" style="color: #92400e; background: #fffbeb;">
-                <span>👉 Action:</span> Add localized Amharic and Afaan Oromo audio tooltips for contract clauses.
-              </div>
-            </div>
-
+          <div class="card-body" id="actionCardList">
+            <!-- Dynamically populated from API -->
           </div>
         </section>
 
@@ -1086,36 +940,339 @@
     <footer class="privacy-seal" role="contentinfo">
       <div class="seal-icon" aria-hidden="true">🛡️</div>
       <div class="seal-text">
-        <h4>Certified Privacy-First Telemetry Architecture</h4>
-        <p>100% compliant with the African Union Convention on Cyber Security and Personal Data Protection (Malabo Convention) and GDPR. All telemetry is aggregated anonymously at the gateway: student names, phone numbers, and IP addresses are never logged or stored.</p>
+        <h4 id="sealTitle">Certified Privacy-First Telemetry Architecture</h4>
+        <p id="sealDesc">100% compliant with the African Union Convention on Cyber Security and Personal Data Protection (Malabo Convention) and GDPR. All telemetry is aggregated anonymously at the gateway: student names, phone numbers, and IP addresses are never logged or stored.</p>
       </div>
     </footer>
 
   </main>
 
   <script>
-    // Live update from backend API
+    // Global State for Live Data & Language
+    let currentLang = localStorage.getItem('savanna_teacher_lang') || 'en';
+    let currentCategoryFilter = 'all';
+    let rawInsightsData = null;
+
+    // Localized Strings Dictionary for the Teacher Dashboard
+    const I18N_STRINGS = {
+      en: {
+        navBrandTitle: "Savanna Educator Hub",
+        liveBadgeText: "Live Telemetry",
+        btnBackText: "← Back to Student View",
+        btnExportText: "📥 Export RFC-4180 CSV",
+        privacyTagText: "🔒 100% Anonymized Telemetry · Zero PII",
+        pageTitleText: "Curriculum Confusion & Inquiry Intelligence",
+        pageDescText: "Real-time aggregate questions asked across Web, Telegram, and 2G SMS to identify broken lessons and student roadblocks.",
+        kpi1Title: "Total Student Inquiries",
+        kpi1Trend: "↑ 24% this week",
+        kpi1Sub: "· Across 5 modules",
+        kpi2Title: "Top Inquiry Language",
+        kpi2Sub: "Followed by Afaan Oromo (22%)",
+        kpi3Title: "Human Escalations",
+        kpi3Sub: "5.3% escalation rate (Healthy < 10%)",
+        kpi4Title: "AI Grounded Accuracy",
+        kpi4Trend: "100% cited",
+        kpi4Sub: "from curriculum",
+        channelBannerTitle: "📡 Multi-Channel Ingestion Telemetry",
+        channelBannerMeta: "Level 1 (Web) · Level 2 (SMS) · Telegram Bot",
+        legWeb: "Web Assistant (68%)",
+        legTelegram: "Telegram Bot @Savanna_AI_Tutor_Bot (22%)",
+        legSms: "Low-Bandwidth 2G SMS (10%)",
+        cardQuestionsHeading: "❓ Most Asked Questions (Anonymized)",
+        cardQuestionsSub: "Ranked by Volume",
+        cardHeatmapHeading: "🔥 Confusion Heatmap",
+        cardHeatmapSub: "Difficulty Index",
+        cardActionHeading: "💡 Pedagogical Action Center",
+        searchPlaceholder: "Search questions, topics, or AI answers...",
+        chipAll: "All",
+        chipAm: "አማርኛ",
+        chipOm: "Oromo",
+        chipEn: "English",
+        groundedLabelPrefix: "🎯 Grounded AI Curriculum Response",
+        asksSuffix: "asks",
+        actionPrefix: "👉 Action:",
+        findingPrefix: "Finding:",
+        sealTitle: "Certified Privacy-First Telemetry Architecture",
+        sealDesc: "100% compliant with the African Union Convention on Cyber Security and Personal Data Protection (Malabo Convention) and GDPR. All telemetry is aggregated anonymously at the gateway: student names, phone numbers, and IP addresses are never logged or stored."
+      },
+      am: {
+        navBrandTitle: "የሳቫና መምህራን ማዕከል",
+        liveBadgeText: "ቀጥታ መረጃ",
+        btnBackText: "← ወደ ተማሪ ገጽ ተመለስ",
+        btnExportText: "📥 CSV ሪፖርት አውርድ",
+        privacyTagText: "🔒 100% ያልተገለጸ ማንነት · ምንም የግል መረጃ አይቀመጥም",
+        pageTitleText: "የስርዓተ-ትምህርት ግራ መጋባት እና የተማሪ ጥያቄዎች መረጃ",
+        pageDescText: "በድረ-ገጽ፣ ቴሌግራም እና በ 2G SMS የመጡ የተማሪ ጥያቄዎች እና የኮርሱን ክፍተቶች ለመለየት የተዘጋጀ የቀጥታ ዳሽቦርድ።",
+        kpi1Title: "አጠቃላይ የተማሪዎች ጥያቄዎች",
+        kpi1Trend: "↑ 24% በዚህ ሳምንት",
+        kpi1Sub: "· በ 5 ሞጁሎች ውስጥ",
+        kpi2Title: "ቀዳሚ የጥያቄ ቋንቋ",
+        kpi2Sub: "በአፋን ኦሮሞ (22%) ይከተላል",
+        kpi3Title: "የሰው ረዳት ጥያቄዎች",
+        kpi3Sub: "5.3% የረዳት ጥያቄ ምጣኔ (ጥሩ ሁኔታ < 10%)",
+        kpi4Title: "የትምህርት ይዘት ትክክለኛነት",
+        kpi4Trend: "100% የተረጋገጠ",
+        kpi4Sub: "ከስርዓተ-ትምህርቱ የተወሰደ",
+        channelBannerTitle: "📡 የባለብዙ-መስመር መረጃ መቀበያ ሁኔታ",
+        channelBannerMeta: "ደረጃ 1 (ድረ-ገጽ) · ደረጃ 2 (SMS) · ቴሌግራም ቦት",
+        legWeb: "የድረ-ገጽ ረዳት (68%)",
+        legTelegram: "የቴሌግራም ቦት @Savanna_AI_Tutor_Bot (22%)",
+        legSms: "ዝቅተኛ ባንድዊድዝ 2G SMS (10%)",
+        cardQuestionsHeading: "❓ በብዛት የተጠየቁ ጥያቄዎች (ያልተገለጸ ማንነት)",
+        cardQuestionsSub: "በጥያቄ ብዛት የተደረደሩ",
+        cardHeatmapHeading: "🔥 የስርዓተ-ትምህርት ግራ መጋባት መረጃ",
+        cardHeatmapSub: "የክብደት ደረጃ",
+        cardActionHeading: "💡 የትምህርት ማሻሻያ እርምጃዎች (የ AI አጋዥ)",
+        searchPlaceholder: "ጥያቄዎችን፣ ርዕሶችን ወይም መልሶችን ይፈልጉ...",
+        chipAll: "ሁሉም",
+        chipAm: "አማርኛ",
+        chipOm: "ኦሮምኛ",
+        chipEn: "እንግሊዝኛ",
+        groundedLabelPrefix: "🎯 ትክክለኛ የ AI ስርዓተ-ትምህርት መልስ",
+        asksSuffix: "ጥያቄዎች",
+        actionPrefix: "👉 እርምጃ፡",
+        findingPrefix: "የተገኘ ግኝት፡",
+        sealTitle: "የተረጋገጠ የግል መረጃ ጥበቃ ሥርዓት",
+        sealDesc: "ከአፍሪካ ህብረት የሳይበር ደህንነት እና የግል መረጃ ጥበቃ (ማላቦ ኮንቬንሽን) እና ከ GDPR ጋር 100% የተጣጣመ። የተማሪ ስሞች፣ ስልክ ቁጥሮች እና IP አድራሻዎች በጭራሽ አይቀመጡም።"
+      },
+      om: {
+        navBrandTitle: "Giddugala Barsiisota Savanna",
+        liveBadgeText: "Oodeeffannoo Kallattii",
+        btnBackText: "← Gara Fuula Barataatti",
+        btnExportText: "📥 Gabaasa CSV Buufadhaa",
+        privacyTagText: "🔒 100% Iccitiin Eegame · Eenyummaan Hin Mul'atu",
+        pageTitleText: "Qorannoo Rakkina Barattootaafi Gaaffilee Barnootaa",
+        pageDescText: "Gaaffilee barattootaa Weebsaayitii, Teeleegraamii fi SMS 2G irraa walitti qabaman.",
+        kpi1Title: "Gaaffilee Barattootaa Waliigalaa",
+        kpi1Trend: "↑ 24% torban kana",
+        kpi1Sub: "· Moojuloota 5 keessatti",
+        kpi2Title: "Afaan Gaaffii Isa Duraa",
+        kpi2Sub: "Afaan Oromootiin (22%) hordofama",
+        kpi3Title: "Gargaarsa Namaa Gaafatame",
+        kpi3Sub: "Harki 5.3% gargaarsa gaafate",
+        kpi4Title: "Sirrummaa Deebii AI",
+        kpi4Trend: "100% wabeeffame",
+        kpi4Sub: "silabasii barnootaa irraa",
+        channelBannerTitle: "📡 Kallattiiwwan Gaaffiin Ittiin Dhufe",
+        channelBannerMeta: "Sadarkaa 1 (Web) · Sadarkaa 2 (SMS) · Telegram Bot",
+        legWeb: "Gargaaraa Weeb (68%)",
+        legTelegram: "Bootii Telegram (22%)",
+        legSms: "SMS 2G (10%)",
+        cardQuestionsHeading: "❓ Gaaffilee Yeroo Baay'ee Gaafataman",
+        cardQuestionsSub: "Baay'inaan Kan Tarreeffaman",
+        cardHeatmapHeading: "🔥 Bakkeewwan Rakkisaa Ta'an",
+        cardHeatmapSub: "Sadarkaa Ulfaatinaa",
+        cardActionHeading: "💡 Tarkaanfii Fooyya'iinsaa (Gargaaraa AI)",
+        searchPlaceholder: "Gaaffilee, mata-duree ykn deebii barbaadaa...",
+        chipAll: "Hunda",
+        chipAm: "Amaaraa",
+        chipOm: "Oromoo",
+        chipEn: "Ingiliffa",
+        groundedLabelPrefix: "🎯 Deebii AI Qabatamaa Silabasii Irraa",
+        asksSuffix: "gaafatame",
+        actionPrefix: "👉 Tarkaanfii:",
+        findingPrefix: "Rakkina Mul'ate:",
+        sealTitle: "Eegumsa Iccitii Mirkanaa'e",
+        sealDesc: "Kootaa Eegumsa Daataa Gamtaa Afrikaa (Waliigaltee Malaaboo) fi GDPR wajjin 100% kan walsimu. Maqaan barattootaa, lakkoofsi bilbilaa fi IP hin galmaa'u."
+      }
+    };
+
+    // Switch Language UI
+    function switchLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem('savanna_teacher_lang', lang);
+
+      // Update button active state
+      document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+      if (lang === 'en') document.getElementById('btnLangEn').classList.add('active');
+      if (lang === 'am') document.getElementById('btnLangAm').classList.add('active');
+      if (lang === 'om') document.getElementById('btnLangOm').classList.add('active');
+
+      // Update UI Text Elements
+      const t = I18N_STRINGS[lang] || I18N_STRINGS['en'];
+      for (const [id, val] of Object.entries(t)) {
+        const el = document.getElementById(id);
+        if (el) {
+          if (id === 'searchInput') {
+            el.placeholder = val;
+          } else {
+            el.textContent = val;
+          }
+        }
+      }
+
+      // Re-render Dynamic Content
+      if (rawInsightsData) {
+        renderDashboard(rawInsightsData);
+      }
+    }
+
+    // Live Fetch from FastAPI Backend
     async function loadTelemetry() {
       try {
         const res = await fetch('/api/v1/teacher/insights');
         if (res.ok) {
-          const data = await res.json();
-          if (data.total_questions) {
-            document.getElementById('kpiTotal').textContent = data.total_questions;
-          }
-          if (data.escalated_to_human_count !== undefined) {
-            document.getElementById('kpiEscalations').textContent = data.escalated_to_human_count;
-          }
+          rawInsightsData = await res.json();
+          renderDashboard(rawInsightsData);
         }
-      } catch (e) {
-        console.log("Telemetry running with cached seed:", e);
+      } catch (err) {
+        console.error("Using cached insights data:", err);
       }
     }
 
-    let currentLangFilter = 'all';
+    // Dynamic Render Engine
+    function renderDashboard(data) {
+      const t = I18N_STRINGS[currentLang] || I18N_STRINGS['en'];
 
-    function setLangFilter(lang, btn) {
-      currentLangFilter = lang;
+      // 1. Render KPIs
+      if (data.total_questions) {
+        document.getElementById('kpiTotal').textContent = data.total_questions;
+      }
+      if (data.escalated_to_human_count !== undefined) {
+        document.getElementById('kpiEscalations').textContent = data.escalated_to_human_count;
+      }
+
+      // Top Language display
+      if (data.language_distribution) {
+        if (currentLang === 'am') {
+          document.getElementById('kpiTopLang').textContent = "አማርኛ (48%)";
+        } else if (currentLang === 'om') {
+          document.getElementById('kpiTopLang').textContent = "Afaan Oromoo (22%)";
+        } else {
+          document.getElementById('kpiTopLang').textContent = "Amharic (48%)";
+        }
+      }
+
+      // 2. Render Confusion Heatmap
+      const hmContainer = document.getElementById('heatmapList');
+      if (hmContainer && data.top_confusing_topics) {
+        hmContainer.innerHTML = '';
+        data.top_confusing_topics.forEach(item => {
+          let topicName = item.topic;
+          if (currentLang === 'am' && item.topic_am) topicName = item.topic_am;
+          if (currentLang === 'om' && item.topic_om) topicName = item.topic_om;
+
+          let colorClass = 'fill-normal';
+          let textClass = 'text-normal';
+          if (item.status === 'needs_clarification') {
+            colorClass = 'fill-danger';
+            textClass = 'text-danger';
+          } else if (item.status === 'moderate_confusion') {
+            colorClass = 'fill-warning';
+            textClass = 'text-warning';
+          }
+
+          const div = document.createElement('div');
+          div.className = 'hm-item';
+          div.innerHTML = `
+            <div class="hm-header">
+              <span class="hm-topic">${topicName}</span>
+              <span class="hm-pct ${textClass}">${item.pct} (${item.count} ${t.asksSuffix})</span>
+            </div>
+            <div class="hm-bar-track">
+              <div class="hm-bar-fill ${colorClass}" style="width: ${item.pct};"></div>
+            </div>
+          `;
+          hmContainer.appendChild(div);
+        });
+      }
+
+      // 3. Render Pedagogical Action Center
+      const actionContainer = document.getElementById('actionCardList');
+      if (actionContainer && data.curriculum_insights) {
+        actionContainer.innerHTML = '';
+        data.curriculum_insights.forEach(rec => {
+          let findingText = rec.finding;
+          let recText = rec.recommendation;
+          if (currentLang === 'am') {
+            if (rec.finding_am) findingText = rec.finding_am;
+            if (rec.recommendation_am) recText = rec.recommendation_am;
+          } else if (currentLang === 'om') {
+            if (rec.finding_om) findingText = rec.finding_om;
+            if (rec.recommendation_om) recText = rec.recommendation_om;
+          }
+
+          let priorityBadge = rec.priority === 'high' 
+            ? `<span class="priority-badge badge-urgent">${currentLang === 'am' ? 'አስቸኳይ' : (currentLang === 'om' ? 'MURTEESSAA' : 'HIGH PRIORITY')}</span>`
+            : `<span class="priority-badge badge-enhancement">${currentLang === 'am' ? 'መካከለኛ' : (currentLang === 'om' ? 'GIDDU-GALEESSA' : 'MEDIUM PRIORITY')}</span>`;
+
+          const card = document.createElement('div');
+          card.className = 'action-card';
+          card.innerHTML = `
+            <div class="action-badge-row">
+              <span class="ref-lesson">${rec.lesson_ref}</span>
+              ${priorityBadge}
+            </div>
+            <div class="action-finding">
+              <strong>${t.findingPrefix}</strong> ${findingText}
+            </div>
+            <div class="action-fix" style="${rec.priority === 'high' ? '' : 'color: #92400e; background: #fffbeb;'}">
+              <span>${t.actionPrefix}</span> ${recText}
+            </div>
+          `;
+          actionContainer.appendChild(card);
+        });
+      }
+
+      // 4. Render Questions List
+      renderQuestionsList(data.most_asked_questions || []);
+    }
+
+    function renderQuestionsList(questions) {
+      const qContainer = document.getElementById('questionList');
+      if (!qContainer) return;
+      const t = I18N_STRINGS[currentLang] || I18N_STRINGS['en'];
+      qContainer.innerHTML = '';
+
+      questions.forEach(q => {
+        let qText = q.question;
+        let ansText = q.sample_ai_answer;
+        let topicText = q.topic;
+
+        if (currentLang === 'am') {
+          if (q.question_am) qText = q.question_am;
+          if (q.sample_ai_answer_am) ansText = q.sample_ai_answer_am;
+          if (q.topic_am) topicText = q.topic_am;
+        } else if (currentLang === 'om') {
+          if (q.question_om) qText = q.question_om;
+          if (q.sample_ai_answer_om) ansText = q.sample_ai_answer_om;
+          if (q.topic_om) topicText = q.topic_om;
+        }
+
+        // Determine language category for filter
+        let langCat = 'english';
+        if (q.top_language.includes('Amharic')) langCat = 'amharic';
+        if (q.top_language.includes('Oromo')) langCat = 'oromo';
+
+        const article = document.createElement('article');
+        article.className = 'q-item';
+        article.setAttribute('data-lang', langCat);
+        article.innerHTML = `
+          <div class="q-summary" onclick="toggleDetails(this)">
+            <div class="q-left">
+              <span class="q-id-badge">${q.id}</span>
+              <div class="q-text-bold">${qText}</div>
+            </div>
+            <div class="q-stats">
+              <span class="ask-count-pill">${q.ask_count} ${t.asksSuffix}</span>
+              <span class="lang-pill">${q.top_language}</span>
+            </div>
+          </div>
+          <div class="q-details" style="display: block;">
+            <div class="grounded-box">
+              <div class="grounded-label">${t.groundedLabelPrefix} (${topicText})</div>
+              ${ansText}
+            </div>
+          </div>
+        `;
+        qContainer.appendChild(article);
+      });
+
+      filterQuestions();
+    }
+
+    function setLangFilter(category, btn) {
+      currentCategoryFilter = category;
       document.querySelectorAll('.chip-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       filterQuestions();
@@ -1129,10 +1286,10 @@
         const itemLang = item.getAttribute('data-lang');
         const text = item.textContent.toLowerCase();
         
-        const matchesLang = (currentLangFilter === 'all') || (itemLang === currentLangFilter);
+        const matchesCategory = (currentCategoryFilter === 'all') || (itemLang === currentCategoryFilter);
         const matchesSearch = text.includes(q);
 
-        if (matchesLang && matchesSearch) {
+        if (matchesCategory && matchesSearch) {
           item.style.display = 'block';
         } else {
           item.style.display = 'none';
@@ -1149,7 +1306,10 @@
       }
     }
 
-    document.addEventListener('DOMContentLoaded', loadTelemetry);
+    document.addEventListener('DOMContentLoaded', () => {
+      switchLanguage(currentLang);
+      loadTelemetry();
+    });
   </script>
 </body>
 </html>

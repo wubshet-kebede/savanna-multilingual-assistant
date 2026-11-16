@@ -4,17 +4,29 @@ from typing import List, Dict, Optional
 class QuestionDetail(BaseModel):
     id: str
     question: str
+    question_am: Optional[str] = None
+    question_om: Optional[str] = None
     topic: str
+    topic_am: Optional[str] = None
+    topic_om: Optional[str] = None
     ask_count: int
     top_language: str
     human_escalations: int
     sample_ai_answer: str
+    sample_ai_answer_am: Optional[str] = None
+    sample_ai_answer_om: Optional[str] = None
 
 class CurriculumInsight(BaseModel):
     topic: str
+    topic_am: Optional[str] = None
+    topic_om: Optional[str] = None
     lesson_ref: str
     finding: str
+    finding_am: Optional[str] = None
+    finding_om: Optional[str] = None
     recommendation: str
+    recommendation_am: Optional[str] = None
+    recommendation_om: Optional[str] = None
     priority: str  # "high", "medium", "low"
 
 class TeacherInsightsResponse(BaseModel):
