@@ -17,6 +17,7 @@ from app.modules.escalate.router import router as escalate_router
 from app.modules.channels.sms_handler import router as sms_router, process_inbound_sms
 from app.modules.channels.telegram_router import router as telegram_router
 from app.modules.teacher.router import router as teacher_router
+from app.modules.teacher.service import TeacherService
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -104,6 +105,14 @@ async def root_sms_inbound_post(request: Request, db: Session = Depends(get_db))
 async def root_sms_inbound_get(request: Request, db: Session = Depends(get_db)):
     """Diagnostic and telecom webhook verification for GET /sms/inbound."""
     return await process_inbound_sms(request, db)
+
+@app.get("/teacher/insights", tags=["Module 5: Anonymized Teacher Intelligence"])
+async def root_teacher_insights(partner_id: str = "savanna", course_id: str = "VA-1"):
+    return TeacherService.get_insights(partner_id, course_id)
+
+@app.get("/teacher/questions", tags=["Module 5: Anonymized Teacher Intelligence"])
+async def root_teacher_questions(topic: str = None, language: str = None, search: str = None):
+    return TeacherService.get_questions(topic, language, search)
 
 @app.get("/")
 def root():

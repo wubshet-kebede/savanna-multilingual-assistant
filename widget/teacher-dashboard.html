@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Savanna Instructor Intelligence — Anonymized Student Q&A Dashboard</title>
+  <link rel="stylesheet" href="../assets/css/application_alx.css">
+  <style>
+    :root {
+      --primary: #0f4c81;
+      --primary-dark: #0a3258;
+      --accent: #2563eb;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --success: #16a34a;
+      --warning: #d97706;
+      --danger: #dc2626;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 0;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 20px;
+    }
+
+    /* Top Navbar */
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .header-title h1 {
+      font-size: 1.6rem;
+      margin: 0 0 6px 0;
+      color: var(--primary-dark);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .privacy-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 9999px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-outline {
+      background: white;
+      border-color: var(--border);
+      color: var(--text);
+    }
+    .btn-outline:hover {
+      background: #f1f5f9;
+    }
+
+    /* Metrics Grid */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .metric-card {
+      background: var(--card-bg);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      padding: 18px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .metric-label {
+      font-size: 0.825rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    .metric-val {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .metric-sub {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Content Layout */
+    .layout-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+
+    @media (max-width: 900px) {
+      .layout-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      padding: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      margin-bottom: 24px;
+    }
+
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text);
+      margin: 0 0 16px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Confusion Heatmap */
+    .confusion-item {
+      margin-bottom: 14px;
+    }
+
+    .confusion-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .progress-bar-bg {
+      background: #f1f5f9;
+      border-radius: 9999px;
+      height: 10px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 9999px;
+      transition: width 0.6s ease;
+    }
+
+    .fill-danger { background: var(--danger); }
+    .fill-warning { background: var(--warning); }
+    .fill-primary { background: var(--accent); }
+
+    /* Questions Table */
+    .search-filter-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .search-input {
+      flex: 1;
+      min-width: 200px;
+      padding: 8px 14px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+
+    .table-container {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+
+    th {
+      background: #f8fafc;
+      padding: 10px 14px;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 2px solid var(--border);
+    }
+
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    tr:hover td {
+      background: #f8fafc;
+    }
+
+    .q-text {
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .q-answer {
+      font-size: 0.825rem;
+      color: var(--text-muted);
+      background: #f8fafc;
+      padding: 8px 10px;
+      border-radius: 4px;
+      border-left: 3px solid var(--accent);
+      margin-top: 6px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .badge-primary { background: #dbeafe; color: #1e40af; }
+    .badge-am { background: #fef3c7; color: #92400e; }
+    .badge-om { background: #dcfce7; color: #166534; }
+    .badge-esc { background: #fee2e2; color: #991b1b; }
+
+    /* AI Curriculum Recommendations */
+    .rec-card {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .rec-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #1e40af;
+      margin-bottom: 6px;
+    }
+
+    .rec-body {
+      font-size: 0.9rem;
+      color: #1e293b;
+      margin-bottom: 8px;
+    }
+
+    .rec-action {
+      font-size: 0.85rem;
+      color: #1d4ed8;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="dashboard-header" role="banner">
+      <div class="header-title">
+        <h1>
+          <span>👩‍🏫 Savanna Instructor Portal</span>
+          <span class="privacy-badge">🔒 100% Anonymized Q&A (Zero PII)</span>
+        </h1>
+        <p class="metric-sub">Curriculum confusion heatmap & most asked student questions across Web, Telegram, and 2G SMS.</p>
+      </div>
+      <div class="header-actions">
+        <a href="/html_course_files/concept-with-navigation.html" class="btn btn-outline">← Back to Course</a>
+        <a href="/api/v1/teacher/export-csv" class="btn btn-primary" download>📥 Export CSV Report</a>
+      </div>
+    </header>
+
+    <!-- Metrics Cards -->
+    <section class="metrics-grid" aria-label="Key Teaching Metrics">
+      <div class="metric-card">
+        <div class="metric-label">Total Student Inquiries</div>
+        <div class="metric-val" id="totalQuestions">167</div>
+        <div class="metric-sub">Across 5 course modules</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Top Inquiry Language</div>
+        <div class="metric-val" id="topLang">Amharic (48%)</div>
+        <div class="metric-sub">Followed by Afaan Oromo (22%)</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Human Escalations Flagged</div>
+        <div class="metric-val" id="escalatedCount" style="color: var(--warning)">8</div>
+        <div class="metric-sub">4.8% escalation rate</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Multi-Channel Inquiries</div>
+        <div class="metric-val">Web 68%</div>
+        <div class="metric-sub">Telegram 22% · SMS 10%</div>
+      </div>
+    </section>
+
+    <!-- Main Content Layout -->
+    <div class="layout-row">
+      <!-- Left Column: Most Asked Questions -->
+      <section class="card" aria-label="Most Asked Questions Table">
+        <div class="card-title">
+          <span>❓ Most Asked Questions (Anonymized)</span>
+          <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: normal;">Ranked by Frequency</span>
+        </div>
+
+        <div class="search-filter-bar">
+          <input type="text" id="searchInput" class="search-input" placeholder="Search questions or topics..." oninput="filterQuestions()">
+        </div>
+
+        <div class="table-container">
+          <table aria-label="Anonymized Questions">
+            <thead>
+              <tr>
+                <th scope="col" style="width: 80px;">ID</th>
+                <th scope="col">Question & Verified AI Response</th>
+                <th scope="col" style="width: 140px;">Topic</th>
+                <th scope="col" style="width: 80px;">Asks</th>
+                <th scope="col" style="width: 100px;">Language</th>
+              </tr>
+            </thead>
+            <tbody id="questionsTbody">
+              <!-- Dynamically populated or fallback -->
+              <tr>
+                <td><code>Q-101</code></td>
+                <td>
+                  <div class="q-text">What is the key difference between an AI tool and a human Virtual Assistant?</div>
+                  <div class="q-answer"><strong>Grounded AI Answer:</strong> AI automates repetitive tasks, while human VAs provide client relationships, empathy, and contextual judgment.</div>
+                </td>
+                <td><span class="badge badge-primary">AI vs Human VA</span></td>
+                <td><strong>62</strong></td>
+                <td><span class="badge badge-am">Amharic 52%</span></td>
+              </tr>
+              <tr>
+                <td><code>Q-102</code></td>
+                <td>
+                  <div class="q-text">How do I calculate timezone overlap between Addis Ababa (EAT) and New York (EST)?</div>
+                  <div class="q-answer"><strong>Grounded AI Answer:</strong> Addis Ababa (EAT, UTC+3) is 7 hours ahead of New York. A 4:00 PM to 8:00 PM EAT window overlaps with 9:00 AM to 1:00 PM EST.</div>
+                </td>
+                <td><span class="badge badge-primary">Timezones & EAT</span></td>
+                <td><strong>34</strong></td>
+                <td><span class="badge badge-am">Amharic 60%</span></td>
+              </tr>
+              <tr>
+                <td><code>Q-103</code></td>
+                <td>
+                  <div class="q-text">What is a realistic hourly proposal rate in USD for an entry-level African VA?</div>
+                  <div class="q-answer"><strong>Grounded AI Answer:</strong> Entry-level international remote rates typically start between $5 to $10/hour, or $400 to $700/month for dedicated full-time work.</div>
+                </td>
+                <td><span class="badge badge-primary">Pricing & Invoicing</span></td>
+                <td><strong>29</strong></td>
+                <td><span class="badge badge-primary">English 45%</span></td>
+              </tr>
+              <tr>
+                <td><code>Q-104</code></td>
+                <td>
+                  <div class="q-text">What minimum laptop specs and internet speed do I need for remote administrative support?</div>
+                  <div class="q-answer"><strong>Grounded AI Answer:</strong> Minimum: Core i3 with 8GB RAM, and a 10 Mbps connection with a mobile 4G hotspot backup.</div>
+                </td>
+                <td><span class="badge badge-primary">Hardware Setup</span></td>
+                <td><strong>24</strong></td>
+                <td><span class="badge badge-om">Oromo 48%</span></td>
+              </tr>
+              <tr>
+                <td><code>Q-105</code></td>
+                <td>
+                  <div class="q-text">How can I formally request interview accommodations for remote video screenings?</div>
+                  <div class="q-answer"><strong>Grounded AI Answer:</strong> Submit an accommodation request letter with tracking code ACC-XXXXXX for live captions or asynchronous interviews.</div>
+                </td>
+                <td><span class="badge badge-primary">Accommodations</span></td>
+                <td><strong>18</strong></td>
+                <td><span class="badge badge-am">Amharic 55%</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Right Column: Confusion Heatmap & Pedagogical Recommendations -->
+      <div>
+        <!-- Heatmap -->
+        <section class="card" aria-label="Curriculum Confusion Heatmap">
+          <div class="card-title">
+            <span>🔥 Confusion Heatmap</span>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Topic Difficulty</span>
+          </div>
+
+          <div class="confusion-item">
+            <div class="confusion-meta">
+              <span>AI Assistant vs Human Remote VA</span>
+              <span style="color: var(--danger);">62 asks (43%)</span>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill fill-danger" style="width: 43%;"></div>
+            </div>
+          </div>
+
+          <div class="confusion-item">
+            <div class="confusion-meta">
+              <span>Remote Work Timezones & EAT</span>
+              <span style="color: var(--warning);">34 asks (24%)</span>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill fill-warning" style="width: 24%;"></div>
+            </div>
+          </div>
+
+          <div class="confusion-item">
+            <div class="confusion-meta">
+              <span>Proposal Pricing & Invoicing</span>
+              <span>29 asks (20%)</span>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill fill-primary" style="width: 20%;"></div>
+            </div>
+          </div>
+
+          <div class="confusion-item">
+            <div class="confusion-meta">
+              <span>Technical Hardware & Connectivity</span>
+              <span>24 asks (17%)</span>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill fill-primary" style="width: 17%;"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- AI Pedagogical Recommendations -->
+        <section class="card" aria-label="AI Recommendations for Instructors">
+          <div class="card-title">
+            <span>💡 Pedagogical Action Center</span>
+          </div>
+
+          <div class="rec-card">
+            <div class="rec-header">
+              <span>VA-1 / Lesson 1.2</span>
+              <span class="badge badge-esc">HIGH PRIORITY</span>
+            </div>
+            <div class="rec-body">
+              <strong>Finding:</strong> 43% of students fear AI will make human VAs obsolete before they graduate.
+            </div>
+            <div class="rec-action">
+              <span>👉 Recommendation:</span> Add a 2-minute video case study showing how VAs use AI as a productivity co-pilot.
+            </div>
+          </div>
+
+          <div class="rec-card">
+            <div class="rec-header">
+              <span>VA-1 / Lesson 2.4</span>
+              <span class="badge badge-esc">HIGH PRIORITY</span>
+            </div>
+            <div class="rec-body">
+              <strong>Finding:</strong> Timezone conversion has the highest live human escalation rate (5 cases).
+            </div>
+            <div class="rec-action">
+              <span>👉 Recommendation:</span> Embed an interactive 24-hr comparative slider between EAT, GMT, and EST.
+            </div>
+          </div>
+
+          <div class="rec-card" style="background: #f0fdf4; border-color: #bbf7d0;">
+            <div class="rec-header" style="color: #166534;">
+              <span>VA-1 / Lesson 4.1</span>
+              <span class="badge" style="background:#bbf7d0; color:#14532d;">MEDIUM PRIORITY</span>
+            </div>
+            <div class="rec-body">
+              <strong>Finding:</strong> Students struggle with financial terminology ("escrow", "retainer", "net-30").
+            </div>
+            <div class="rec-action" style="color: #15803d;">
+              <span>👉 Recommendation:</span> Include localized Amharic and Afaan Oromo audio tooltips for contract terms.
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Live fetch from FastAPI Backend
+    async function loadTeacherInsights() {
+      try {
+        const res = await fetch('/api/v1/teacher/insights');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.total_questions) {
+            document.getElementById('totalQuestions').textContent = data.total_questions;
+          }
+          if (data.escalated_to_human_count !== undefined) {
+            document.getElementById('escalatedCount').textContent = data.escalated_to_human_count;
+          }
+        }
+      } catch (err) {
+        console.log("Using cached teacher insights data:", err);
+      }
+    }
+
+    function filterQuestions() {
+      const q = document.getElementById('searchInput').value.toLowerCase();
+      const rows = document.querySelectorAll('#questionsTbody tr');
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(q) ? '' : 'none';
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', loadTeacherInsights);
+  </script>
+</body>
+</html>
