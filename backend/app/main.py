@@ -1,3 +1,4 @@
+import asyncio
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
@@ -12,13 +13,25 @@ from app.modules.tutor import schemas as tutor_schemas
 from app.modules.career.router import router as career_router
 from app.modules.escalate.router import router as escalate_router
 from app.modules.channels.sms_handler import router as sms_router
+from app.modules.channels.telegram_router import router as telegram_router
 from app.modules.teacher.router import router as teacher_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Ensure tables and the pgvector extension are created on boot
     init_db()
+
+    # Start Telegram bot polling if token is configured in .env
+    from app.modules.channels.telegram_bot import run_telegram_bot_service
+    bot_task = None
+    token = settings.TELEGRAM_BOT_TOKEN or ""
+    if token and token.strip() not in ["", "YOUR_TELEGRAM_BOT_TOKEN_HERE"]:
+        bot_task = asyncio.create_task(run_telegram_bot_service())
+
     yield
+
+    if bot_task:
+        bot_task.cancel()
 
 app = FastAPI(
     title="Universal Multilingual Assistant & Live Help API",
@@ -51,6 +64,7 @@ app.include_router(tutor_router, prefix=settings.API_PREFIX)
 app.include_router(career_router, prefix=settings.API_PREFIX)
 app.include_router(escalate_router, prefix=settings.API_PREFIX)
 app.include_router(sms_router, prefix=settings.API_PREFIX)
+app.include_router(telegram_router, prefix=settings.API_PREFIX)
 app.include_router(teacher_router, prefix=settings.API_PREFIX)
 
 # 2. Root-Level Direct Bridges for Widget & Legacy Client Compatibility
