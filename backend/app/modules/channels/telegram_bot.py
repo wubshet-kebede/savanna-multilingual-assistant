@@ -773,13 +773,18 @@ def build_telegram_application(token: str) -> Optional["Application"]:
         print("[Telegram Bot] python-telegram-bot is not installed.", flush=True)
         return None
 
-    req = HTTPXRequest(
-        connection_pool_size=16,
-        read_timeout=30.0,
-        write_timeout=30.0,
-        connect_timeout=30.0,
-        pool_timeout=30.0
-    )
+    proxy = os.getenv('TELEGRAM_PROXY') or os.getenv('HTTPS_PROXY') or os.getenv('HTTP_PROXY')
+    req_kwargs = {
+        'connection_pool_size': 16,
+        'read_timeout': 30.0,
+        'write_timeout': 30.0,
+        'connect_timeout': 30.0,
+        'pool_timeout': 30.0,
+    }
+    if proxy:
+        print(f'[Telegram Bot] Routing through proxy: {proxy}', flush=True)
+        req_kwargs['proxy'] = proxy
+    req = HTTPXRequest(**req_kwargs)
     app = Application.builder().token(token).request(req).build()
 
     app.add_handler(CommandHandler(["start", "restart"], start_handler))
